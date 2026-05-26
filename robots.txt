@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.paramours.cl/sitemap.xml
+Sitemap: https://paramours.cl/sitemap.xml

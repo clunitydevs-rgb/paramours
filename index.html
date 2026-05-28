@@ -866,6 +866,16 @@
       color: #D6C6A5;
     }
 
+    .footer-social {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .footer-social .social-link {
+      font-size: 1.1rem;
+    }
+
     /* BOTTOM */
 
     .footer-bottom {
@@ -878,6 +888,14 @@
       font-size: 12px;
       color: rgba(232, 223, 200, 0.5);
       letter-spacing: 1px;
+    }
+
+    @media (max-width: 575.98px) {
+      .footer-content {
+        flex-direction: column;
+        justify-content: center;
+        gap: 18px;
+      }
     }
   </style>
   <!-- Google tag (gtag.js) -->
@@ -1192,6 +1210,17 @@
           <img src="https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/logofooter.png"
             alt="PARAMOURS">
           <p>Publicaci&oacute;n discreta, verificaci&oacute;n responsable y contacto confidencial.</p>
+        </div>
+
+        <div class="footer-social" aria-label="Redes sociales">
+          <a class="social-link" href="https://www.instagram.com/paramours.cl" target="_blank"
+            rel="noopener noreferrer" aria-label="Instagram Paramours">
+            <i class="bi bi-instagram"></i>
+          </a>
+          <a class="social-link" href="https://www.tiktok.com/@paramours.cl" target="_blank"
+            rel="noopener noreferrer" aria-label="TikTok Paramours">
+            <i class="bi bi-tiktok"></i>
+          </a>
         </div>
 
         <!-- <nav class="footer-nav" aria-label="Footer">

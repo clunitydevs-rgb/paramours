@@ -32,6 +32,11 @@ jobs:
       - name: Build Angular app
         run: npm run build
 
+      - name: Prepare Windows App Service SSR package
+        run: |
+          cp deploy/azure-server.js dist/cl.app.paramours/server.js
+          cp deploy/azure-web.config dist/cl.app.paramours/web.config
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -45,4 +50,3 @@ jobs:
           app-name: 'paramours'
           slot-name: 'Production'
           package: dist/cl.app.paramours
-          startup-command: node server/server.mjs

@@ -30,7 +30,7 @@ export class ApiServices{
 
     postLogin(form:LoginI):Observable<ResponseI>{
         //let cUrl = this.sSiteUrl + "/cl.api.paramours.client/api/v1/Login/Authentication"
-        let cUrl = "https://cl.api.client.paramours.cl/api/v1/Client/Authentication";
+        let cUrl = "https://cl.api.client.paramours.cl/api/v1/Login/Authentication";
         return this._http.post<ResponseI>(cUrl, form);
     }
 
@@ -78,7 +78,7 @@ export class ApiServices{
 
     GetRefreshToken(form:rRefreshToken):Observable<ResponseI>{
         //let cUrl = this.sSiteUrl + "/cl.api.paramours.client/api/v1/Login/RefreshToken"
-        let cUrl = "https://cl.api.client.paramours.cl/api/v1/Client/RefreshToken";
+        let cUrl = "https://cl.api.client.paramours.cl/api/v1/Login/RefreshToken";
         return this._http.post<ResponseI>(cUrl, form);
     }
 

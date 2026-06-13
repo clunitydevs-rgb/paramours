@@ -1,0 +1,16 @@
+<div class="toast-container" aria-live="polite" aria-atomic="true">
+
+  <div *ngFor="let t of toasts" class="toast-card {{ t.classname }}" role="alert">
+    <div class="toast-content">
+        <div class="toast-icon">
+          <i class="{{ t.icon }}"></i>
+        </div>
+        <div class="toast-body">
+          {{ t.message }}
+        </div>
+        <button type="button" class="toast-close" (click)="removeToast(t)" aria-label="Cerrar notificación">
+          <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+[
+    {
+        "id" : "0",
+        "nombre" : "Café"
+    },
+    {
+        "id" : "1",
+        "nombre" : "Pardos"
+    },
+    {
+        "id" : "2",
+        "nombre" : "Claros"
+    },
+    {
+        "id" : "3",
+        "nombre" : "Azules"
+    },
+    {
+        "id" : "4",
+        "nombre" : "Celestes"
+    },
+    {
+        "id" : "5",
+        "nombre" : "Verdes"
+    },
+    {
+        "id" : "6",
+        "nombre" : "Oscuros"
+    }
+]

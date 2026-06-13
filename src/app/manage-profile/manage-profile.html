@@ -1,0 +1,188 @@
+<main class="home-shell">
+    <section class="catalog-head container">
+        <div>
+            <span class="catalog-kicker">Paramours Chile</span>
+            <h1 class="catalog-title">Escorts</h1>
+        </div>
+        <div class="catalog-meta">
+            <span>{{ nTotalClienteCount }} perfiles</span>
+        </div>
+    </section>
+
+    <section class="container">
+        <div>
+            <input type="text" class="form-control mb-3" placeholder="Buscar..." [(ngModel)]="textoBusqueda" />
+        </div>
+        <div class="d-none d-md-block">
+            <div class="table-responsive">
+                <table class="table table-sm table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="text-center"></th>
+                            <th scope="col" class="text-center">Nombre</th>
+                            <th scope="col" class="text-center">Celular</th>
+                            <th scope="col" class="text-center">Email</th>
+                            <th scope="col" class="text-center">Fecha creación</th>
+                            <th scope="col" class="text-center">Perfil</th>
+                            <th scope="col" class="text-center">Foto verificación</th>
+                            <th scope="col" class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let i of registrosFiltrados">
+                            <td class="text-center align-middle">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <div class="account-avatar"
+                                        [style.background-image]="'url(' + ((i.fotO_PERFIL != null && i.fotO_PERFIL !== '') ? sUrlRps + i.fotO_PERFIL : proFileImg) + ')'">
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-start align-middle">{{i.nombrE_USUARIO}}</td>
+                            <td class="text-center align-middle">
+                                <div class="d-flex justify-content-center align-items-center gap-2">
+                                    @if (i.celular != null && i.celular !== ''){<a
+                                        class="bi bi-whatsapp icon-text-contact"
+                                        href="https://wa.me/56{{i.celular}}?text=Hola,%20tengo%20una%20consulta"
+                                        id="btn-wsp" target="_blank"></a>}
+                                    {{i.celular}}
+                                </div>
+                            </td>
+                            <td class="text-start align-middle">{{i.correo}}</td>
+                            <td class="text-center align-middle">{{i.fechA_CREACION | date:'shortDate'}}</td>
+                            <td class="text-center align-middle">
+                                {{i.glosA_ESTADO}}
+                            </td>
+                            <td class="text-center align-middle">
+                                @if (i.fotO_VERIFICACION != null && i.fotO_VERIFICACION !== ''){
+                                <button class="btn btn-outline-light btn-sm" (click)="onPreviewImg(i.fotO_VERIFICACION)"
+                                    data-bs-toggle="modal" data-bs-target="#myViewImage">Ver</button>
+                                }
+                            </td>
+                            <td class="text-center align-middle">
+                                @switch (i.estado) {
+                                @case ('P'){
+                                <div class="d-flex justify-content-center align-items-center gap-2">
+                                    <button class="btn btn-outline-light btn-sm"
+                                        (click)="onChangeStateProfile(i.iD_USUARIO, 'E')">Rechazar</button>
+                                    <button class="btn btn-light btn-sm"
+                                        (click)="onChangeStateProfile(i.iD_USUARIO, 'N')">Aprobar</button>
+                                </div>
+                                }
+                                @case ('B'){
+                                <button class="btn btn-outline-light btn-sm"
+                                    (click)="onChangeStateProfile(i.iD_USUARIO, 'N')">Habilitar</button>
+                                }
+                                @case ('N'){
+                                <button class="btn btn-outline-light btn-sm"
+                                    (click)="onChangeStateProfile(i.iD_USUARIO, 'V')">Activar</button>
+                                }
+                                @default {
+                                <button class="btn btn-outline-light btn-sm"
+                                    (click)="onChangeStateProfile(i.iD_USUARIO, 'B')">Bloquear</button>
+                                }
+                                }
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="d-block d-md-none">
+            <div class="card mb-3 advertiser-card" *ngFor="let item of registrosFiltrados">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="account-avatar"
+                            [style.background-image]="'url(' + ((item.fotO_PERFIL != null && item.fotO_PERFIL !== '') ? sUrlRps + item.fotO_PERFIL : proFileImg) + ')'">
+                        </div>
+                        <div>
+                            <h6 class="mb-1 ms-2">
+                                {{item.nombrE_USUARIO}}
+                            </h6>
+                            
+                            @switch (item.estado) {
+                            @case ('V'){<span class="badge bg-success">{{item.glosA_ESTADO}}</span>}
+                            @case ('N'){<span class="badge bg-defaul">{{item.glosA_ESTADO}}</span>}
+                            @case ('P'){<span class="badge bg-danger">{{item.glosA_ESTADO}}</span>}
+                            @default {<span class="badge bg-default">{{item.glosA_ESTADO}}</span>}
+                            }
+                        </div>
+
+                    </div>
+
+                    <hr>
+
+                    <div class="small mb-2">
+                        <strong>Correo:</strong> {{item.correo}}
+                    </div>
+
+                    <div class="small mb-2">
+                        <strong class="me-2">Contacto:</strong>
+                        @if (item.celular != null && item.celular !== ''){<a
+                            class="bi bi-whatsapp icon-text-contact me-1"
+                            href="https://wa.me/56{{item.celular}}?text=Hola,%20tengo%20una%20consulta" id="btn-wsp"
+                            target="_blank"></a>}
+
+                        {{item.celular}}
+                    </div>
+
+                    <div class="small mb-3">
+                        <strong>Última creación:</strong>
+                        {{item.fechA_CREACION | date:'shortDate'}}
+                    </div>
+
+                    <div class="d-grid">
+                        <button class="btn btn-outline-light btn-sm mb-2" (click)="onPreviewImg(item.fotO_VERIFICACION)"
+                            data-bs-toggle="modal" data-bs-target="#myViewImage">
+                            Ver foto verificación
+                        </button>
+                    </div>
+
+                    <div class="d-grid">
+                        @switch (item.estado) {
+                        @case ('P'){
+                        <div class="d-flex justify-content-center align-items-center gap-2">
+                            <button class="btn btn-outline-light btn-sm"
+                                (click)="onChangeStateProfile(item.iD_USUARIO, 'E')">Rechazar</button>
+                            <button class="btn btn-light btn-sm"
+                                (click)="onChangeStateProfile(item.iD_USUARIO, 'N')">Aprobar</button>
+                        </div>
+                        }
+                        @case ('B'){
+                        <button class="btn btn-outline-light btn-sm"
+                            (click)="onChangeStateProfile(item.iD_USUARIO, 'N')">Habilitar</button>
+                        }
+                        @case ('N'){
+                        <button class="btn btn-outline-light btn-sm"
+                            (click)="onChangeStateProfile(item.iD_USUARIO, 'V')">Activar</button>
+                        }
+                        @default {
+                        <button class="btn btn-outline-light btn-sm"
+                            (click)="onChangeStateProfile(item.iD_USUARIO, 'B')">Bloquear</button>
+                        }
+                        }
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+</main>
+
+<div class="modal fade" id="myViewImage" tabindex="-1" role="dialog" aria-labelledby="myViewImageLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen modal-dialog-centered video-lightbox-container">
+        <!-- Agrega modal-fullscreen -->
+        <div class="modal-content d-flex justify-content-center align-items-center lightbox">
+            <button class="close-btn" (click)="onCleanObject()" data-bs-dismiss="modal" aria-label="Close">
+                <i class="bi bi-x-circle icon-close"></i>
+            </button>
+            <div #htmlContent class="lightbox-img">
+            </div>
+        </div>
+    </div>
+</div>

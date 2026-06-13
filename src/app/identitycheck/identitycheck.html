@@ -1,0 +1,78 @@
+<div class="modal fade" id="myModalIdentityCheck" tabindex="-1" aria-labelledby="identityCheckTitle" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen modal-dialog-centered identity-modal">
+        <div class="modal-content identity-content">
+            <button id="BtnCloseModal" class="close-btn" data-bs-dismiss="modal" (click)="onCloseModal()" aria-label="Cerrar">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+            <div class="modal-body identity-body">
+                <form class="identity-card" [formGroup]="frmStories" (ngSubmit)="onPost()">
+                    <div class="identity-copy">
+                        <span class="eyebrow">Verificacion</span>
+                        <h1 id="identityCheckTitle">Verifica tu identidad</h1>
+                        <p>
+                            Sube una selfie clara mostrando tu documento. La imagen se usa solo para revisar tu perfil y mantener la comunidad mas segura.
+                        </p>
+
+                        <div class="identity-illustration">
+                            <img src="https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/identitycheck.png" alt="Referencia para verificacion de identidad">
+                        </div>
+                    </div>
+
+                    <div class="identity-panel">
+                        <div class="requirements">
+                            <h2>Antes de subirla</h2>
+                            <ul>
+                                <li><i class="bi bi-check2-circle"></i><span>Tu rostro y el documento deben verse completos.</span></li>
+                                <li><i class="bi bi-check2-circle"></i><span>Evita reflejos, sombras fuertes o texto borroso.</span></li>
+                                <li><i class="bi bi-check2-circle"></i><span>La informacion no se comparte con terceros.</span></li>
+                            </ul>
+                        </div>
+
+                        <div class="upload-card" [class.has-preview]="!bImage">
+                            @if (bImage) {
+                                <div class="upload-empty">
+                                    <div class="upload-icon">
+                                        <i class="bi bi-file-earmark-person"></i>
+                                    </div>
+                                    <h3>Selecciona tu selfie</h3>
+                                    <p>Formatos de imagen desde tu camara o galeria.</p>
+                                </div>
+                            } @else {
+                                <div class="preview-frame">
+                                    <img [src]="imageUrl" alt="Vista previa de la imagen de identidad">
+                                </div>
+                            }
+
+                            @if (selectedFileName) {
+                                <div class="file-chip">
+                                    <i class="bi bi-paperclip"></i>
+                                    <span>{{ selectedFileName }}</span>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="upload-actions">
+                            <input type="file" id="fileInput" #fileInput (change)="onFileSelected($event)" hidden alt="Multimedia" accept="image/*">
+
+                            <button type="button" (click)="triggerFileInput(fileInput)" class="btn-outline">
+                                <i class="bi bi-image"></i>
+                                {{ fileToUpload ? 'Cambiar imagen' : 'Cargar imagen' }}
+                            </button>
+
+                            <button id="idBtnPost" #idBtnPost type="submit" class="btn-gold" [disabled]="!fileToUpload || isPosting">
+                                @if (isPosting) {
+                                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                                    Enviando
+                                } @else {
+                                    <i class="bi bi-arrow-up-circle"></i>
+                                    Subir verificacion
+                                }
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,22 @@
+[
+    {
+        "id" : "0",
+        "nombre" : "Fitness"
+    },
+    {
+        "id" : "1",
+        "nombre" : "Delgada"
+    },
+    {
+        "id" : "2",
+        "nombre" : "Mediana"
+    },
+    {
+        "id" : "3",
+        "nombre" : "Robusta"
+    },
+    {
+        "id" : "4",
+        "nombre" : "Voluptuosa"
+    }
+]

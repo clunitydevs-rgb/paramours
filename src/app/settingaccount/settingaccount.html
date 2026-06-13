@@ -1,0 +1,177 @@
+<form [formGroup]="frmAccount" (ngSubmit)="goBtnAceptar()">
+    <main class="settings-shell container">
+        <header class="settings-head">
+            <div>
+                <span class="settings-kicker">Cuenta</span>
+                <h1>Editar Perfil</h1>
+            </div>
+            <button type="submit" class="btn-gold save-top"><i class="bi bi-save2"></i> Grabar</button>
+        </header>
+
+        <section class="settings-hero">
+            <aside class="profile-side">
+                <div id="container" [style.background-image]="'url(' + proFileImg + ')'">
+                    <div class="round">
+                        <input type="file" formControlName="fotoperfil" (change)="CargarImgFotoPerfil($event)"
+                            accept="image/*">
+                        <i class="bi bi-camera"></i>
+                    </div>
+                </div>
+
+                <div *ngIf="!bHiddenProfileValided" class="form-check form-switch profile-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault"
+                        [checked]="isProfileActive" (change)="toggleProfileStatus()">
+                    <label class="form-check-label ms-1" for="switchCheckDefault">
+                        {{ isProfileActive ? 'Perfil Activado' : 'Activa tu Perfil' }}
+                    </label>
+                </div>
+
+                <div *ngIf="bHiddenProfileValided && this.oCliente.estado != 'P'"
+                    class="alert alert-warning text-center label-alert-validprofile" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Valida tu identidad para activar tu perfil.
+                    <a href="#" class="alert-link" data-bs-toggle="modal" data-bs-target="#myModalIdentityCheck">Hazlo aquí</a>
+                </div>
+                <div *ngIf="bHiddenProfileValided && this.oCliente.estado === 'P'"
+                    class="alert alert-info text-center label-alert-validprofile" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Tu identidad está en proceso de validación.
+                </div>
+            </aside>
+
+            <section class="profile-summary">
+                <div class="lbl_tile">{{oCliente.nombrE_USUARIO}}</div>
+                <span class="birth-label">Fecha nacimiento: {{dFechaNac}}</span>
+            </section>
+        </section>
+
+        <section class="settings-card">
+            <div class="section-title">Datos principales</div>
+            <div class="form-grid four">
+                <div class="field-group">
+                    <label class="form-label">Correo</label>
+                    <input type="text" class="form-control" formControlName="email" placeholder="ej. correo@paramours.cl">
+                </div>
+                <div class="field-group">
+                    <label class="form-label">Nº Celular</label>
+                    <input type="text" class="form-control" formControlName="celular" placeholder="ej. 984222306">
+                </div>
+                <div class="field-group">
+                    <label class="form-label">Edad</label>
+                    <input type="text" class="form-control" formControlName="edad" placeholder="ej. 25">
+                </div>
+                <div class="field-group">
+                    <label class="form-label">Nacionalidad</label>
+                    <select class="form-select" formControlName="nacionalidad">
+                        <option value="">Seleccione nacionalidad</option>
+                        <option *ngFor="let nacion of oNacionalidades" value="{{ nacion.id }}">{{ nacion.nacionalidad }}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-grid four">
+                <div class="field-group">
+                    <label class="form-label">Servicio</label>
+                    <select class="form-select" formControlName="genero">
+                        <option value="">Seleccione servicio</option>
+                        <option *ngFor="let genero of oGeneros" value="{{ genero.id }}">{{ genero.nombre }}</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label class="form-label">Medidas</label>
+                    <input type="text" class="form-control" formControlName="medidas" placeholder="ej. 90-60-90">
+                </div>
+                <div class="field-group">
+                    <label class="form-label">Peso (kg)</label>
+                    <input type="text" class="form-control" formControlName="peso" placeholder="ej. 50">
+                </div>
+                <div class="field-group">
+                    <label class="form-label">Altura (cm)</label>
+                    <input type="text" class="form-control" formControlName="altura" placeholder="ej. 160" maxlength="3">
+                </div>
+            </div>
+        </section>
+
+        <section class="settings-card">
+            <div class="section-title">Ubicación y atención</div>
+            <div class="form-grid three">
+                <div class="field-group">
+                    <label class="form-label">Ubicación</label>
+                    <select class="form-select mb-2" formControlName="ubicacion" (change)="onComunaSelect($event)">
+                        <option value="">Seleccione comuna</option>
+                        <option *ngFor="let comunas of oComunas" value="{{ comunas.id }}">{{ comunas.nombre }}</option>
+                    </select>
+                    <select [hidden]="bShowComuna" class="form-select" formControlName="metro">
+                        <option value="">Seleccione metro</option>
+                        <option *ngFor="let metros of oMetros" value="{{ metros.idMetro }}">{{ metros.NombreMetro }}</option>
+                    </select>
+                </div>
+                <div class="field-group field-desktop">
+                    <label class="form-label">Horario de atención</label>
+                    <select class="form-select" formControlName="horario">
+                        <option value="">Horario</option>
+                        <option value="0">Full Time</option>
+                        <option value="1">Part Time</option>
+                    </select>
+                </div>
+                <div class="field-group field-desktop">
+                    <label class="form-label">Valor de tus servicios</label>
+                    <input type="text" class="form-control" formControlName="valor" [value]="montoFormateado"
+                        (input)="formatearMonto($event)" placeholder="ej. 60000">
+                </div>
+            </div>
+        </section>
+
+        <section class="settings-card">
+            <div class="section-title">Atributos</div>
+            <div class="form-grid three">
+                <div class="field-group">
+                    <label class="form-label">Color de ojos</label>
+                    <select class="form-select" formControlName="colordeojos">
+                        <option value="">Seleccione color</option>
+                        <option *ngFor="let colorojos of oColorOjos" value="{{ colorojos.id }}">{{ colorojos.nombre }}</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label class="form-label">Color del cabello</label>
+                    <select class="form-select" formControlName="colorcabello">
+                        <option value="">Seleccione color</option>
+                        <option *ngFor="let colorcabello of oColorCabello" value="{{ colorcabello.id }}">{{ colorcabello.nombre }}</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label class="form-label">Biotipo</label>
+                    <select class="form-select" formControlName="biotipo">
+                        <option value="">Seleccione</option>
+                        <option *ngFor="let biotipo of oBiotipo" value="{{ biotipo.id }}">{{ biotipo.nombre }}</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section class="settings-card">
+            <div class="section-title">Descripción</div>
+            <textarea rows="5" class="form-control" formControlName="descripcion"
+                placeholder="Cuéntale a los visitantes sobre tus servicios"></textarea>
+        </section>
+
+        <section class="settings-card media-card">
+            <div>
+                <div class="section-title">Book's</div>
+                <p>Carga tus fotos y videos para mostrarlos en tu perfil.</p>
+            </div>
+            <div class="loadImgContent">
+                <div class="roundImg">
+                    <input type="file" (change)="CapturarImagenes($event)" multiple accept="image/*, video/*">
+                    <i class="bi bi-cloud-plus"></i>
+                </div>
+                <div>Carga tus fotos y videos acá.</div>
+            </div>
+        </section>
+
+        <div class="save-bottom">
+            <button type="submit" class="btn-gold"><i class="bi bi-save2"></i> Grabar</button>
+        </div>
+    </main>
+</form>
+
+<app-identitycheck></app-identitycheck>
+<app-gallery-lightbox [showDelete]="isOwner"></app-gallery-lightbox>

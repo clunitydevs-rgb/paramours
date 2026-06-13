@@ -1,0 +1,98 @@
+[
+    {
+        "id": "0",
+        "nacionalidad": "Chilena"
+    },
+    {
+        "id": "1",
+        "nacionalidad": "Colombiana"
+    },
+    {
+        "id": "2",
+        "nacionalidad": "Venezolana"
+    },
+    {
+        "id": "3",
+        "nacionalidad": "Brasileña"
+    },
+    {
+        "id": "4",
+        "nacionalidad": "Argentina"
+    },
+    {
+        "id": "5",
+        "nacionalidad": "Peruana"
+    },
+    {
+        "id": "6",
+        "nacionalidad": "Boliviana"
+    },
+    {
+        "id": "7",
+        "nacionalidad": "Paraguaya"
+    },
+    {
+        "id": "8",
+        "nacionalidad": "Ecuatoriana"
+    },
+    {
+        "id": "9",
+        "nacionalidad": "Uruguaya"
+    },
+    {
+        "id": "10",
+        "nacionalidad": "Mexicana"
+    },
+    {
+        "id": "11",
+        "nacionalidad": "Cubana"
+    },
+    {
+        "id": "12",
+        "nacionalidad": "Dominicana"
+    },
+    {
+        "id": "13",
+        "nacionalidad": "Costarricense"
+    },
+    {
+        "id": "14",
+        "nacionalidad": "Panameña"
+    },
+    {
+        "id": "15",
+        "nacionalidad": "Española"
+    },
+    {
+        "id": "16",
+        "nacionalidad": "Italiana"
+    },
+    {
+        "id": "17",
+        "nacionalidad": "Francesa"
+    },
+    {
+        "id": "18",
+        "nacionalidad": "Alemana"
+    },
+    {
+        "id": "19",
+        "nacionalidad": "Rusa"
+    },
+    {
+        "id": "20",
+        "nacionalidad": "Ucraniana"
+    },
+    {
+        "id": "21",
+        "nacionalidad": "Latina"
+    },
+    {
+        "id": "22",
+        "nacionalidad": "Europea"
+    },
+    {
+        "id": "23",
+        "nacionalidad": "Extranjera"
+    }
+]

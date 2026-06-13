@@ -1,0 +1,336 @@
+:host {
+    display: block;
+}
+
+.settings-shell {
+    max-width: 1180px;
+    padding-top: 18px;
+    padding-bottom: 48px;
+}
+
+.settings-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(232, 220, 190, 0.14);
+}
+
+.settings-kicker {
+    display: block;
+    color: var(--champagne-gold, #C6A75E);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.settings-head h1,
+.section-title {
+    margin: 0;
+    color: #FAFAFA;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.settings-head h1 {
+    font-size: 1.35rem;
+}
+
+.section-title {
+    margin-bottom: 14px;
+    color: #E8DCBE;
+    font-size: 0.92rem;
+}
+
+.settings-hero {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 22px;
+    margin-top: 18px;
+}
+
+.profile-side,
+.profile-summary,
+.settings-card {
+    border: 1px solid rgba(232, 220, 190, 0.14);
+    border-radius: 8px;
+    background: rgba(18, 18, 18, 0.72);
+    box-shadow: 0 18px 46px rgba(0, 0, 0, 0.18);
+}
+
+.profile-side {
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    gap: 14px;
+    padding: 20px;
+}
+
+.profile-summary {
+    display: grid;
+    align-content: center;
+    padding: 24px;
+    background:
+        radial-gradient(circle at top left, rgba(198, 167, 94, 0.08), transparent 30%),
+        rgba(18, 18, 18, 0.72);
+}
+
+.lbl_tile {
+    color: #FAFAFA;
+    font-size: clamp(2rem, 4.5vw, 3.2rem);
+    line-height: 1.05;
+    text-transform: capitalize;
+}
+
+.birth-label {
+    margin-top: 8px;
+    color: rgba(250, 250, 250, 0.62);
+    font-size: 0.86rem;
+}
+
+#container {
+    position: relative;
+    width: min(230px, 100%);
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 50%;
+    background-position: center;
+    background-size: cover;
+}
+
+#container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 5px solid transparent;
+    border-radius: 50%;
+    background: linear-gradient(140deg, #C6A75E, #E8DCBE) border-box;
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+}
+
+#container .round {
+    position: absolute;
+    right: 90px;
+    bottom: 0px;
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    color: #fff;
+    border: 1px solid rgba(232, 220, 190, 0.24);
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.64);
+    font-size: 1.35rem;
+}
+
+#container input[type='file'],
+.loadImgContent input[type='file'] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.profile-switch {
+    padding: 10px 12px;
+    border: 1px solid rgba(232, 220, 190, 0.12);
+    border-radius: 999px;
+    background: rgba(6, 6, 6, 0.34);
+}
+
+.form-check-input:checked {
+    background-color: #C90035;
+    border-color: #a93226;
+}
+
+.label-alert-validprofile {
+    margin: 0;
+    border-radius: 8px;
+    font-size: 0.78rem;
+}
+
+.settings-card {
+    margin-top: 14px;
+    padding: 18px;
+}
+
+.form-grid {
+    display: grid;
+    gap: 14px;
+    margin-top: 12px;
+}
+
+.form-grid:first-of-type {
+    margin-top: 0;
+}
+
+.form-grid.four {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.form-grid.three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.field-group {
+    display: grid;
+    gap: 7px;
+}
+
+.form-label {
+    margin: 0;
+    color: rgba(232, 223, 200, 0.78);
+    font-size: 0.76rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.form-control,
+.form-select {
+    height: 44px;
+    border: 1px solid rgba(232, 220, 190, 0.14) !important;
+    border-radius: 8px;
+    background-color: #28252A !important;
+    color: #fff !important;
+    font-size: 0.9rem;
+}
+
+.field-desktop{
+    height: 5px;
+
+    @media (max-width: 430px) {
+        height: 100%;
+    }
+}
+
+textarea.form-control {
+    min-height: 140px;
+    resize: vertical;
+    line-height: 1.55;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: rgba(198, 167, 94, 0.62) !important;
+    box-shadow: 0 0 0 3px rgba(198, 167, 94, 0.08);
+}
+
+.media-card {
+    display: grid;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.media-card p {
+    margin: 0;
+    color: rgba(250, 250, 250, 0.62);
+    font-size: 0.84rem;
+}
+
+.loadImgContent {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 280px;
+    color: rgba(250, 250, 250, 0.72);
+}
+
+.roundImg {
+    position: relative;
+    display: grid;
+    place-items: center;
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    color: #fff;
+    border: 1px solid rgba(232, 220, 190, 0.14);
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.46);
+    font-size: 1.45rem;
+    overflow: hidden;
+}
+
+.save-bottom {
+    display: flex;
+    justify-content: center;
+    margin-top: 18px;
+}
+
+.save-top,
+.save-bottom .btn-gold {
+    min-width: 150px;
+}
+
+@media (max-width: 991.98px) {
+    .settings-hero {
+        grid-template-columns: 220px minmax(0, 1fr);
+    }
+
+    .form-grid.four,
+    .form-grid.three {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 576px) {
+    .settings-shell {
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+
+    .settings-head {
+        align-items: flex-start;
+    }
+
+    .save-top {
+        display: none;
+    }
+
+    .settings-head h1 {
+        font-size: 1.08rem;
+    }
+
+    .settings-hero {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .profile-side,
+    .profile-summary,
+    .settings-card {
+        padding: 14px;
+    }
+
+    #container {
+        width: min(230px, 72vw);
+    }
+
+    .lbl_tile {
+        font-size: 2rem;
+    }
+
+    .form-grid.four,
+    .form-grid.three {
+        grid-template-columns: 1fr;
+    }
+
+    .media-card {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .loadImgContent {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .save-bottom .btn-gold {
+        width: 100%;
+    }
+}

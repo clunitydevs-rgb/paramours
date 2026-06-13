@@ -1,0 +1,60 @@
+<main class="authkeys-shell">
+    <section class="authkeys-card">
+        <div class="authkeys-header">
+            <span class="eyebrow">Seguridad</span>
+            <h1>Cambia tu clave</h1>
+            <p>
+                Actualiza tu acceso con una clave nueva. Usa una combinacion que recuerdes, pero que no sea facil de adivinar.
+            </p>
+        </div>
+
+        <form class="authkeys-form" [formGroup]="frmClave" (ngSubmit)="goChangePassword()">
+            <div class="field-group">
+                <label for="new-password">Nueva clave</label>
+                <div class="field-control" [class.has-error]="newPassword.invalid && newPassword.touched">
+                    <i class="bi bi-lock"></i>
+                    <input
+                        id="new-password"
+                        type="password"
+                        formControlName="nuevaclave"
+                        autocomplete="new-password"
+                        placeholder="Minimo 6 caracteres">
+                </div>
+                @if (newPassword.hasError('required') && newPassword.touched) {
+                    <span class="field-error">Ingresa una clave nueva.</span>
+                }
+                @if (newPassword.hasError('minlength') && newPassword.touched) {
+                    <span class="field-error">La clave debe tener al menos 4 caracteres.</span>
+                }
+            </div>
+
+            <div class="field-group">
+                <label for="repeat-password">Confirma tu clave</label>
+                <div class="field-control" [class.has-error]="(repeatedPassword.invalid && repeatedPassword.touched) || (frmClave.hasError('passwordMismatch') && repeatedPassword.touched)">
+                    <i class="bi bi-shield-lock"></i>
+                    <input
+                        id="repeat-password"
+                        type="password"
+                        formControlName="reingresanuevaclave"
+                        autocomplete="new-password"
+                        placeholder="Reingresa la clave">
+                </div>
+                @if (repeatedPassword.hasError('required') && repeatedPassword.touched) {
+                    <span class="field-error">Reingresa la clave para confirmar.</span>
+                }
+                @if (frmClave.hasError('passwordMismatch') && repeatedPassword.touched) {
+                    <span class="field-error">Las claves no coinciden.</span>
+                }
+            </div>
+
+            <div class="security-note">
+                <i class="bi bi-info-circle"></i>
+                <span>Despues de cambiarla, usa tu nueva clave la proxima vez que inicies sesion.</span>
+            </div>
+
+            <button type="submit" class="btn-submit" [disabled]="frmClave.invalid">
+                Actualizar clave
+            </button>
+        </form>
+    </section>
+</main>

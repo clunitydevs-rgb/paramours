@@ -1,0 +1,192 @@
+<!--- <header class="header">
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">
+        <img src="https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/logo.png" alt="PARAMOURS">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav d-flex mb-2 mb-lg-0 ms-auto">
+          <li class="nav-item flex-fill text-center" [hidden]="bShowLoginAndRegister"><a class="nav-link"
+              aria-current="page" routerLinkActive="active" routerLink="/login"><i class="bi bi-box-arrow-in-right"></i> Accede</a></li>
+
+          <li class="nav-item flex-fill text-center" [hidden]="bShowLoginAndRegister"><a class="nav-link"
+              aria-current="page" routerLinkActive="active" routerLink="/account/user"><i class="bi bi-person-add"></i> Registrate</a></li>
+
+          <li class="nav-item flex-fill text-center" [hidden]="!bShowLoginAndRegister"><a class="nav-link"
+              aria-current="page" routerLinkActive="active" routerLink="/profile"><i class="bi bi-person-badge-fill"></i> Mi Perfil</a></li>
+
+          <li class="nav-item flex-fill text-center" [hidden]="!bShowLoginAndRegister"><a class="nav-link"
+              aria-current="page" (click)="goLogout()"><i class="bi bi-arrow-bar-right"></i> Cerrar Sesión</a></li>
+
+          <li class="nav-item flex-fill text-center" [hidden]="bShowLoginAndRegister">
+            <button class="btn-gold" routerLinkActive="active" routerLink="/account/client">Publicate</button>
+          </li>
+        </ul>
+      </div>
+      
+    </div>
+  </nav>
+</header>--->
+
+<header class="header">
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+
+      <!-- LOGO (siempre visible) -->
+      <a class="navbar-brand" routerLink="/">
+        <img src="https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/logo.png" width="150">
+      </a>
+
+      <!-- BOTÓN MOBILE -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- ===== DESKTOP MENU ===== -->
+      <div class="collapse navbar-collapse d-none d-lg-flex">
+        <ul class="navbar-nav ms-auto align-items-center">
+
+          <!-- USUARIO NO LOGUEADO -->
+          <ng-container *ngIf="!bShowLoginAndRegister">
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/login">Inicia Sesión</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/account/user">Regístrate</a>
+            </li>
+
+            <li class="nav-item">
+              <button class="btn-gold" routerLink="/account/client">
+                Publicarse gratis
+              </button>
+            </li>
+          </ng-container>
+
+          <!-- USUARIO LOGUEADO -->
+          <ng-container *ngIf="bShowLoginAndRegister">
+            <li class="nav-item">
+              <div class="section-pub-comment">
+                <div id="container_comment"
+                  [style.background-image]="'url(' + avatarUrl + ')'"
+                  data-bs-toggle="offcanvas" data-bs-target="#profileMenu"></div>
+              </div>
+
+
+              <!-- <button class="btn btn-light rounded-circle"
+                      data-bs-toggle="offcanvas"
+                      data-bs-target="#profileMenu">
+                <i class="bi bi-person-circle fs-4"></i>
+              </button> -->
+            </li>
+          </ng-container>
+
+        </ul>
+      </div>
+
+    </div>
+  </nav>
+</header>
+
+<!-- ===== OFFCANVAS PERFIL (DESKTOP) ===== -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="profileMenu">
+  <div class="offcanvas-header menu-panel-head">
+    <div>
+      <span class="menu-kicker">Paramours</span>
+      <h5 class="titleh5">Mi Cuenta</h5>
+    </div>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+
+  <div class="offcanvas-body">
+    <div class="account-summary">
+      <div class="account-avatar" [style.background-image]="'url(' + avatarUrl + ')'"></div>
+      <div>
+        <span class="account-label">Sesión activa</span>
+        <strong>Gestiona tu cuenta</strong>
+      </div>
+    </div>
+
+    <nav class="menu-actions" aria-label="Cuenta">
+      <a routerLink="/profile" (click)="closeOffcanvas('profileMenu')" class="menu-action">
+        <i class="bi bi-person-lines-fill"></i>
+        <span>Mi Perfil</span>
+      </a>
+      <a routerLink="/authkeys" (click)="closeOffcanvas('profileMenu')" class="menu-action">
+        <i class="bi bi-key-fill"></i>
+        <span>Cambio de Clave</span>
+      </a>
+      <button type="button" (click)="goLogout(); closeOffcanvas('profileMenu')" class="menu-action menu-action-danger">
+        <i class="bi bi-arrow-bar-right"></i>
+        <span>Cerrar Sesión</span>
+      </button>
+    </nav>
+  </div>
+</div>
+
+<!-- ===== OFFCANVAS MOBILE ===== -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="mobileMenu">
+  <div class="offcanvas-header menu-panel-head">
+    <div>
+      <span class="menu-kicker">Paramours</span>
+      <h5 class="titleh5">Menú</h5>
+    </div>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+
+  <div class="offcanvas-body">
+
+    <!-- NO LOGUEADO -->
+    <ng-container *ngIf="!bShowLoginAndRegister">
+      <nav class="menu-actions" aria-label="Navegación">
+        <a routerLink="/login" (click)="closeOffcanvas('mobileMenu')" class="menu-action">
+          <i class="bi bi-box-arrow-in-right"></i>
+          <span>Acceder</span>
+        </a>
+
+        <a routerLink="/account/user" (click)="closeOffcanvas('mobileMenu')" class="menu-action">
+          <i class="bi bi-person-add"></i>
+          <span>Registrarse</span>
+        </a>
+
+        <a routerLink="/account/client" (click)="closeOffcanvas('mobileMenu')" class="menu-action menu-action-primary">
+          <i class="bi bi-stars"></i>
+          <span>Publicarse gratis</span>
+        </a>
+      </nav>
+    </ng-container>
+
+    <!-- LOGUEADO -->
+    <ng-container *ngIf="bShowLoginAndRegister">
+      <div class="account-summary">
+        <div class="account-avatar" [style.background-image]="'url(' + avatarUrl + ')'"></div>
+        <div>
+          <span class="account-label">Sesión activa</span>
+          <strong>Gestiona tu cuenta</strong>
+        </div>
+      </div>
+
+      <nav class="menu-actions" aria-label="Cuenta móvil">
+        <a routerLink="/profile" (click)="closeOffcanvas('mobileMenu')" class="menu-action">
+          <i class="bi bi-person-lines-fill"></i>
+          <span>Mi Perfil</span>
+        </a>
+
+        <a routerLink="/authkeys" (click)="closeOffcanvas('mobileMenu')" class="menu-action">
+          <i class="bi bi-key-fill"></i>
+          <span>Cambio de Clave</span>
+        </a>
+
+        <button type="button" (click)="goLogout(); closeOffcanvas('mobileMenu')" class="menu-action menu-action-danger">
+          <i class="bi bi-arrow-bar-right"></i>
+          <span>Cerrar Sesión</span>
+        </button>
+      </nav>
+    </ng-container>
+
+  </div>
+</div>

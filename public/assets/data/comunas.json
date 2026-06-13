@@ -1,0 +1,138 @@
+[
+    {
+        "id": "0",
+        "nombre": "Las Condes"
+    },
+    {
+        "id": "1",
+        "nombre": "Providencia"
+    },
+    {
+        "id": "2",
+        "nombre": "Vitacura"
+    },
+    {
+        "id": "3",
+        "nombre": "Lo Barnechea"
+    },
+    {
+        "id": "4",
+        "nombre": "Ñuñoa"
+    },
+    {
+        "id": "5",
+        "nombre": "Santiago"
+    },
+    {
+        "id": "6",
+        "nombre": "La Reina"
+    },
+    {
+        "id": "7",
+        "nombre": "Peñalolén"
+    },
+    {
+        "id": "8",
+        "nombre": "San Miguel"
+    },
+    {
+        "id": "9",
+        "nombre": "La Florida"
+    },
+    {
+        "id": "10",
+        "nombre": "Estación Central"
+    },
+    {
+        "id": "11",
+        "nombre": "Independencia"
+    },
+    {
+        "id": "12",
+        "nombre": "Huechuraba"
+    },
+    {
+        "id": "13",
+        "nombre": "Recoleta"
+    },
+    {
+        "id": "14",
+        "nombre": "Maipú"
+    },
+    {
+        "id": "15",
+        "nombre": "Quilicura"
+    },
+    {
+        "id": "16",
+        "nombre": "Macul"
+    },
+    {
+        "id": "17",
+        "nombre": "San Joaquín"
+    },
+    {
+        "id": "18",
+        "nombre": "Pedro Aguirre Cerda"
+    },
+    {
+        "id": "19",
+        "nombre": "La Cisterna"
+    },
+    {
+        "id": "20",
+        "nombre": "Conchalí"
+    },
+    {
+        "id": "21",
+        "nombre": "Quinta Normal"
+    },
+    {
+        "id": "22",
+        "nombre": "Pudahuel"
+    },
+    {
+        "id": "23",
+        "nombre": "Renca"
+    },
+    {
+        "id": "24",
+        "nombre": "Lo Prado"
+    },
+    {
+        "id": "25",
+        "nombre": "Cerro Navia"
+    },
+    {
+        "id": "26",
+        "nombre": "Cerrillos"
+    },
+    {
+        "id": "27",
+        "nombre": "Lo Espejo"
+    },
+    {
+        "id": "28",
+        "nombre": "El Bosque"
+    },
+    {
+        "id": "29",
+        "nombre": "La Granja"
+    },
+    {
+        "id": "30",
+        "nombre": "San Ramón"
+    },
+    {
+        "id": "31",
+        "nombre": "La Pintana"
+    },
+    {
+        "id": "32",
+        "nombre": "Puente Alto"
+    },
+    {
+        "id": "33",
+        "nombre": "San Bernardo"
+    }
+]

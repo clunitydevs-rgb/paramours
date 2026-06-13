@@ -1,0 +1,73 @@
+<div [hidden]="bShowFx" class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">Historias</div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="stories-scroll">
+                <div *ngFor="let data of storiesAgrupadas; let i = index" class="story-avatar"
+                    (click)="onPreviewImg(i)">
+                    <div class="avatar" [style.background-image]="'url(' + sUrlRps + ((data.fotoPerfil != null && data.fotoPerfil !== '') ? data.fotoPerfil : 'avatar_anunciante.png') + ')'">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- VIEWER -->
+<div class="lightbox" *ngIf="isViewerOpen">
+
+    <!-- 🔥 ZONA SUPERIOR PARA CERRAR -->
+    <div class="top-zone" (click)="close()"></div>
+
+    <!-- 🔥 BOTÓN CERRAR -->
+    <button class="close-btn" (click)="close()">✕</button>
+
+    <button *ngIf="isVideo(currentStory)" class="sound-btn" type="button" (click)="toggleStoryAudio($event)"
+        (touchstart)="$event.stopPropagation()" [attr.aria-label]="isMuted ? 'Activar sonido' : 'Silenciar video'">
+        <i class="bi" [ngClass]="isMuted ? 'bi-volume-mute-fill' : 'bi-volume-up-fill'"></i>
+    </button>
+
+    <!-- HEADER -->
+    <div class="viewer-header">
+        <div class="avatar" [style.background-image]="'url(' + sFotoPerfil + ')'">
+        </div>
+        <div class="story-meta">
+            <div class="story-user">{{currentUserName}}</div>
+            <div class="time">{{elapsedTimeLabel}}</div>
+        </div>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="progress-container">
+        <div *ngFor="let s of currentStories; let i = index" class="progress">
+            <div class="progress-bar" [style.width.%]="getProgress(i)">
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content" (click)="onTap($event)" (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)"
+        (mousedown)="onMouseDown()" (mouseup)="onMouseUp()" (contextmenu)="onContextMenu($event)">
+
+        <!-- IMG -->
+        <img *ngIf="!isVideo(currentStory)" [src]="getMediaUrl(currentStory)" class="media" draggable="false"
+            (contextmenu)="$event.preventDefault()" />
+
+        <!-- VIDEO -->
+        <!-- <video *ngIf="isVideo(currentStory)" #videoPlayer [src]="getMediaUrl(currentStory)" class="media" autoplay muted
+            playsinline (loadedmetadata)="onVideoLoaded($event)" (ended)="onVideoEnded()" (touchstart)="onTouchStart($event)"
+            (touchend)="onTouchEnd($event)" (mousedown)="onMouseDown()" (mouseup)="onMouseUp()"
+            (click)="$event.stopPropagation()">
+        </video> -->
+
+        <video *ngIf="isVideo(currentStory)" #videoPlayer [src]="getMediaUrl(currentStory)" class="media" autoplay
+            [muted]="isMuted" playsinline webkit-playsinline preload="auto" (loadedmetadata)="onVideoLoaded($event)"
+            (canplay)="onVideoReady($event)" (ended)="onVideoEnded()">
+        </video>
+
+    </div>
+
+</div>

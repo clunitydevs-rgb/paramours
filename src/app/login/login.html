@@ -1,0 +1,77 @@
+<main class="login-shell">
+    <section class="login-card">
+        <div class="login-head">
+            <span class="login-kicker">Paramours</span>
+            <h1>Inicia sesión</h1>
+            <p>Accede a tu cuenta para administrar tu perfil, publicaciones e historias.</p>
+        </div>
+
+        <form [formGroup]="frmAccount" (ngSubmit)="goBtnAceptar()" class="login-form">
+            <div class="field-group">
+                <label for="login-email">Correo electrónico</label>
+                <div class="field-control">
+                    <i class="bi bi-envelope"></i>
+                    <input id="login-email" type="email" formControlName="email" autocomplete="email"
+                        placeholder="tu@email.cl">
+                </div>
+                <span [hidden]="bMsgEmailValid" class="field-error">El email no está registrado.</span>
+            </div>
+
+            <div class="field-group">
+                <label for="login-password">Contraseña</label>
+                <div class="field-control">
+                    <i class="bi bi-lock"></i>
+                    <input id="login-password" type="password" formControlName="password"
+                        autocomplete="current-password" placeholder="Ingresa tu contraseña">
+                </div>
+                <span [hidden]="bMsgPassValid" class="field-error">La contraseña debe tener mínimo 4 caracteres.</span>
+            </div>
+
+            <div [hidden]="bMsgErrorLogin" class="login-error">
+                <i class="bi bi-exclamation-triangle"></i>
+                <span>Clave inválida.</span>
+            </div>
+
+            <button type="submit" [disabled]="frmAccount.invalid" class="btn-gold login-submit">
+                Iniciar sesión
+            </button>
+
+            <div class="login-help">
+                <span>¿Problemas con tu clave?</span>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#idModalClave">Recupérala aquí</a>
+            </div>
+        </form>
+    </section>
+</main>
+
+<div class="modal fade" id="idModalClave" tabindex="-1" role="dialog" aria-labelledby="idModalClave"
+    aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen modal-dialog-scrollable container-contact">
+        <div class="modal-content lightbox">
+            <button id="btnCloseModal" class="close-btn" data-bs-dismiss="modal" aria-label="Close"
+                (click)="onCloseModal()">
+                <i class="bi bi-x-lg icon-close"></i>
+            </button>
+            <div class="modal-body-custom">
+                <section class="contact">
+                    <div class="contact-container">
+                        <h2>Recuperar clave</h2>
+                        <p class="subtitle">Ingresa el correo registrado en tu cuenta y te enviaremos las instrucciones.</p>
+
+                        <form [formGroup]="frmClave" (ngSubmit)="goSendMail()">
+                            <div class="input-group">
+                                <input id="recovery-email" type="email" formControlName="email" required
+                                    autocomplete="email">
+                                <label for="recovery-email">Correo electrónico</label>
+                            </div>
+
+                            <button type="submit" class="btn-submit" [disabled]="frmClave.invalid">
+                                Enviar recuperación
+                            </button>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>

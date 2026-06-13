@@ -1,0 +1,166 @@
+[
+    { "idComuna": "0", "idMetro": "1", "NombreMetro": "Tobalaba" },
+    { "idComuna": "0", "idMetro": "2", "NombreMetro": "El Golf" },
+    { "idComuna": "0", "idMetro": "3", "NombreMetro": "Alcántara" },
+    { "idComuna": "0", "idMetro": "4", "NombreMetro": "Escuela Militar" },
+    { "idComuna": "0", "idMetro": "5", "NombreMetro": "Manquehue" },
+    { "idComuna": "0", "idMetro": "6", "NombreMetro": "Hernando de Magallanes" },
+    { "idComuna": "0", "idMetro": "7", "NombreMetro": "Los Dominicos" },
+
+    { "idComuna": "1", "idMetro": "8", "NombreMetro": "Baquedano" },
+    { "idComuna": "1", "idMetro": "9", "NombreMetro": "Salvador" },
+    { "idComuna": "1", "idMetro": "10", "NombreMetro": "Manuel Montt" },
+    { "idComuna": "1", "idMetro": "11", "NombreMetro": "Pedro de Valdivia" },
+    { "idComuna": "1", "idMetro": "12", "NombreMetro": "Los Leones" },
+    { "idComuna": "1", "idMetro": "13", "NombreMetro": "Inés de Suárez" },
+    { "idComuna": "1", "idMetro": "14", "NombreMetro": "Cristóbal Colón" },
+    { "idComuna": "1", "idMetro": "15", "NombreMetro": "Francisco Bilbao" },
+
+    { "idComuna": "2", "idMetro": "16", "NombreMetro": "Sin estaciones" },
+    { "idComuna": "3", "idMetro": "17", "NombreMetro": "Sin estaciones" },
+
+    { "idComuna": "4", "idMetro": "18", "NombreMetro": "Irarrázaval" },
+    { "idComuna": "4", "idMetro": "19", "NombreMetro": "Monseñor Eyzaguirre" },
+    { "idComuna": "4", "idMetro": "20", "NombreMetro": "Ñuñoa" },
+    { "idComuna": "4", "idMetro": "21", "NombreMetro": "Chile España" },
+    { "idComuna": "4", "idMetro": "22", "NombreMetro": "Villa Frei" },
+    { "idComuna": "4", "idMetro": "23", "NombreMetro": "Estadio Nacional" },
+
+    { "idComuna": "5", "idMetro": "24", "NombreMetro": "República" },
+    { "idComuna": "5", "idMetro": "25", "NombreMetro": "Los Héroes" },
+    { "idComuna": "5", "idMetro": "26", "NombreMetro": "La Moneda" },
+    { "idComuna": "5", "idMetro": "27", "NombreMetro": "Universidad de Chile" },
+    { "idComuna": "5", "idMetro": "28", "NombreMetro": "Santa Lucía" },
+    { "idComuna": "5", "idMetro": "29", "NombreMetro": "Universidad Católica" },
+    { "idComuna": "5", "idMetro": "30", "NombreMetro": "Puente Cal y Canto" },
+    { "idComuna": "5", "idMetro": "31", "NombreMetro": "Santa Ana" },
+    { "idComuna": "5", "idMetro": "32", "NombreMetro": "Plaza de Armas" },
+    { "idComuna": "5", "idMetro": "33", "NombreMetro": "Parque Almagro" },
+    { "idComuna": "5", "idMetro": "34", "NombreMetro": "Matta" },
+    { "idComuna": "5", "idMetro": "35", "NombreMetro": "Toesca" },
+    { "idComuna": "5", "idMetro": "36", "NombreMetro": "Parque O’Higgins" },
+    { "idComuna": "5", "idMetro": "37", "NombreMetro": "Rondizzoni" },
+    { "idComuna": "5", "idMetro": "38", "NombreMetro": "Bellas Artes" },
+    { "idComuna": "5", "idMetro": "39", "NombreMetro": "Cumming" },
+    { "idComuna": "5", "idMetro": "40", "NombreMetro": "Santa Isabel" },
+    { "idComuna": "5", "idMetro": "41", "NombreMetro": "Parque Bustamante" },
+
+    { "idComuna": "6", "idMetro": "42", "NombreMetro": "Príncipe de Gales" },
+    { "idComuna": "6", "idMetro": "43", "NombreMetro": "Simón Bolívar" },
+    { "idComuna": "6", "idMetro": "44", "NombreMetro": "Plaza Egaña" },
+    { "idComuna": "6", "idMetro": "45", "NombreMetro": "Fernando Castillo Velasco" },
+
+    { "idComuna": "7", "idMetro": "46", "NombreMetro": "Los Orientales" },
+    { "idComuna": "7", "idMetro": "47", "NombreMetro": "Grecia" },
+    { "idComuna": "7", "idMetro": "48", "NombreMetro": "Los Presidentes" },
+
+    { "idComuna": "8", "idMetro": "49", "NombreMetro": "El Llano" },
+    { "idComuna": "8", "idMetro": "50", "NombreMetro": "San Miguel" },
+    { "idComuna": "8", "idMetro": "51", "NombreMetro": "Lo Vial" },
+    { "idComuna": "8", "idMetro": "52", "NombreMetro": "Departamental" },
+    { "idComuna": "8", "idMetro": "53", "NombreMetro": "Ciudad del Niño" },
+
+    { "idComuna": "9", "idMetro": "54", "NombreMetro": "Vicuña Mackenna" },
+    { "idComuna": "9", "idMetro": "55", "NombreMetro": "Vicente Valdés" },
+    { "idComuna": "9", "idMetro": "56", "NombreMetro": "Rojas Magallanes" },
+    { "idComuna": "9", "idMetro": "57", "NombreMetro": "Trinidad" },
+    { "idComuna": "9", "idMetro": "58", "NombreMetro": "San José de la Estrella" },
+    { "idComuna": "9", "idMetro": "59", "NombreMetro": "Santa Julia" },
+    { "idComuna": "9", "idMetro": "60", "NombreMetro": "Bellavista de La Florida" },
+    { "idComuna": "9", "idMetro": "61", "NombreMetro": "Mirador" },
+
+    { "idComuna": "10", "idMetro": "62", "NombreMetro": "Las Rejas" },
+    { "idComuna": "10", "idMetro": "63", "NombreMetro": "Ecuador" },
+    { "idComuna": "10", "idMetro": "64", "NombreMetro": "San Alberto Hurtado" },
+    { "idComuna": "10", "idMetro": "65", "NombreMetro": "Universidad de Santiago" },
+    { "idComuna": "10", "idMetro": "66", "NombreMetro": "Estación Central" },
+    { "idComuna": "10", "idMetro": "67", "NombreMetro": "U.L.A." },
+
+    { "idComuna": "11", "idMetro": "68", "NombreMetro": "Plaza Chacabuco" },
+    { "idComuna": "11", "idMetro": "69", "NombreMetro": "Hospitales" },
+
+    { "idComuna": "12", "idMetro": "70", "NombreMetro": "Sin estaciones" },
+
+    { "idComuna": "13", "idMetro": "71", "NombreMetro": "Vespucio Norte" },
+    { "idComuna": "13", "idMetro": "72", "NombreMetro": "Zapadores" },
+    { "idComuna": "13", "idMetro": "73", "NombreMetro": "Dorsal" },
+    { "idComuna": "13", "idMetro": "74", "NombreMetro": "Einstein" },
+    { "idComuna": "13", "idMetro": "75", "NombreMetro": "Cementerios" },
+    { "idComuna": "13", "idMetro": "76", "NombreMetro": "Cerro Blanco" },
+    { "idComuna": "13", "idMetro": "77", "NombreMetro": "Patronato" },
+
+    { "idComuna": "14", "idMetro": "78", "NombreMetro": "Plaza de Maipú" },
+    { "idComuna": "14", "idMetro": "79", "NombreMetro": "Santiago Bueras" },
+    { "idComuna": "14", "idMetro": "80", "NombreMetro": "Del Sol" },
+    { "idComuna": "14", "idMetro": "81", "NombreMetro": "Monte Tabor" },
+    { "idComuna": "14", "idMetro": "82", "NombreMetro": "Las Parcelas" },
+
+    { "idComuna": "15", "idMetro": "83", "NombreMetro": "Plaza Quilicura" },
+    { "idComuna": "15", "idMetro": "84", "NombreMetro": "Lo Cruzat" },
+    { "idComuna": "15", "idMetro": "85", "NombreMetro": "Ferrocarril" },
+    { "idComuna": "15", "idMetro": "86", "NombreMetro": "Los Libertadores" },
+
+    { "idComuna": "16", "idMetro": "87", "NombreMetro": "Quilín" },
+    { "idComuna": "16", "idMetro": "88", "NombreMetro": "Las Torres" },
+    { "idComuna": "16", "idMetro": "89", "NombreMetro": "Macul" },
+    { "idComuna": "16", "idMetro": "90", "NombreMetro": "Camino Agrícola" },
+
+    { "idComuna": "17", "idMetro": "91", "NombreMetro": "Ñuble" },
+    { "idComuna": "17", "idMetro": "92", "NombreMetro": "Rodrigo de Araya" },
+    { "idComuna": "17", "idMetro": "93", "NombreMetro": "Carlos Valdovinos" },
+    { "idComuna": "17", "idMetro": "94", "NombreMetro": "San Joaquín" },
+
+    { "idComuna": "18", "idMetro": "95", "NombreMetro": "Franklin" },
+    { "idComuna": "18", "idMetro": "96", "NombreMetro": "Bío Bío" },
+    { "idComuna": "18", "idMetro": "97", "NombreMetro": "Presidente Pedro Aguirre Cerda" },
+
+    { "idComuna": "19", "idMetro": "98", "NombreMetro": "Lo Ovalle" },
+    { "idComuna": "19", "idMetro": "99", "NombreMetro": "El Parrón" },
+    { "idComuna": "19", "idMetro": "100", "NombreMetro": "La Cisterna" },
+
+    { "idComuna": "20", "idMetro": "101", "NombreMetro": "Cardenal Caro" },
+    { "idComuna": "20", "idMetro": "102", "NombreMetro": "Vivaceta" },
+    { "idComuna": "20", "idMetro": "103", "NombreMetro": "Conchalí" },
+
+    { "idComuna": "21", "idMetro": "104", "NombreMetro": "Gruta de Lourdes" },
+    { "idComuna": "21", "idMetro": "105", "NombreMetro": "Quinta Normal" },
+
+    { "idComuna": "22", "idMetro": "106", "NombreMetro": "Laguna Sur" },
+    { "idComuna": "22", "idMetro": "107", "NombreMetro": "Barrancas" },
+    { "idComuna": "22", "idMetro": "108", "NombreMetro": "Pudahuel" },
+
+    { "idComuna": "23", "idMetro": "109", "NombreMetro": "Sin estaciones" },
+
+    { "idComuna": "24", "idMetro": "110", "NombreMetro": "San Pablo" },
+    { "idComuna": "24", "idMetro": "111", "NombreMetro": "Neptuno" },
+    { "idComuna": "24", "idMetro": "112", "NombreMetro": "Pajaritos" },
+    { "idComuna": "24", "idMetro": "113", "NombreMetro": "Lo Prado" },
+    { "idComuna": "24", "idMetro": "114", "NombreMetro": "Blanqueado" },
+
+    { "idComuna": "25", "idMetro": "115", "NombreMetro": "Sin estaciones" },
+
+    { "idComuna": "26", "idMetro": "116", "NombreMetro": "Cerrillos" },
+    { "idComuna": "26", "idMetro": "117", "NombreMetro": "Lo Valledor" },
+
+    { "idComuna": "27", "idMetro": "118", "NombreMetro": "Sin estaciones" },
+
+    { "idComuna": "28", "idMetro": "119", "NombreMetro": "El Bosque" },
+    { "idComuna": "28", "idMetro": "120", "NombreMetro": "Observatorio" },
+
+    { "idComuna": "29", "idMetro": "121", "NombreMetro": "La Granja" },
+    { "idComuna": "29", "idMetro": "122", "NombreMetro": "Santa Rosa" },
+
+    { "idComuna": "30", "idMetro": "123", "NombreMetro": "San Ramón" },
+
+    { "idComuna": "31", "idMetro": "124", "NombreMetro": "Sin estaciones" },
+
+    { "idComuna": "32", "idMetro": "125", "NombreMetro": "Los Quillayes" },
+    { "idComuna": "32", "idMetro": "126", "NombreMetro": "Elisa Correa" },
+    { "idComuna": "32", "idMetro": "127", "NombreMetro": "Hospital Sótero del Río" },
+    { "idComuna": "32", "idMetro": "128", "NombreMetro": "Protectora de la Infancia" },
+    { "idComuna": "32", "idMetro": "129", "NombreMetro": "Las Mercedes" },
+    { "idComuna": "32", "idMetro": "130", "NombreMetro": "Plaza de Puente Alto" },
+
+    { "idComuna": "33", "idMetro": "131", "NombreMetro": "Copa Lo Martínez" },
+    { "idComuna": "33", "idMetro": "132", "NombreMetro": "Hospital El Pino" }
+]

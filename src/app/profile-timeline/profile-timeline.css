@@ -1,0 +1,667 @@
+.modal-post-container {
+    position: relative;
+
+    .md-load-post {
+        background-color: rgba(0, 0, 0, .85);
+
+        .close-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 0;
+            color: #fff;
+            background: 0 0;
+            border: 0;
+            cursor: pointer;
+            width: 7%;
+            height: 10%;
+            z-index: 2;
+
+            .icon-close {
+                font-size: 25px;
+            }
+
+            @media (max-width: 940px) {
+                height: 5%;
+            }
+
+            @media (max-width: 430px) {
+                height: 5%;
+            }
+        }
+    }
+}
+
+#ob_post {
+    border: 0px;
+}
+
+.lbl_title_post {
+    color: #E4E6EB;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.modal-body {
+    width: min(760px, 100%);
+    padding: 16px;
+}
+
+.post-form-shell {
+    width: min(700px, calc(100vw - 32px));
+    margin: 0 auto;
+    padding: 22px;
+    background: rgba(18, 18, 18, 0.96);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+
+.md-head {
+    padding-bottom: 14px;
+}
+
+.post-editor-shell {
+    overflow: hidden;
+    border: 1px solid rgba(198, 167, 94, 0.35);
+    border-radius: 8px;
+    background: #18191a;
+}
+
+.post-actions {
+    margin-top: 16px;
+    padding: 12px 0;
+}
+
+.post-preview {
+    display: flex;
+    justify-content: center;
+    padding-top: 16px;
+}
+
+.post-preview img,
+.post-preview video {
+    width: min(350px, 100%);
+    max-height: 45vh;
+    object-fit: contain;
+    border-radius: 8px;
+    border: 1px solid rgba(232, 220, 190, 0.18);
+    background: #060606;
+}
+
+.col-bordert-color {
+    border-top: 1px solid #7f807f !important;
+}
+
+.col-borderd-color {
+    border-bottom: 1px solid #7f807f !important;
+}
+
+.col-border-color {
+    border: 1px solid #7f807f !important;
+    border-radius: 3%;
+}
+
+
+.loadImgContent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .roundImg {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0, 0, 0, .85);
+        bottom: 0px;
+        color: #fff;
+        opacity: 0.5;
+        transition: all 0.15s ease;
+        width: 50px;
+        height: 50px;
+        text-align: center;
+        border-radius: 50%;
+        font-size: 1.5rem;
+
+    }
+
+    .icon-position {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .roundImg:hover {
+        opacity: 0.9;
+
+    }
+
+    .roundImg:active {
+        opacity: 0.9;
+    }
+
+    input[type=file]::file-selector-button {
+        cursor: pointer;
+    }
+}
+
+.timeline-section {
+    max-width: 980px;
+}
+
+.timeline-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(232, 220, 190, 0.14);
+}
+
+.timeline-kicker {
+    display: block;
+    color: var(--champagne-gold, #C6A75E);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.timeline-title {
+    margin: 2px 0 0;
+    color: #FAFAFA;
+    font-size: 1.25rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.timeline-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 120px;
+    margin-top: 18px;
+    padding: 22px;
+    color: rgba(250, 250, 250, 0.72);
+    border: 1px solid rgba(232, 220, 190, 0.14);
+    background: rgba(18, 18, 18, 0.72);
+}
+
+.timeline-empty i {
+    color: var(--champagne-gold, #C6A75E);
+    font-size: 1.2rem;
+}
+
+.timeline-list {
+    display: grid;
+    gap: 18px;
+    padding-top: 18px;
+}
+
+.section-pub-comment {
+    overflow: hidden;
+    border: 1px solid rgba(232, 220, 190, 0.16) !important;
+    border-radius: 8px;
+    background: linear-gradient(180deg, rgba(30, 30, 30, 0.9), rgba(12, 12, 12, 0.92));
+    box-shadow: 0 18px 46px rgba(0, 0, 0, 0.22);
+}
+
+.comment-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(232, 220, 190, 0.1);
+}
+
+.image-profile-comment {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 12px;
+}
+
+.comment-avatar {
+    position: relative;
+    flex: 0 0 52px;
+    width: 52px;
+    height: 52px;
+    background-position: center;
+    background-size: cover;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.comment-avatar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    background: linear-gradient(140deg, #d12313, rgb(61, 3, 61), #C6A75E) border-box;
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+}
+
+.comment-author {
+    display: grid;
+    min-width: 0;
+}
+
+.comment-author-name {
+    overflow: hidden;
+    color: #FAFAFA;
+    font-size: 0.96rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-overflow: ellipsis;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+.lbl-dt-publications {
+    color: rgba(250, 250, 250, 0.56);
+    font-size: 0.78rem;
+    letter-spacing: 0.03em;
+}
+
+.btnDeleteImag {
+    display: flex;
+    flex: 0 0 auto;
+}
+
+.cBtnDel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    color: rgba(250, 250, 250, 0.78);
+    border: 1px solid rgba(232, 220, 190, 0.16);
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.45);
+    font-size: 1rem;
+    transition: color 180ms ease, border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.cBtnDel:hover,
+.cBtnDel:focus-visible {
+    color: #fff;
+    border-color: rgba(198, 167, 94, 0.6);
+    background: rgba(156, 0, 42, 0.72);
+    transform: translateY(-1px);
+}
+
+.comment-copy {
+    padding: 16px 18px 4px;
+}
+
+.comments-text {
+    display: block;
+    color: rgba(250, 250, 250, 0.9);
+    font-family: unset !important;
+    font-size: 1rem;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+}
+
+.comments-text :where(p, ul, ol, blockquote) {
+    margin-bottom: 0.75rem;
+}
+
+.comments-text :where(p, ul, ol, blockquote):last-child {
+    margin-bottom: 0;
+}
+
+.comment-container-img {
+    padding: 14px 18px 18px;
+}
+
+.comment-image-container {
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    aspect-ratio: 4 / 3;
+    border: 1px solid rgba(232, 220, 190, 0.14);
+    border-radius: 8px;
+    background: #060606;
+}
+
+.comment-image-show {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    cursor: pointer;
+    transition: transform 240ms ease, opacity 240ms ease;
+}
+
+.comment-image-show:hover {
+    opacity: 0.92;
+    transform: scale(1.01);
+}
+
+.btn-comment-VideoImg {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+}
+
+.cBtn-comment-Play {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 62px;
+    height: 62px;
+    color: #fff;
+    border: 1px solid rgba(232, 220, 190, 0.28);
+    border-radius: 50%;
+    background: rgba(156, 0, 42, 0.72);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.34);
+    font-size: 2rem;
+    pointer-events: auto;
+    transition: background 180ms ease, transform 180ms ease;
+}
+
+.cBtn-comment-Play:hover,
+.cBtn-comment-Play:focus-visible {
+    background: rgba(198, 167, 94, 0.9);
+    transform: scale(1.04);
+}
+
+:host ::ng-deep .post-editor-shell .e-richtexteditor {
+    width: 100% !important;
+    border: 0 !important;
+}
+
+:host ::ng-deep .post-editor-shell .e-rte-placeholder {
+    color: #E4E6EB;
+    font-family: "Raleway";
+}
+
+/* To change font family and font size */
+:host ::ng-deep .post-editor-shell .e-richtexteditor .e-rte-content .e-content,
+:host ::ng-deep .post-editor-shell .e-richtexteditor .e-source-content .e-content {
+    min-height: 170px;
+    padding: 14px;
+    font-size: 1rem;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+/* To change font color and content background */
+:host ::ng-deep .post-editor-shell .e-richtexteditor .e-rte-content,
+:host ::ng-deep .post-editor-shell .e-richtexteditor .e-source-content {
+    background: #18191a;
+    color: #E4E6EB;
+}
+
+:host ::ng-deep .post-editor-shell .e-richtexteditor .e-toolbar-wrapper,
+:host ::ng-deep .post-editor-shell .e-toolbar .e-toolbar-items {
+    background: #18191a;
+    border-color: rgba(232, 220, 190, 0.16);
+}
+/* To change font color for toolbar icon */
+:host ::ng-deep .post-editor-shell .e-richtexteditor .e-rte-toolbar .e-toolbar-item .e-icons,
+:host ::ng-deep .post-editor-shell .e-richtexteditor .e-rte-toolbar .e-toolbar-item .e-icons:active {
+    background: #18191a;
+    color: #E4E6EB;
+}
+
+/* To change font color for toolbar button */
+:host ::ng-deep .post-editor-shell .e-toolbar .e-tbar-btn,
+:host ::ng-deep .post-editor-shell .e-toolbar .e-tbar-btn:active,
+:host ::ng-deep .post-editor-shell .e-toolbar .e-tbar-btn:hover {
+    background: #18191a;
+    color: #E4E6EB;
+}
+
+/* To change font color for toolbar button in active state*/
+:host ::ng-deep .post-editor-shell .e-richtexteditor .e-rte-toolbar .e-toolbar-item .e-dropdown-btn.e-active .e-icons,
+:host ::ng-deep .post-editor-shell .e-richtexteditor .e-rte-toolbar .e-toolbar-item .e-dropdown-btn.e-active .e-rte-dropdown-btn-text {
+    background: #18191a;
+    color: #E4E6EB;
+}
+
+/* To change font color for expanded toolbar items */
+:host ::ng-deep .post-editor-shell .e-richtexteditor .e-rte-toolbar .e-toolbar-extended .e-toolbar-item .e-tbar-btn .e-icons,
+:host ::ng-deep .post-editor-shell .e-toolbar.e-extended-toolbar .e-toolbar-extended .e-toolbar-item .e-tbar-btn {
+    background: #18191a;
+    color: #E4E6EB;
+}
+
+:host ::ng-deep .post-editor-shell .e-richtexteditor .e-rte-container {
+    border: 0;
+    border-radius: 8px;
+}
+
+:host ::ng-deep .post-editor-shell .e-richtexteditor .e-rte-toolbar .e-toolbar-item .e-rte-dropdown-menu,
+:host ::ng-deep .post-editor-shell .e-rte-quick-popup .e-rte-quick-toolbar .e-toolbar-item .e-rte-dropdown-menu {
+    color : #E4E6EB;   
+}
+
+:host ::ng-deep .post-editor-shell .e-richtexteditor .e-rte-toolbar .e-toolbar-item .e-rte-dropdown-menu:hover, 
+:host ::ng-deep .post-editor-shell .e-richtexteditor .e-rte-toolbar .e-toolbar-item .e-rte-dropdown-menu:focus, 
+:host ::ng-deep .post-editor-shell .e-richtexteditor .e-rte-toolbar .e-toolbar-item .e-rte-dropdown-menu:active, 
+:host ::ng-deep .post-editor-shell .e-richtexteditor .e-rte-toolbar .e-toolbar-item .e-rte-dropdown-menu.e-active, 
+:host ::ng-deep .post-editor-shell .e-rte-quick-popup .e-rte-quick-toolbar .e-toolbar-item .e-rte-dropdown-menu:hover, 
+:host ::ng-deep .post-editor-shell .e-rte-quick-popup .e-rte-quick-toolbar .e-toolbar-item .e-rte-dropdown-menu:focus, 
+:host ::ng-deep .post-editor-shell .e-rte-quick-popup .e-rte-quick-toolbar .e-toolbar-item .e-rte-dropdown-menu:active, 
+:host ::ng-deep .post-editor-shell .e-rte-quick-popup .e-rte-quick-toolbar .e-toolbar-item .e-rte-dropdown-menu.e-active {
+    background: #18191a;
+}
+
+@media (max-width: 576px) {
+    .timeline-section {
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+
+    .timeline-head {
+        padding-bottom: 10px;
+    }
+
+    .timeline-title {
+        font-size: 1rem;
+    }
+
+    .timeline-list {
+        gap: 14px;
+        padding-top: 14px;
+    }
+
+    .section-pub-comment {
+        border-radius: 8px;
+    }
+
+    .comment-toolbar {
+        align-items: flex-start;
+        padding: 12px;
+    }
+
+    .image-profile-comment {
+        gap: 10px;
+    }
+
+    .comment-avatar {
+        flex-basis: 42px;
+        width: 42px;
+        height: 42px;
+    }
+
+    .comment-author-name {
+        max-width: 190px;
+        font-size: 0.9rem;
+    }
+
+    .lbl-dt-publications {
+        font-size: 0.68rem;
+    }
+
+    .cBtnDel {
+        width: 40px;
+        height: 40px;
+    }
+
+    .comment-copy {
+        padding: 12px 12px 2px;
+    }
+
+    .comments-text {
+        font-size: 0.95rem;
+        line-height: 1.55;
+    }
+
+    .comment-container-img {
+        padding: 12px;
+    }
+
+    .comment-image-container {
+        max-width: 100%;
+        aspect-ratio: 1 / 1;
+        border-radius: 7px;
+    }
+
+    .cBtn-comment-Play {
+        width: 54px;
+        height: 54px;
+        font-size: 1.75rem;
+    }
+
+    .modal-post-container .md-load-post {
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+        overflow-y: auto;
+    }
+
+    .modal-post-container .md-load-post .close-btn {
+        width: 48px;
+        height: 48px;
+        right: 6px;
+        top: 6px;
+    }
+
+    .modal-body {
+        width: 100%;
+        min-height: 100vh;
+        padding: 58px 12px 18px;
+    }
+
+    .post-form-shell {
+        width: 100%;
+        padding: 14px;
+        border-radius: 8px;
+    }
+
+    .lbl_title_post {
+        font-size: 1rem;
+    }
+
+    .post-actions .loadImgContent {
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .loadImgContent .roundImg {
+        flex: 0 0 46px;
+        width: 46px;
+        height: 46px;
+    }
+
+    :host ::ng-deep .post-editor-shell .e-richtexteditor .e-toolbar-wrapper {
+        overflow-x: auto;
+    }
+
+    :host ::ng-deep .post-editor-shell .e-toolbar .e-toolbar-item .e-tbar-btn {
+        min-width: 38px;
+    }
+
+    :host ::ng-deep .post-editor-shell .e-richtexteditor .e-rte-content .e-content,
+    :host ::ng-deep .post-editor-shell .e-richtexteditor .e-source-content .e-content {
+        min-height: 140px;
+        font-size: 0.95rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .timeline-list {
+        gap: 22px;
+    }
+
+    .section-pub-comment {
+        max-width: 860px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .comment-toolbar {
+        padding: 16px 20px;
+    }
+
+    .comment-copy {
+        padding-right: 22px;
+        padding-left: 22px;
+    }
+
+    .comment-container-img {
+        padding-right: 22px;
+        padding-left: 22px;
+        padding-bottom: 22px;
+    }
+}
+
+.video-lightbox-container {
+    position: relative;
+
+    .lightbox {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: rgba(0, 0, 0, .85);
+
+        .close-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 0;
+            color: #fff;
+            background: 0 0;
+            border: 0;
+            cursor: pointer;
+            width: 7%;
+            height: 10%;
+            z-index: 2;
+
+            .icon-close {
+                font-size: 25px;
+            }
+        }
+
+        .lightbox-img {
+
+            video {
+                width: 100vw;
+                height: 100vh;
+                object-fit: contain;
+            }
+
+            img {
+                width: 100vw !important;
+                height: 100vh !important;
+                object-fit: contain;
+            }
+        }
+
+
+    }
+
+}

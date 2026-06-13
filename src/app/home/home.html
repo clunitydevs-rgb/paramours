@@ -1,0 +1,164 @@
+<app-storieshome></app-storieshome>
+
+<main class="home-shell">
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-7">
+                    <span class="section-kicker">Paramours Chile</span>
+                    <h1>Publica tu perfil gratis y gana visibilidad desde el primer d&iacute;a</h1>
+                    <p class="hero-copy">
+                        Plataforma en lanzamiento. Cupos limitados para anunciantes que quieran posicionarse primero.
+                    </p>
+
+                    <div class="benefit-list" aria-label="Beneficios de lanzamiento">
+                        <span><i class="bi bi-gem"></i> Publicaci&oacute;n gratuita por lanzamiento</span>
+                        <span><i class="bi bi-stars"></i> Perfil destacado sin costo inicial</span>
+                        <span><i class="bi bi-graph-up-arrow"></i> Mayor visibilidad en etapa temprana</span>
+                        <span><i class="bi bi-chat-heart"></i> Soporte para crear tu perfil</span>
+                    </div>
+
+                    <div class="hero-actions">
+                        <a routerLink="/account/client" class="btn-premium btn-premium-primary">
+                            Crear mi perfil gratis
+                        </a>
+                        <a href="#anunciantes" class="btn-premium btn-premium-secondary">
+                            Ver anunciantes
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <aside class="hero-panel" aria-label="Lanzamiento Paramours">
+                        <span class="panel-label">Lanzamiento activo</span>
+                        <h2>Primeras anunciantes con exposici&oacute;n preferente</h2>
+                        <p>
+                            Una vitrina discreta, visual y preparada para crecer con perfiles reales desde el inicio.
+                        </p>
+                        <div class="launch-status">
+                            <span>Publicaci&oacute;n gratuita</span>
+                            <strong>Etapa inicial</strong>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="scarcity-section">
+        <div class="container">
+            <div class="scarcity-card">
+                <div>
+                    <span class="section-kicker">Lanzamiento inicial</span>
+                    <h2>Cupos destacados limitados para las primeras anunciantes</h2>
+                    <p>Obt&eacute;n mayor visibilidad mientras la plataforma crece.</p>
+                </div>
+                <a routerLink="/account/client" class="btn-premium btn-premium-primary">
+                    Reservar mi espacio
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="anunciantes" class="profiles-section">
+        <div class="container">
+            <div class="section-head">
+                <div>
+                    <span class="section-kicker">Perfiles reales</span>
+                    <h2>Anunciantes destacadas</h2>
+                    <p>Nuevos perfiles se ir&aacute;n incorporando durante la etapa de lanzamiento.</p>
+                </div>
+                <span *ngIf="nTotalClienteCount > 0" class="profiles-count">{{ nTotalClienteCount }} perfiles</span>
+            </div>
+
+            <div *ngIf="arrItems.length > 0; else emptyProfiles" class="profiles-grid">
+                <article *ngFor="let i of arrItems" class="profile-card-wrap">
+                    <a class="profile-card" [href]="getProfileUrl(i)" target="_blank" rel="noopener noreferrer"
+                        [attr.aria-label]="'Ver perfil de ' + i.nombrE_USUARIO">
+                        <img class="image-show" alt="{{i.nombrE_USUARIO}}"
+                            [src]="i.fotO_PERFIL != null && i.fotO_PERFIL != '' ? sUrlRps + i.fotO_PERFIL : proFileImg"
+                            loading="lazy">
+                        <span class="verified-badge"><i class="bi bi-shield-fill-check"></i> Verificado</span>
+
+                        <div class="profile-overlay">
+                            <h3>{{ i.nombrE_USUARIO }}</h3>
+                            <div class="profile-data">
+                                <span *ngIf="i.edad">{{ i.edad }} a&ntilde;os</span>
+                                <span *ngIf="getProfileLocation(i)">{{ getProfileLocation(i) }}</span>
+                            </div>
+                        </div>
+                    </a>
+                </article>
+            </div>
+
+            <ng-template #emptyProfiles>
+                <div class="empty-state">
+                    <span class="section-kicker">Pr&oacute;ximamente</span>
+                    <h3>Estamos preparando los primeros perfiles destacados.</h3>
+                    <p>Si eres anunciante, puedes ser parte del lanzamiento y obtener visibilidad preferente.</p>
+                    <a routerLink="/account/client" class="btn-premium btn-premium-primary">
+                        Publicarme gratis
+                    </a>
+                </div>
+            </ng-template>
+        </div>
+    </section>
+
+    <section class="why-section">
+        <div class="container">
+            <div class="section-head compact">
+                <span class="section-kicker">Por qu&eacute; publicar en Paramours</span>
+                <h2>Dise&ntilde;ado para darte m&aacute;s visibilidad</h2>
+            </div>
+
+            <div class="why-grid">
+                <article class="why-card">
+                    <i class="bi bi-bullseye"></i>
+                    <h3>Menos competencia</h3>
+                    <p>Al estar en etapa inicial, tu perfil puede destacar m&aacute;s.</p>
+                </article>
+                <article class="why-card">
+                    <i class="bi bi-award"></i>
+                    <h3>Posici&oacute;n preferente</h3>
+                    <p>Las primeras anunciantes tendr&aacute;n mayor exposici&oacute;n dentro del sitio.</p>
+                </article>
+                <article class="why-card">
+                    <i class="bi bi-layout-text-window-reverse"></i>
+                    <h3>Perfil optimizado</h3>
+                    <p>Una presentaci&oacute;n clara, elegante y pensada para convertir visitas en contactos.</p>
+                </article>
+                <a href="https://wa.me/56965043226?text=Hola,%Necesito%20ayuda%20para%20publicarme"
+                    target="_blank" style="text-decoration: none;">
+                    <article class="why-card">
+                        <i class="bi bi-headset"></i>
+                        <h3>Soporte directo</h3>
+                        <p>Te ayudamos a crear y mejorar tu perfil si lo necesitas.</p>
+                    </article>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="activity-section">
+        <div class="container">
+            <div class="activity-strip">
+                <span *ngFor="let mensaje of lanzamientoMensajes">
+                    <i class="bi bi-circle-fill"></i> {{ mensaje }}
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <section class="final-cta">
+        <div class="container">
+            <div class="final-cta-inner">
+                <span class="section-kicker">Publicaci&oacute;n gratis</span>
+                <h2>Aprovecha esta etapa inicial</h2>
+                <p>Publica tu perfil gratis y asegura una mejor posici&oacute;n mientras la plataforma crece.</p>
+                <a routerLink="/account/client" class="btn-premium btn-premium-primary">
+                    Crear mi perfil ahora
+                </a>
+            </div>
+        </div>
+    </section>
+</main>

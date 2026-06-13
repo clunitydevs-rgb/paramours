@@ -1,0 +1,26 @@
+[
+    {
+        "id" : "0",
+        "nombre" : "Castaño"
+    },
+    {
+        "id" : "1",
+        "nombre" : "Castaño Claro"
+    },
+    {
+        "id" : "2",
+        "nombre" : "Negro"
+    },
+    {
+        "id" : "3",
+        "nombre" : "Pelirrojo"
+    },
+    {
+        "id" : "4",
+        "nombre" : "Rubio"
+    },
+    {
+        "id" : "5",
+        "nombre" : "Colores"
+    }
+]

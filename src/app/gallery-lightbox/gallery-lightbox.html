@@ -1,0 +1,50 @@
+<div [hidden]="bShowFx" class="container gallery-section">
+    <div class="gallery-head">
+        <div>
+            <span class="gallery-kicker">Galeria</span>
+            <h2 class="gallery-title">Revisa mi galeria</h2>
+        </div>
+        <span class="gallery-count">{{ totalImageCount }} archivos</span>
+    </div>
+
+    <section class="gallery-container">
+        <article *ngFor="let img of galleryData, let i=index" id="img{{i}}" class="gallery-container-img">
+            <div class="image-container">
+                <img *ngIf="img.mediA_TYPE.indexOf('video') === -1" [src]="sUrlRps + img.noM_MEDIA"
+                    (click)="onPreviewImg(i)" data-bs-toggle="modal" data-bs-target="#myModal"
+                    class="image-show" loading="lazy" alt="Imagen de galeria">
+                <img *ngIf="img.mediA_TYPE.indexOf('video') !== -1 && img.thumbnail != ''"
+                    [src]="sUrlRps + img.thumbnail" (click)="onPreviewImg(i)" data-bs-toggle="modal"
+                    data-bs-target="#myModal" class="image-show" loading="lazy" alt="Video de galeria">
+                <div [hidden]="showDelete" class="btnDeleteImag">
+                    <button type="button" class="cBtnDel" (click)="onDeleteImage(i)" aria-label="Eliminar archivo">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+                <div *ngIf="img.mediA_TYPE.indexOf('video') !== -1 && img.thumbnail != ''" class="btnVideoImg">
+                    <button type="button" class="cBtnPlay" (click)="onPreviewImg(i)" data-bs-toggle="modal"
+                        data-bs-target="#myModal" aria-label="Reproducir video"><i class="bi bi-play-fill"></i></button>
+                </div>
+            </div>
+        </article>
+    </section>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen modal-dialog-centered gallery-lightbox-container">
+        <!-- Agrega modal-fullscreen -->
+        <div class="modal-content d-flex justify-content-center align-items-center lightbox">
+            <span class="count">{{ currentIndex + 1 }} / {{totalImageCount}}</span>
+            <button class="close-btn" (click)="onCleanObject()" data-bs-dismiss="modal" aria-label="Close">
+                <i class="bi bi-x-lg icon-close"></i>
+            </button>
+            <button class="btn-lightbox-carousel btn-prev" (click)="onPrev()" aria-label="Archivo anterior">
+                <i class="bi bi-chevron-left icon-lightbox-carrousel icon-prev"></i>
+            </button>
+            <button class="btn-lightbox-carousel btn-next" (click)="onNext()" aria-label="Archivo siguiente">
+                <i class="bi bi-chevron-right icon-lightbox-carrousel icon-next"></i>
+            </button>
+            <div #htmlContent class="lightbox-img" (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
+            </div>
+        </div>
+    </div>
+</div>

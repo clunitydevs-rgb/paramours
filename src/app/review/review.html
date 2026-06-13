@@ -1,0 +1,71 @@
+<div class="modal fade" id="idModalReview" tabindex="-1" role="dialog" aria-labelledby="idModalReview"
+    aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen modal-dialog-scrollable container-review">
+        <div class="modal-content lightbox">
+            <div class="review-header">
+                <div>
+                    <span class="review-kicker">Perfil</span>
+                    <h2>Recomendaciones</h2>
+                </div>
+            </div>
+
+            <button class="close-btn" data-bs-dismiss="modal" aria-label="Close" (click)="cerrarModal()">
+                <i class="bi bi-x-lg icon-close"></i>
+            </button>
+
+            <div class="modal-body-custom">
+                <div [hidden]="bShowBlockReview" class="comentario-form">
+                    <form [formGroup]="frmReview" (ngSubmit)="onPost()">
+                        <div class="rating-panel">
+                            <div class="rating-title">{{lblTitleValorations}}</div>
+                            <div class="rating-stars" aria-label="Calificacion">
+                                <button *ngFor="let star of stars" type="button" class="star"
+                                    [class.filled]="isFilled(star)" (mouseenter)="onMouseEnter(star)"
+                                    (mouseleave)="onMouseLeave()" (click)="setRating(star)"
+                                    [attr.aria-label]="star + ' estrellas'">
+                                    <i class="bi bi-star-fill"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <textarea id="txt_review" class="form-control mb-2" rows="3" formControlName="txtreview"
+                            placeholder="Escribe un comentario..."></textarea>
+
+                        <button id="btnEnviarReview" type="submit" class="btn-gold">
+                            <i class="bi bi-send"></i> Enviar
+                        </button>
+                    </form>
+                </div>
+
+                <div #reviews class="comentarios-lista" (scroll)="onScroll()">
+                    <div *ngIf="ArrReviews.length === 0" class="review-empty">
+                        <i class="bi bi-chat-heart"></i>
+                        <span>Aun no hay recomendaciones.</span>
+                    </div>
+
+                    <article *ngFor="let data of ArrReviews, let i=index" id="review{{i}}" class="review-item">
+                        <div class="section-pub-comment">
+                            <div class="image-profile-comment">
+                                <div class="container_comment"
+                                    [style.background-image]="'url(' + (((data.fotoPerfilReview != '')&&(data.fotoPerfilReview != null)) ? sUrlRps + data.fotoPerfilReview : proFileImg) + ')'">
+                                </div>
+                                <span class="text-data-review">{{data.nombreUsuarioReview}}</span>
+                            </div>
+
+                            <div class="review-meta color-star">
+                                <div class="text-data-review">Publicado {{data.fecha | date : 'dd-MM-yyyy HH:mm'}}
+                                </div>
+                                <div class="review-score">{{ data.nota | number:'1.1-1' }} <i
+                                        class="bi bi-star-fill icon-star-size"></i></div>
+                            </div>
+
+                            <div *ngIf="data.comentario != null" class="review-copy">
+                                <span class="comments-text">{{data.comentario}}</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

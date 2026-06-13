@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Bloquear rutas internas técnicas
+Disallow: /api
+Disallow: /login
+Disallow: /account
+Disallow: /settingaccount
+Disallow: /manage-profile
+
+Sitemap: https://paramours.cl/sitemap.xml

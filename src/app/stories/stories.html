@@ -1,0 +1,66 @@
+<div *ngIf="ArrStories.length > 0" class="container mt-4">
+    <div class="row">
+        <div class="col-md-12 text-start lead">
+            <div>Revisa mis historias</div>
+        </div>
+    </div>
+
+    <!-- CÍRCULOS -->
+    <div class="row mt-3">
+        <div class="col-md-12 d-flex flex-row flex-wrap">
+
+            <div *ngFor="let data of ArrStories; let i = index" class="story-circle me-2 mb-2" (click)="openViewer(i)">
+                <div class="story-avatar" [style.background-image]="'url(' + sUrlProfile + ')'"></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- VIEWER -->
+<div *ngIf="viewerOpen" class="stories-viewer">
+
+    <!-- PROGRESS -->
+    <div class="progress-container">
+        <div *ngFor="let s of ArrStories; let i = index" class="progress-item">
+            <div class="progress-fill" [style.width]="
+          i < currentIndex ? '100%' : 
+          i === currentIndex ? progress + '%' : '0%'
+        "></div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <div class="viewer-header">
+        <div class="avatar" [style.background-image]="'url(' + sUrlProfile + ')'"></div>
+        <span class="ms-2">{{sNomUser}}</span>
+        <button *ngIf="isVideo()" class="sound-btn" type="button" (click)="toggleStoryAudio($event)"
+            (touchstart)="$event.stopPropagation()" [attr.aria-label]="isMuted ? 'Activar sonido' : 'Silenciar video'">
+            <i class="bi" [ngClass]="isMuted ? 'bi-volume-mute-fill' : 'bi-volume-up-fill'"></i>
+        </button>
+        <button class="close-btn" (click)="closeViewer(); $event.stopPropagation()" aria-label="Cerrar historias">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="viewer-content" (click)="onViewerTap($event)" (touchstart)="onTouchStart($event)"
+        (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd()" (contextmenu)="$event.preventDefault()">
+
+        <button type="button" class="nav-zone left" (click)="prevStory(); $event.stopPropagation()"
+            aria-label="Historia anterior"></button>
+        <button type="button" class="nav-zone right" (click)="nextStory(); $event.stopPropagation()"
+            aria-label="Historia siguiente"></button>
+
+        <!-- MEDIA -->
+        <img *ngIf="!isVideo()" [src]="currentMediaUrl()" draggable="false" (contextmenu)="$event.preventDefault()" />
+
+        <!--- <video *ngIf="isVideo()" [src]="currentMediaUrl()" autoplay muted playsinline (ended)="nextStory()"></video> -->
+
+        <video #videoPlayer *ngIf="isVideo()" [attr.data-index]="currentIndex" [src]="currentMediaUrl()" autoplay
+            [muted]="isMuted" playsinline webkit-playsinline preload="auto" (loadedmetadata)="onVideoReady($event)"
+            (canplay)="onVideoReady($event)" (timeupdate)="onVideoProgress($event)" (ended)="nextStory()"></video>
+
+    </div>
+
+</div>

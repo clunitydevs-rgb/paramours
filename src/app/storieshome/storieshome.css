@@ -1,0 +1,256 @@
+/* 🔥 LIGHTBOX BASE */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: black;
+  z-index: 9999;
+}
+
+/*.lightbox::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.3),
+    rgba(0,0,0,0)
+  );
+
+  z-index: 4;
+}*/
+
+/* 🔥 CONTENIDO */
+.content {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* 🔥 MEDIA FULLSCREEN */
+.media {
+  width: 100vw;
+  height: 100vh;
+  object-fit: contain;
+
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* 🔥 PROGRESS */
+.progress-container {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  display: flex;
+  gap: 4px;
+  padding: 10px;
+  z-index: 5;
+}
+
+.progress {
+  flex: 1;
+  height: 4px;
+  background: rgba(255,255,255,0.3);
+}
+
+.progress-bar {
+  height: 100%;
+  background: white;
+  width: 0%;
+}
+
+.viewer-header {
+  position: absolute;
+  top: 18px;
+  left: 10px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  color: white;
+  z-index: 6;
+
+  background: transparent!important;
+}
+
+.story-meta {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  max-width: calc(100vw - 120px);
+  line-height: 1.15;
+}
+
+.story-user {
+  max-width: 100%;
+  overflow: hidden;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.viewer-header .avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+}
+
+.viewer-header .avatar::before {
+  display: none;
+}
+
+/* 🔥 TEXTO TIEMPO */
+.time {
+  color: rgba(255,255,255,0.78);
+  font-size: 12px;
+}
+
+/* 🔥 BOTÓN CERRAR */
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+
+  width: 40px;
+  height: 40px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: rgba(0,0,0,0.5);
+  color: white;
+
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.sound-btn {
+  position: absolute;
+  top: 15px;
+  right: 62px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
+  border: 1px solid rgba(232, 220, 190, 0.18);
+  border-radius: 50%;
+
+  background: rgba(0,0,0,0.5);
+  color: white;
+
+  font-size: 18px;
+  cursor: pointer;
+  z-index: 10;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sound-btn:active {
+  background: rgba(198, 167, 94, 0.32);
+}
+
+/* 🔥 ZONA SUPERIOR CLICKEABLE */
+.top-zone {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  z-index: 9;
+}
+
+/* 🔥 AVATAR LIST */
+.story-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+/* 🔥 AVATAR */
+.avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+/*  BORDE INSTAGRAM 
+.avatar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  padding: 2px;
+  background: linear-gradient(140deg, #d12313, purple);
+
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+*/
+
+.avatar::before {
+  content: "";
+    position: absolute;
+    inset: 0;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    background: linear-gradient(140deg, #C6A75E, #E8DCBE) border-box;
+    mask: linear-gradient(#C6A75E 0 0) padding-box, linear-gradient(#D6C6A5 0 0);
+    mask-composite: exclude;
+}
+
+
+
+/* 🔥 SCROLL HORIZONTAL */
+.stories-scroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+
+  width: 100%;
+  max-width: 100vw;
+
+  scroll-behavior: smooth;
+
+  scrollbar-width: none;
+}
+
+.stories-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+video.media {
+  pointer-events: none;
+}
+
+@media (max-width: 576px) {
+  .media {
+    object-position: center calc(max(10px, env(safe-area-inset-top)) + 58px);
+    background: #000;
+  }
+}

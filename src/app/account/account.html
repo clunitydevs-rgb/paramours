@@ -1,0 +1,96 @@
+<main class="account-shell">
+    <section class="account-card">
+        <div class="account-head">
+            <span class="account-kicker">Paramours</span>
+            <h1>{{sTitle}}</h1>
+            <p>Crea tu cuenta para acceder a la plataforma y completar tu perfil.</p>
+        </div>
+
+        <form [formGroup]="frmAccount" (ngSubmit)="goBtnAceptar()" class="account-form">
+            <div class="field-group">
+                <label for="account-email">Correo electrónico</label>
+                <div class="field-control">
+                    <i class="bi bi-envelope"></i>
+                    <input id="account-email" type="email" formControlName="email" autocomplete="email"
+                        placeholder="tu@email.cl">
+                </div>
+                <span [hidden]="bMsgEmailValid" class="field-error">El email ya se encuentra registrado.</span>
+            </div>
+
+            <div class="field-group">
+                <label for="account-password">Contraseña</label>
+                <div class="field-control">
+                    <i class="bi bi-lock"></i>
+                    <input id="account-password" type="password" formControlName="password"
+                        autocomplete="new-password" placeholder="Mínimo 4 caracteres">
+                </div>
+                <span [hidden]="bMsgPassValid" class="field-error">La contraseña debe tener mínimo 4 caracteres.</span>
+            </div>
+
+            <div class="field-group">
+                <label>Fecha de nacimiento</label>
+                <div class="birth-grid">
+                    <input type="text" class="form-control" formControlName="dia" placeholder="Día" inputmode="numeric"
+                        maxlength="2">
+                    <select class="form-select" formControlName="mes">
+                        <option value="" selected>Mes</option>
+                        <option value="01">Enero</option>
+                        <option value="02">Febrero</option>
+                        <option value="03">Marzo</option>
+                        <option value="04">Abril</option>
+                        <option value="05">Mayo</option>
+                        <option value="06">Junio</option>
+                        <option value="07">Julio</option>
+                        <option value="08">Agosto</option>
+                        <option value="09">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                    <input type="text" class="form-control" formControlName="ano" placeholder="Año" inputmode="numeric"
+                        maxlength="4">
+                </div>
+                <span [hidden]="dia.valid || dia.pristine" class="field-error"
+                    *ngIf="dia.errors?.['pattern']">El día debe contener solo números.</span>
+                <span [hidden]="ano.valid || ano.pristine" class="field-error"
+                    *ngIf="ano.errors?.['pattern']">El año debe contener solo números.</span>
+                <span [hidden]="bMsgEAgeEnable" class="field-error">Debes ser mayor de edad para registrarte.</span>
+            </div>
+
+            <div class="field-group">
+                <label for="account-username">Nombre de usuario</label>
+                <div class="field-control">
+                    <i class="bi bi-person"></i>
+                    <input id="account-username" type="text" formControlName="username" autocomplete="username"
+                        placeholder="Nombre público">
+                </div>
+                <span [hidden]="bMsgUserNameValid" class="field-error">El nombre de usuario ya está registrado.</span>
+            </div>
+
+            <div [hidden]="hddUserClient" class="field-gruop">
+                <label for="account-email">Celular</label>
+                <div class="field-control">
+                    <i class="bi bi-phone"></i>
+                    <input id="account-celular" type="text" formControlName="celular" autocomplete="tel"
+                        placeholder="9XXXXXXXX">
+                </div>
+            </div>
+
+            <div [hidden]="hddUserClient" class="field-group">
+                <label for="account-service">Servicio</label>
+                <div class="field-control select-control">
+                    <i class="bi bi-stars"></i>
+                    <select id="account-service" class="form-select" formControlName="servicio">
+                        <option value="" selected>Selecciona servicio</option>
+                        <option value="1">Escort</option>
+                        <option value="0">Masajista</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" [disabled]="frmAccount.invalid" class="btn-gold account-submit">
+                Registrate
+            </button>
+        </form>
+    </section>
+</main>

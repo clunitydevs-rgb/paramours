@@ -1,0 +1,81 @@
+/* ============================= */
+/* BASE */
+/* ============================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+
+/* ============================= */
+/* ERROR CODE */
+/* ============================= */
+
+.error-code {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 100px;
+    color: rgba(214,198,165,0.08);
+    /*position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);*/
+}
+
+/* ============================= */
+/* TITLES */
+/* ============================= */
+
+h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    color: #D6C6A5;
+    margin-bottom: 20px;
+}
+
+.subtitle {
+    font-size: 14px;
+    color: rgba(232,223,200,0.7);
+    margin-bottom: 40px;
+    line-height: 1.6;
+}
+
+/* ============================= */
+/* CTA */
+/* ============================= */
+
+.cta {
+    margin-top: 30px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 28px;
+    border: 1px solid #D6C6A5;
+    color: #D6C6A5;
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: 0.3s ease;
+    margin: 10px;
+}
+
+.btn:hover {
+    background: #D6C6A5;
+    color: #0B0B0C;
+}
+
+/* CTA secundario */
+
+.btn-outline {
+    border: 1px solid rgba(214,198,165,0.4);
+    color: rgba(232,223,200,0.7);
+}
+
+.btn-outline:hover {
+    border: 1px solid #D6C6A5;
+    color: #D6C6A5;
+}

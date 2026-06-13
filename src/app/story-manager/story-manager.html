@@ -1,0 +1,71 @@
+<div class="modal fade" id="myModalManageStories" tabindex="-1" role="dialog" aria-labelledby="myModalManageStories"
+    aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen container-contact">
+        <div class="modal-content lightbox">
+            <button id="btnCloseModal" class="close-btn" data-bs-dismiss="modal" aria-label="Close">
+                <i class="bi bi-x-circle icon-close"></i>
+            </button>
+
+            <!-- BODY -->
+            <div class="modal-body-custom">
+                <section class="contact">
+                    <div class="contact-container">
+                        <h2 class="lbl_tile">Historias</h2>
+
+
+                        <!-- SUBIR -->
+                        <div class="upload-box text-center mb-4">
+                            <label class="btn-gold">
+                                + Agregar historia
+                                <input type="file" hidden (change)="onFileSelected($event)" accept="image/*, video/*">
+                            </label>
+                        </div>
+
+                        <!-- ACTIVAS -->
+                        <h6 class="lbl_data mb-2">Historias activas</h6>
+
+                        <div class="stories-grid">
+                            <div *ngFor="let story of activeStories" id="activeStories" class="story-card active">
+
+                                <ng-container [ngSwitch]="story.type">
+                                    <img *ngSwitchCase="'image'" [src]="story.url">
+                                    <img *ngSwitchCase="'video'" [src]="story.thumbnailUrl">
+                                </ng-container>
+
+                                <div class="overlay">
+                                    <span class="badge bg-success">Activa</span>
+                                    <button class="btn-outline btn-sm btn-low-letter" (click)="toggleStatus(story)">
+                                        Desactivar
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- INACTIVAS -->
+                        <h6 class="lbl_data mt-4 mb-2">Historias inactivas</h6>
+
+                        <div class="stories-grid">
+                            <div *ngFor="let story of inactiveStories" id="inactiveStories" class="story-card inactive">
+
+                                <ng-container [ngSwitch]="story.type">
+                                    <img *ngSwitchCase="'image'" [src]="story.url">
+                                    <img *ngSwitchCase="'video'" [src]="story.thumbnailUrl">
+                                </ng-container>
+
+                                <div class="overlay">
+                                    <span class="badge bg-secondary">Inactiva</span>
+                                    <button class="btn-gold btn-sm btn-low-letter" (click)="toggleStatus(story)">
+                                        Activar
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>

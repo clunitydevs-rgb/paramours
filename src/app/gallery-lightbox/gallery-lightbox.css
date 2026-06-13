@@ -1,0 +1,325 @@
+:host {
+    display: block;
+}
+
+.gallery-section {
+    max-width: 1180px;
+    padding-bottom: 48px;
+}
+
+.gallery-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 24px 0 14px;
+    border-bottom: 1px solid rgba(232, 220, 190, 0.14);
+}
+
+.gallery-kicker {
+    display: block;
+    color: var(--champagne-gold, #C6A75E);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.gallery-title {
+    margin: 2px 0 0;
+    color: #FAFAFA;
+    font-size: 1.25rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.gallery-count {
+    color: rgba(250, 250, 250, 0.56);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.gallery-container {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.gallery-container-img {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border: 1px solid rgba(232, 220, 190, 0.12);
+    border-radius: 8px;
+    background: #060606;
+}
+
+.image-container,
+.image-show {
+    width: 100%;
+    height: 100%;
+}
+
+.image-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.image-show {
+    display: block;
+    object-fit: cover;
+    cursor: pointer;
+    transition: opacity 220ms ease, transform 260ms ease;
+}
+
+.image-container::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 58%, rgba(0, 0, 0, 0.34));
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 220ms ease;
+}
+
+.image-container:hover .image-show {
+    opacity: 0.92;
+    transform: scale(1.035);
+}
+
+.image-container:hover::after {
+    opacity: 1;
+}
+
+.btnDeleteImag {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    z-index: 2;
+}
+
+.cBtnDel,
+.cBtnPlay {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(232, 220, 190, 0.18);
+    color: #fff;
+    cursor: pointer;
+    transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.cBtnDel {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.58);
+    font-size: 0.95rem;
+}
+
+.cBtnDel:hover,
+.cBtnDel:focus-visible {
+    border-color: rgba(198, 167, 94, 0.6);
+    background: rgba(156, 0, 42, 0.78);
+    transform: translateY(-1px);
+}
+
+.btnVideoImg {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+}
+
+.cBtnPlay {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(156, 0, 42, 0.72);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.34);
+    font-size: 1.7rem;
+    pointer-events: auto;
+}
+
+.cBtnPlay:hover,
+.cBtnPlay:focus-visible {
+    border-color: rgba(232, 220, 190, 0.34);
+    background: rgba(198, 167, 94, 0.9);
+    transform: scale(1.04);
+}
+
+.gallery-lightbox-container {
+    position: relative;
+}
+
+.lightbox {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+}
+
+.lightbox::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.68), transparent 18%),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.42), transparent 18%, transparent 82%, rgba(0, 0, 0, 0.42));
+    pointer-events: none;
+}
+
+.count {
+    position: absolute;
+    top: max(14px, env(safe-area-inset-top));
+    left: max(16px, env(safe-area-inset-left));
+    z-index: 3;
+    color: rgba(250, 250, 250, 0.82);
+    font-size: 0.88rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+}
+
+.close-btn,
+.btn-lightbox-carousel {
+    position: absolute;
+    z-index: 4;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(232, 220, 190, 0.18);
+    color: #fff;
+    background: rgba(0, 0, 0, 0.42);
+    cursor: pointer;
+    transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.close-btn {
+    top: max(10px, env(safe-area-inset-top));
+    right: max(12px, env(safe-area-inset-right));
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    font-size: 1.05rem;
+}
+
+.btn-lightbox-carousel {
+    top: 50%;
+    width: 54px;
+    height: 78px;
+    border-radius: 999px;
+    transform: translateY(-50%);
+    font-size: 2rem;
+}
+
+.btn-prev {
+    left: 16px;
+}
+
+.btn-next {
+    right: 16px;
+}
+
+.close-btn:hover,
+.close-btn:focus-visible,
+.btn-lightbox-carousel:hover,
+.btn-lightbox-carousel:focus-visible {
+    border-color: rgba(198, 167, 94, 0.6);
+    background: rgba(18, 18, 18, 0.72);
+}
+
+.lightbox-img {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+.lightbox-img video,
+.lightbox-img img {
+    width: 100vw !important;
+    height: 100vh !important;
+    object-fit: contain;
+    background: #000;
+}
+
+@media (max-width: 991.98px) {
+    .gallery-container {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767.98px) {
+    .gallery-section {
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+
+    .gallery-head {
+        padding-top: 18px;
+    }
+
+    .gallery-title {
+        font-size: 1rem;
+    }
+
+    .gallery-count {
+        font-size: 0.68rem;
+    }
+
+    .gallery-container {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 5px;
+    }
+
+    .gallery-container-img {
+        border-radius: 6px;
+    }
+
+    .cBtnDel {
+        width: 34px;
+        height: 34px;
+        font-size: 0.85rem;
+    }
+
+    .cBtnPlay {
+        width: 44px;
+        height: 44px;
+        font-size: 1.45rem;
+    }
+
+    .count {
+        top: max(12px, env(safe-area-inset-top));
+        left: 12px;
+    }
+
+    .btn-lightbox-carousel {
+        top: auto;
+        bottom: max(18px, env(safe-area-inset-bottom));
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        transform: none;
+        font-size: 1.55rem;
+    }
+
+    .btn-prev {
+        left: 16px;
+    }
+
+    .btn-next {
+        right: 16px;
+    }
+}

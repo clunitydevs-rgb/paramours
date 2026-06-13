@@ -1,0 +1,209 @@
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-md-12 section-pub">
+            <div class="image-profile">
+                <div id="container" [style.background-image]="'url(' + proFileImg + ')'">
+                    <div class="round">
+                        <!--<input type="file" formControlName="imgfotoprofile" (change)="capturarArchivo($event)" accept="image/*" >-->
+                        <input type="file" formControlName="fotoperfil" (change)="CargarImgFotoPerfil($event)"
+                            accept="image/*">
+                        <i class="bi bi-camera"></i>
+                    </div>
+                </div>
+                <div *ngIf="!isOwner" class="justify-content-center m-3 btn-edit-profile-tblt"><button type="button"
+                        class="btn-gold lbl-btn-edit" (click)="editProfile()"><i class="bi bi-pencil-square">
+                        </i> <b> Edita Tú Perfil</b></button></div>
+                <div *ngIf="!isOwner && !bHiddenProfileValided"
+                    class="form-check form-switch m-3 d-flex justify-content-center">
+                    <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault"
+                        [checked]="isProfileActive" (change)="toggleProfileStatus()">
+                    <div *ngIf="isProfileActive; then thenBlock else elseBlock"></div>
+                    <ng-template #thenBlock>
+                        <label class="form-check-label ms-1" for="switchCheckDefault">Perfil Activado</label>
+                    </ng-template>
+                    <ng-template #elseBlock>
+                        <label class="form-check-label ms-1" for="switchCheckDefault">Activa tu Perfil</label>
+                    </ng-template>
+                </div>
+                <div *ngIf="!isOwner && bHiddenProfileValided && this.oCliente.estado != 'P'"
+                    class="alert alert-warning text-center label-alert-validprofile" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i> No puedes activar tu perfil, hasta que no valides tu
+                    identidad, <a href="#" class="alert-link" data-bs-toggle="modal"
+                        data-bs-target="#myModalIdentityCheck">hazlo aquí</a>
+                </div>
+                <div *ngIf="!isOwner && bHiddenProfileValided && this.oCliente.estado === 'P'"
+                    class="alert alert-info text-center label-alert-validprofile" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Tu identidad esta en proceso de validación, en una
+                    hora podrás activar tu perfil
+                </div>
+            </div>
+
+            <div class="ps-2 mb-1">
+                <div class="lbl-litle"><b>{{genero}}</b></div>
+                <div class="lbl_tile">{{oCliente.nombrE_USUARIO}}</div>
+                <div class="lead">
+                    {{nacionalidad != null ? nacionalidad + ' · ' : ''}}
+                    {{oCliente.edad != null ? oCliente.edad + ' años ·' : ''}}
+                    {{oCliente.altura != null ? oCliente.altura + ' cm ·' : ''}}
+                    {{oCliente.peso != null ? oCliente.peso + ' kg' : ''}}
+                </div>
+            </div>
+            <div class="data-value-profile text-md-end ps-2">
+                <div *ngIf="!isOwner" class="text-center"><button type="button" class="btn-gold"
+                        (click)="editProfile()"><i class="bi bi-pencil-square">
+                        </i> <b> Edita Tú Perfil</b></button></div>
+                <div *ngIf="oCliente.valor!= null && oCliente.valor.toString() !== '' && !isProfileUser"
+                    class="rounded p-4 justify-content-between lh-1">
+                    <div class="small">Precio<br></div>
+                    <div class="lbl-value"><i
+                            class="bi bi-currency-dollar size-icons-value asset-color-silver"></i><b>{{oCliente.valor |
+                            number:'1.0-0' }}</b></div>
+                    <div class="small">1 hora<br></div>
+                </div>
+            </div>
+            <div class="ps-2 mb-2 data-type_profile">
+                <!-- <span class="badge bg-secondary">Figura </span> <b>{{biotipo}}</b><span class="asset-color-silver"> / </span>-->
+                <span *ngIf="colorojo != null && colorojo.toString() !== ''" class="badge bg-secondary me-2">Ojos :
+                    {{colorojo}} </span>
+                <span *ngIf="colorcabello != null && colorcabello.toString() !== ''"
+                    class="badge bg-secondary me-2">Cabello : {{ colorcabello }}</span>
+                <span *ngIf="oCliente.medidas != null && oCliente.medidas.toString() !== ''"
+                    class="badge bg-secondary">Medidas : {{oCliente.medidas}}</span>
+            </div>
+            <!--<div class="data-value-profile text-center p-2">
+                
+            </div>-->
+            <div class="ps-2 small mb-2">
+                <span *ngIf="comuna != null && comuna.toString() !== ''"><i
+                        class="bi bi-geo-alt asset-color-silver"></i> </span> {{ comuna != null && comuna.toString() !==
+                '' ? comuna + ' ·' : '' }}
+                <span *ngIf="metro != null && metro.toString() !== ''"><i
+                        class="bi bi-train-front asset-color-silver"></i></span> {{ metro != null && metro.toString()
+                !== '' ? metro + ' ·' : '' }}
+                <span *ngIf="hAtencion != null && hAtencion.toString() !== ''"><i
+                        class="bi bi-calendar4 asset-color-silver"></i></span> {{ hAtencion != null &&
+                hAtencion.toString() !== '' ? hAtencion : '' }}
+            </div>
+            <div class="data-description-profile justify">
+
+                <div *ngIf="oCliente.celular != null && oCliente.celular.toString() !== '' && !isProfileUser"
+                    class="data-phone-profile-desktop d-flex ps-2 mb-2 small">
+                    <div class="style-btn-contact me-1"><a class="bi bi-whatsapp icon-text-contact"
+                            href="https://wa.me/56{{oCliente.celular}}?text=Hola,%20tengo%20una%20consulta" id="btn-wsp"
+                            target="_blank"></a></div>
+                    <div class="style-btn-contact"><a href="tel:+56{{oCliente.celular}}"><i
+                                class="bi bi-telephone-fill icon-text-contact"></i></a></div>
+                    <!-- <span class="cel-color"><i class="bi bi-telephone size-icon-phone"></i> <b>
+                            +56{{oCliente.celular}}</b></span> -->
+                </div>
+                <div class="small data-description-mobile-profile">{{oCliente.descripcion}}</div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="!isProfileUser" class="row data-value-profile-tblt pt-3">
+        <div class="data-value-profile-mobile w-100">
+            <div>
+                <div class="small text-center text-size-recomendaciones">{{iReviewCount}} reviews</div>
+                <div class="text-center align-items-center">
+                    <span class="small">{{ dValReview | number:'1.1-1' }} <i
+                            class="bi bi-star-fill icon-star-size"></i></span>
+                </div>
+
+                <div *ngIf="isOwner" class="small text-center text-size-hazrecomendaciones">
+                    <button type="button" class="small text-size-hazrecomendaciones" data-bs-toggle="modal"
+                        data-bs-target="#idModalReview" (click)="abrirModal()"><i class="bi bi-chat-text-fill"></i> Ver
+                        y haz una recomendación</button>
+
+                </div>
+
+                <div *ngIf="!isOwner" class="small text-center text-size-hazrecomendaciones">
+                    <button type="button" class="small text-size-hazrecomendaciones" data-bs-toggle="modal"
+                        data-bs-target="#idModalReview" (click)="abrirModal()"><i class="bi bi-chat-text-fill"></i> Ver
+                        recomendaciones</button>
+
+                </div>
+
+            </div>
+            <div *ngIf="oCliente.valor!= null && oCliente.valor.toString() !== '' && !isProfileUser"
+                class="text-end lh-1">
+                <div class="small">Precio<br></div>
+                <div class="lbl-value"><i
+                        class="bi bi-currency-dollar size-icons-value asset-color-silver"></i><b>{{oCliente.valor |
+                        number:'1.0-0' }}</b></div>
+                <div class="small">1 hora<br></div>
+            </div>
+        </div>
+        <div *ngIf="oCliente.celular != null && oCliente.celular.toString() !== ''"
+            class="data-phone-profile-mobile d-flex justify-content-center align-items-center pt-3 mb-2 small w-100">
+            <div class="style-btn-contact m-1"><a class="bi bi-whatsapp icon-text-contact"
+                    href="https://wa.me/56{{oCliente.celular}}?text=Hola,%20tengo%20una%20consulta" id="btn-wsp"
+                    target="_blank"></a>
+            </div>
+            <div class="style-btn-contact m-1"><a href="tel:+56{{oCliente.celular}}"><i
+                        class="bi bi-telephone-fill icon-text-contact"></i></a></div>
+
+            <!-- <span class="cel-color"><i class="bi bi-telephone size-icon-phone"></i> <b>
+                            +56{{oCliente.celular}}</b></span> -->
+        </div>
+    </div>
+
+    <div class="row" [ngClass]="{'row-acc-btn-owner' : !isOwner, 'row-acc-btn-visitor' : isOwner }">
+        <!-- col-bordert-color col-borderd-color-->
+        <div class="col-md-12 w-100 acc-btn-content">
+            <div *ngIf="!isProfileUser" class="acc-btn-content-desktop">
+                <div class="small text-center text-size-recomendaciones">{{iReviewCount}} recomendaciones</div>
+                <div class="text-center align-items-center">
+                    <span class="small">{{ dValReview | number:'1.1-1' }} <i
+                            class="bi bi-star-fill icon-star-size"></i></span>
+                </div>
+                <div *ngIf="isOwner" class="small text-center text-size-hazrecomendaciones">
+                    <button type="button" class="small text-size-hazrecomendaciones" data-bs-toggle="modal"
+                        data-bs-target="#idModalReview" (click)="abrirModal()"><i class="bi bi-chat-text-fill"></i> Ver
+                        y haz una recomendación</button>
+                </div>
+
+                <div *ngIf="!isOwner" class="small text-center text-size-hazrecomendaciones">
+                    <button type="button" class="small text-size-hazrecomendaciones" data-bs-toggle="modal"
+                        data-bs-target="#idModalReview" (click)="abrirModal()"><i class="bi bi-chat-text-fill"></i> Ver
+                        recomendaciones</button>
+
+                </div>
+            </div>
+            <div *ngIf="!isOwner" class="loadImgContent border-s border-e">
+                <div class="roundImg">
+                    <input type="file" id="input-file-upload" #fileInput class="form-control" aria-label="Sube tu archivo"
+                        (change)="CapturarImagenes($event)" multiple style="display: none;" accept="image/*, video/*">
+                    <label for="input-file-upload" class="btn-load-data icon-position"><i
+                            class="bi bi-cloud-plus"></i></label>
+
+                </div>
+                <div class="data-lbl-acc-btn ms-2" (click)="fileInput.click()">Carga tu fotos y videos acá</div>
+            </div>
+            <div *ngIf="!isOwner" class="loadImgContent border-e">
+                <div class="roundImg">
+                    <button type="button" class="btn-load-data" data-bs-toggle="modal" data-bs-target="#myModalPost"><i
+                            class="bi bi-plus-circle-dotted"></i> </button>
+                </div>
+                <div class="data-lbl-acc-btn ms-2" data-bs-toggle="modal" data-bs-target="#myModalPost">Crea una publicación</div>
+            </div>
+            <div *ngIf="!isOwner" class="loadImgContent">
+                <div class="roundImg">
+                    <button type="button" class="btn-load-data" data-bs-toggle="modal"
+                        data-bs-target="#myModalManageStories"><i class="bi bi-plus-square"></i> </button>
+                </div>
+                <div class="data-lbl-acc-btn ms-2" data-bs-toggle="modal"
+                        data-bs-target="#myModalManageStories">Administra tus historias</div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<app-identitycheck></app-identitycheck>
+<app-stories [iUser]="this.uIdUser.sUid" [sNomUser]="oCliente.nombrE_USUARIO" [sUrlProfile]="proFileImg"></app-stories>
+<app-story-manager *ngIf="!isOwner" (storiesChanged)="refreshStories()"></app-story-manager>
+<app-gallery-lightbox [showDelete]="isOwner"></app-gallery-lightbox>
+<app-review [iUser]="this.uIdUser.sUid" [bNoOwner]="isOwner" [abrir]="mostrarModal"
+    (cerrar)="cerrarModal()"></app-review>
+<app-profile-timeline [showDelete]="isOwner" [iUser]="this.uIdUser.sUid" [sNomUser]="oCliente.nombrE_USUARIO"
+    [sUrlProfile]="proFileImg"></app-profile-timeline>

@@ -44,4 +44,5 @@ jobs:
         with:
           app-name: 'paramours'
           slot-name: 'Production'
-          package: dist/cl.app.paramours/browser
+          package: dist/cl.app.paramours
+          startup-command: node server/server.mjs

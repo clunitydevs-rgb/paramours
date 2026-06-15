@@ -29,7 +29,7 @@ export class Profile implements OnInit {
 
   @ViewChild(Stories) private storiesComponent?: Stories;
 
-  sUrlRps: string = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
+  sUrlRps: string = "https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/";
   proFileImg: string | null = null;
   public isOwner: boolean = true;
   public isProfileActive: boolean = false;

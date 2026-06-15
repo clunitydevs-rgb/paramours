@@ -33,7 +33,8 @@ interface Files {
 })
 export class Settingaccount {
 
-  sUrlRps: string = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
+  //sUrlRps: string = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
+  sUrlRps: string = "https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/";
   public dFechaNac: any;
   public proFileImg: string | null = null;
   public dataOutput: string = '';

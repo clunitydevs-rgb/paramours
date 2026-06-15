@@ -12,8 +12,8 @@ declare var bootstrap: any;
   styleUrl: './headermenu.css'
 })
 export class Headermenu implements OnInit {
-  public sUrlRps: string = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
-  //public proFileImg: string = "https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg";
+  //public sUrlRps: string = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
+  public sUrlRps: string = "https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/";
   public sFotoPerfil: string | null = null;
   public avatarUrl: string | null = null;// string = this.proFileImg;
   public bShowLoginAndRegister = false;

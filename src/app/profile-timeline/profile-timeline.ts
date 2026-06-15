@@ -28,7 +28,8 @@ export class ProfileTimeline implements OnInit, OnChanges {
   @ViewChild('exampleRTE') public componentObject!: RichTextEditorComponent;
 
 
-  sUrlRps: string = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
+  //sUrlRps: string = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
+  sUrlRps: string = "https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/";
   ArraPublications: Array<any> = [];
   fileToUpload: FileList | undefined;
   imageUrl: string | null = null; // Variable para almacenar la URL de datos

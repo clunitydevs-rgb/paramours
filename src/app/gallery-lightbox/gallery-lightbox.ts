@@ -18,7 +18,8 @@ export class GalleryLightbox implements OnDestroy {
   @ViewChild('htmlContent', { static: true }) contenedor!: ElementRef;
   @Input() showDelete: boolean | null = null;
 
-  sUrlRps: string = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
+  //sUrlRps: string = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
+  sUrlRps: string = "https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer";
   galleryData: Array<any> = [];
   oData: any;
   htmlContent: any;

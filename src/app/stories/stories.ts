@@ -21,7 +21,8 @@ export class Stories implements OnChanges, OnDestroy {
 
   ArrStories: Array<any> = [];
 
-  sUrlRps: string = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
+  //sUrlRps: string = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
+  sUrlRps: string = "https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/";
 
   viewerOpen = false;
   currentIndex = 0;

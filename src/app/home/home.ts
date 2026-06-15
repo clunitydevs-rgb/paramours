@@ -17,7 +17,8 @@ import { EMPTY, catchError, timeout } from 'rxjs';
   styleUrl: './home.css'
 })
 export class Home implements OnInit {
-  sUrlRps: string = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
+  //sUrlRps: string = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
+  sUrlRps: string = "https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/";
   proFileImg: string = this.sUrlRps + "avatar_anunciante.png";
   arrItems: Cliente[] = [];
   nTotalClienteCount: number = 0;

@@ -17,7 +17,8 @@ import { FormsModule } from '@angular/forms';
 })
 export class ManageProfile implements OnInit {
   @ViewChild('htmlContent', { static: true }) contenedor!: ElementRef;
-  sUrlRps: string = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
+  //sUrlRps: string = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
+  sUrlRps: string = "https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/";
   proFileImg: string = this.sUrlRps + "avatar_anunciante.png";
   arrItems: Array<any> = [];
   nTotalClienteCount: number = 0;

@@ -24,8 +24,9 @@ export class Review implements OnChanges {
   @ViewChild('reviews') reviews!: ElementRef<HTMLDivElement>;
   //@ViewChild('txt_review', { static: true }) txt_review!: ElementRef<HTMLInputElement>;
 
-  sUrlRps: string = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
-  proFileImg: string = "https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg";
+  //sUrlRps: string = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
+  sUrlRps: string = "https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/";
+  proFileImg: string = "https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/avatar_visitante.png";
   bShowBlockReview: boolean = true;
   ArrReviews: Array<any> = [];
   pageIndex: number = 0;

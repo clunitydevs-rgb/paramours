@@ -15,7 +15,8 @@ export class Storieshome {
 
   @ViewChild('videoPlayer') videoRef!: ElementRef<HTMLVideoElement>;
 
-  sUrlRps = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
+  //sUrlRps = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
+  sUrlRps = "https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/";
 
   storiesAgrupadas: any[] = [];
 

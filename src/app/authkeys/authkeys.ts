@@ -57,7 +57,7 @@ export class Authkeys {
       return;
     }
 
-    this.ChangePassword.sPwd = this.frmClave.get('new-password')?.value!;
+    this.ChangePassword.sPwd = this.frmClave.get('repeat-password')?.value!;
 
     this.api.ChangePasswordProfile(this.ChangePassword).subscribe({
       next: (data: ResponseClient) => {

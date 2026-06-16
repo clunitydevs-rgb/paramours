@@ -88,7 +88,7 @@
                 <div *ngIf="oCliente.celular != null && oCliente.celular.toString() !== '' && !isProfileUser"
                     class="data-phone-profile-desktop d-flex ps-2 mb-2 small">
                     <div class="style-btn-contact me-1"><a class="bi bi-whatsapp icon-text-contact"
-                            href="https://wa.me/56{{oCliente.celular}}?text=Hola,%20tengo%20una%20consulta" id="btn-wsp"
+                            href="https://wa.me/56{{oCliente.celular}}?text=Hola%20{{oCliente.nombrE_USUARIO}},%20espero%20que%20te%20encuentres%20bien.%20Vi%20tu%20perfil%20en%20*Paramours.cl*%20Te%20quería%20consultar.." id="btn-wsp"
                             target="_blank"></a></div>
                     <div class="style-btn-contact"><a href="tel:+56{{oCliente.celular}}"><i
                                 class="bi bi-telephone-fill icon-text-contact"></i></a></div>
@@ -136,7 +136,7 @@
         <div *ngIf="oCliente.celular != null && oCliente.celular.toString() !== ''"
             class="data-phone-profile-mobile d-flex justify-content-center align-items-center pt-3 mb-2 small w-100">
             <div class="style-btn-contact m-1"><a class="bi bi-whatsapp icon-text-contact"
-                    href="https://wa.me/56{{oCliente.celular}}?text=Hola,%20tengo%20una%20consulta" id="btn-wsp"
+                    href="https://wa.me/56{{oCliente.celular}}?text=Hola%20{{oCliente.nombrE_USUARIO}},%20espero%20que%20te%20encuentres%20bien.%20Vi%20tu%20perfil%20en%20*Paramours.cl*%20Te%20quería%20consultar.." id="btn-wsp"
                     target="_blank"></a>
             </div>
             <div class="style-btn-contact m-1"><a href="tel:+56{{oCliente.celular}}"><i

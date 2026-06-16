@@ -18,7 +18,7 @@
                         type="password"
                         formControlName="nuevaclave"
                         autocomplete="new-password"
-                        placeholder="Minimo 6 caracteres">
+                        placeholder="Minimo 4 caracteres">
                 </div>
                 @if (newPassword.hasError('required') && newPassword.touched) {
                     <span class="field-error">Ingresa una clave nueva.</span>
@@ -52,7 +52,7 @@
                 <span>Despues de cambiarla, usa tu nueva clave la proxima vez que inicies sesion.</span>
             </div>
 
-            <button type="submit" class="btn-submit" [disabled]="frmClave.invalid">
+            <button type="submit" class="btn-submit" [attr.aria-disabled]="frmClave.invalid">
                 Actualizar clave
             </button>
         </form>

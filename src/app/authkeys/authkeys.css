@@ -158,7 +158,8 @@
     box-shadow: 0 14px 28px rgba(214, 198, 165, 0.18);
 }
 
-.btn-submit:disabled {
+.btn-submit:disabled,
+.btn-submit[aria-disabled="true"] {
     cursor: not-allowed;
     opacity: 0.45;
 }

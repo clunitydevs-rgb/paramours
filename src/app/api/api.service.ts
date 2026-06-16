@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { Cliente, LoginI, objId, PublicationForm, Publications, UidUser, UsuarioI, ActiveProfile, Reviews, rRefreshToken, IDHISTORIA, ContactMail, WelcomeMail, ClaveMail, Story } from "../models/models.interface";
+import { Cliente, LoginI, objId, PublicationForm, Publications, UidUser, UsuarioI, ActiveProfile, Reviews, rRefreshToken, IDHISTORIA, ContactMail, WelcomeMail, ClaveMail, Story, ChangePassword } from "../models/models.interface";
 import { ResponseClient, ResponseI, ResponseMediaFiles, ResponseMsg, rPublications, rReview, rStories, rStoriesHome, rStory, rValLastReview, rValoracion } from "../models/response.interface";
 
 @Injectable({providedIn: 'root'})
@@ -73,6 +73,12 @@ export class ApiServices{
     updateLoadPhotoProfile(form:FormData):Observable<ResponseClient>{
         //let cUrl = this.sSiteUrl + "/cl.api.paramours.client/api/v1/Client/LoadPhotoProfile";
         let cUrl = "https://cl.api.client.paramours.cl/api/v1/Client/LoadPhotoProfile";
+        return this._http.post<ResponseClient>(cUrl, form);
+    }
+
+    ChangePasswordProfile(form:ChangePassword):Observable<ResponseClient>{
+        //let cUrl = this.sSiteUrl + "/cl.api.paramours.client/api/v1/Client/LoadPhotoProfile";
+        let cUrl = "https://cl.api.client.paramours.cl/api/v1/Client/ChangePasswordProfile";
         return this._http.post<ResponseClient>(cUrl, form);
     }
 

@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { ChangePassword } from '../models/models.interface';
+import { ApiServices } from '../api/api.service';
+import { ToastService } from '../service/toast.service';
+import { AnalyticsService } from '../service/analytics.service';
+import { ResponseClient } from '../models/response.interface';
+import { Router } from '@angular/router';
 
 const samePasswordValidator = (control: AbstractControl): ValidationErrors | null => {
   const newPassword = control.get('nuevaclave')?.value;
@@ -21,6 +27,13 @@ const samePasswordValidator = (control: AbstractControl): ValidationErrors | nul
 })
 export class Authkeys {
 
+  constructor(
+    private api: ApiServices,
+    private toastService: ToastService,
+    private router: Router,
+    private analyticsService: AnalyticsService
+  ) { }
+
   frmClave = new FormGroup({
     nuevaclave: new FormControl('', [Validators.required, Validators.minLength(4)]),
     reingresanuevaclave: new FormControl('', [Validators.required])
@@ -34,11 +47,27 @@ export class Authkeys {
     return this.frmClave.get('reingresanuevaclave') as FormControl;
   }
 
+  ChangePassword: ChangePassword = {
+    sPwd: ''
+  }
+
   goChangePassword() {
     if (this.frmClave.invalid) {
       this.frmClave.markAllAsTouched();
       return;
     }
-  }
 
+    this.ChangePassword.sPwd = this.frmClave.get('new-password')?.value!;
+
+    this.api.ChangePasswordProfile(this.ChangePassword).subscribe({
+      next: (data: ResponseClient) => {
+        this.toastService.success('Cambio de clave exitoso!');
+        this.router.navigate(['/home']);
+      },
+      error: err => {
+        this.toastService.error('Problemas con los servicios para cambiar clave!');
+      }
+    });
+
+  }
 }

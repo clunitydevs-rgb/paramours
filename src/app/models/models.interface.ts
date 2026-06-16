@@ -174,3 +174,7 @@ export interface WelcomeMail {
 export interface ClaveMail {
     email: string;
 }
+
+export interface ChangePassword{
+    sPwd : string;
+}

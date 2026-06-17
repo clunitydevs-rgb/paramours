@@ -59,6 +59,9 @@ export class Authkeys {
 
     this.ChangePassword.sPwd = this.frmClave.get('repeat-password')?.value!;
 
+    console.log('sPwd : ' + this.ChangePassword.sPwd);
+    console.log('ChangePassword : ' + this.ChangePassword);
+    
     this.api.ChangePasswordProfile(this.ChangePassword).subscribe({
       next: (data: ResponseClient) => {
         this.toastService.success('Cambio de clave exitoso!');

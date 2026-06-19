@@ -577,7 +577,10 @@
     }
 
     :host ::ng-deep .post-editor-shell .e-richtexteditor .e-toolbar-wrapper {
-        overflow-x: auto;
+        /* El emoji picker es hijo directo de este wrapper. `overflow-x: auto`
+           también vuelve recortable el eje Y y oculta el popup completo. La
+           barra Scrollable de Syncfusion ya administra su propio desplazamiento. */
+        overflow: visible !important;
     }
 
     :host ::ng-deep .post-editor-shell .e-toolbar .e-toolbar-item .e-tbar-btn {

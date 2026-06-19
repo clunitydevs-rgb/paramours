@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { Cliente, LoginI, objId, PublicationForm, Publications, UidUser, UsuarioI, ActiveProfile, Reviews, rRefreshToken, IDHISTORIA, ContactMail, WelcomeMail, ClaveMail, Story, ChangePassword } from "../models/models.interface";
+import { Cliente, LoginI, objId, PublicationForm, Publications, UidUser, UsuarioI, ActiveProfile, Reviews, rRefreshToken, IDHISTORIA, ContactMail, WelcomeMail, ClaveMail, Story, ChangePassword, idUsersReview } from "../models/models.interface";
 import { ResponseClient, ResponseI, ResponseMediaFiles, ResponseMsg, rPublications, rReview, rStories, rStoriesHome, rStory, rValLastReview, rValoracion } from "../models/response.interface";
 
 @Injectable({providedIn: 'root'})
@@ -178,7 +178,7 @@ export class ApiServices{
         return this._http.post<rReview>(cUrl, form);
     }
 
-    GetLastValReviewUser(form:UidUser):Observable<rValLastReview>{
+    GetLastValReviewUser(form:idUsersReview):Observable<rValLastReview>{
         //let cUrl = this.sSiteUrl + "/cl.api.paramours.reviews/api/v1/Review/GetLastValReviewUser";
         let cUrl = "https://cl.api.reviews.paramours.cl/api/v1/Review/GetLastValReviewUser";
         return this._http.post<rValLastReview>(cUrl, form);

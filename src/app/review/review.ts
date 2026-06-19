@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { PublicationForm, Reviews, UidUser } from '../models/models.interface';
+import { idUsersReview, PublicationForm, Reviews, UidUser } from '../models/models.interface';
 import { ApiServices } from '../api/api.service';
 import { ToastService } from '../service/toast.service';
 import { ResponseMsg, rReview, rValLastReview, rValoracion } from '../models/response.interface';
@@ -43,8 +43,9 @@ export class Review implements OnChanges {
   stars: number[] = [];
   hoverRating: number = 0;
 
-  uIdUser: UidUser = {
-    sUid: 0
+  UsersReview: idUsersReview = {
+    sIdUser: 0,
+    sIdUserEval: 0
   }
 
   publication: PublicationForm = {
@@ -98,9 +99,10 @@ export class Review implements OnChanges {
     if (((this.methodservice.getItemLocalStorage("cl.paramours.sUid") != null) && (this.methodservice.getItemLocalStorage("cl.paramours.sUid") != '')) && (this.methodservice.getItemLocalStorage('cl.paramours.sUid') != this.iUser?.toString())) {
       this.stars = Array(this.maxStars).fill(0).map((_, i) => i + 1);
 
-      this.uIdUser.sUid = this.methodservice.getItemLocalStorage("cl.paramours.sUid") as unknown as number;
+      this.UsersReview.sIdUser = this.methodservice.getItemLocalStorage("cl.paramours.sUid") as unknown as number;
+      this.UsersReview.sIdUserEval = this.iUser;
 
-      this.api.GetLastValReviewUser(this.uIdUser).subscribe({
+      this.api.GetLastValReviewUser(this.UsersReview).subscribe({
         next: (data: rValLastReview) => {
           if (data.oValReview != null) {
             if (data.oValReview.nota != null) {

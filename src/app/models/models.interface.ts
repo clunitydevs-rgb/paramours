@@ -141,6 +141,11 @@ export interface Reviews {
     oldnota: number;
 }
 
+export interface idUsersReview {
+    sIdUser: number | null;
+    sIdUserEval: number | null;
+}
+
 export interface LastValReviewUser {
     iD_REVIEW: number;
     iD_USUARIO: number;

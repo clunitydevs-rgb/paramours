@@ -358,3 +358,19 @@ input:-webkit-autofill:active {
     /* Cambia 'white' por tu color de fondo o transparent */
     -webkit-text-fill-color: #fff !important; /* Para mantener el color de texto */
 }
+
+/*
+ * iOS/WebKit amplía el viewport al enfocar controles cuyo texto mide menos
+ * de 16px. Se limita a pantallas móviles y campos editables para no cambiar
+ * la escala visual del resto del sitio ni la experiencia en Android/desktop.
+ */
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 767px) {
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]):not([type="button"]):not([type="submit"]):not([type="reset"]),
+    select,
+    textarea,
+    [contenteditable="true"] {
+      font-size: 16px !important;
+    }
+  }
+}

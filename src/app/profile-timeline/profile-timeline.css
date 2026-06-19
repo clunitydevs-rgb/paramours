@@ -60,7 +60,9 @@
 }
 
 .post-editor-shell {
-    overflow: hidden;
+    /* Syncfusion inserta el selector de emojis dentro de la barra del editor.
+       Si se oculta el overflow, el popup queda recortado (especialmente en mobile). */
+    overflow: visible;
     border: 1px solid rgba(198, 167, 94, 0.35);
     border-radius: 8px;
     background: #18191a;
@@ -580,6 +582,22 @@
 
     :host ::ng-deep .post-editor-shell .e-toolbar .e-toolbar-item .e-tbar-btn {
         min-width: 38px;
+    }
+
+    /* El tema de Syncfusion usa 308 x 330 px para este popup. En pantallas
+       angostas lo ajustamos al viewport y dejamos desplazable su contenido. */
+    :host ::ng-deep .post-editor-shell .e-rte-emojipicker-popup.e-popup.e-popup-open {
+        width: min(308px, calc(100vw - 52px)) !important;
+        max-width: calc(100vw - 52px) !important;
+        height: min(330px, calc(100dvh - 180px)) !important;
+        max-height: calc(100dvh - 180px) !important;
+        z-index: 10002 !important;
+    }
+
+    :host ::ng-deep .post-editor-shell .e-rte-emojipicker-popup .e-rte-emojipicker-btn {
+        height: calc(100% - 79px) !important;
+        overflow-y: auto !important;
+        overscroll-behavior: contain;
     }
 
     :host ::ng-deep .post-editor-shell .e-richtexteditor .e-rte-content .e-content,

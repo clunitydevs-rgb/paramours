@@ -153,6 +153,10 @@
                 placeholder="Cuéntale a los visitantes sobre tus servicios"></textarea>
         </section>
 
+        <div class="save-bottom">
+            <button type="submit" class="btn-gold"><i class="bi bi-save2"></i> Grabar</button>
+        </div>
+
         <section class="settings-card media-card">
             <div>
                 <div class="section-title">Book's</div>
@@ -160,16 +164,13 @@
             </div>
             <div class="loadImgContent">
                 <div class="roundImg">
-                    <input type="file" (change)="CapturarImagenes($event)" multiple accept="image/*, video/*">
+                    <input type="file" #fileInput (change)="CapturarImagenes($event)" multiple accept="image/*, video/*">
                     <i class="bi bi-cloud-plus"></i>
                 </div>
-                <div>Carga tus fotos y videos acá.</div>
+                <div (click)="fileInput.click()">Carga tus fotos y videos acá.</div>
             </div>
         </section>
 
-        <div class="save-bottom">
-            <button type="submit" class="btn-gold"><i class="bi bi-save2"></i> Grabar</button>
-        </div>
     </main>
 </form>
 

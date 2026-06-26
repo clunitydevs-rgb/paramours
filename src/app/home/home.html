@@ -1,72 +1,13 @@
 <app-storieshome></app-storieshome>
 
 <main class="home-shell">
-    <section class="hero-section">
+    <section id="anunciantes" class="profiles-section profiles-section-first" aria-labelledby="profiles-title">
         <div class="container">
-            <div class="row align-items-center g-4">
-                <div class="col-lg-7">
+            <div class="profiles-intro">
+                <div>
                     <span class="section-kicker">Paramours Chile</span>
-                    <h1>Publica tu perfil gratis y gana visibilidad desde el primer d&iacute;a</h1>
-                    <p class="hero-copy">
-                        Plataforma en lanzamiento. Cupos limitados para anunciantes que quieran posicionarse primero.
-                    </p>
-
-                    <div class="benefit-list" aria-label="Beneficios de lanzamiento">
-                        <span><i class="bi bi-gem"></i> Publicaci&oacute;n gratuita por lanzamiento</span>
-                        <span><i class="bi bi-stars"></i> Perfil destacado sin costo inicial</span>
-                        <span><i class="bi bi-graph-up-arrow"></i> Mayor visibilidad en etapa temprana</span>
-                        <span><i class="bi bi-chat-heart"></i> Soporte para crear tu perfil</span>
-                    </div>
-
-                    <div class="hero-actions">
-                        <a routerLink="/account/client" class="btn-premium btn-premium-primary">
-                            Crear mi perfil gratis
-                        </a>
-                        <a href="#anunciantes" class="btn-premium btn-premium-secondary">
-                            Ver anunciantes
-                        </a>
-                    </div>
-                </div>
-
-                <div class="col-lg-5">
-                    <aside class="hero-panel" aria-label="Lanzamiento Paramours">
-                        <span class="panel-label">Lanzamiento activo</span>
-                        <h2>Primeras anunciantes con exposici&oacute;n preferente</h2>
-                        <p>
-                            Una vitrina discreta, visual y preparada para crecer con perfiles reales desde el inicio.
-                        </p>
-                        <div class="launch-status">
-                            <span>Publicaci&oacute;n gratuita</span>
-                            <strong>Etapa inicial</strong>
-                        </div>
-                    </aside>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="scarcity-section">
-        <div class="container">
-            <div class="scarcity-card">
-                <div>
-                    <span class="section-kicker">Lanzamiento inicial</span>
-                    <h2>Cupos destacados limitados para las primeras anunciantes</h2>
-                    <p>Obt&eacute;n mayor visibilidad mientras la plataforma crece.</p>
-                </div>
-                <a routerLink="/account/client" class="btn-premium btn-premium-primary">
-                    Reservar mi espacio
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <section id="anunciantes" class="profiles-section">
-        <div class="container">
-            <div class="section-head">
-                <div>
-                    <span class="section-kicker">Perfiles reales</span>
-                    <h2>Anunciantes destacadas</h2>
-                    <p>Nuevos perfiles se ir&aacute;n incorporando durante la etapa de lanzamiento.</p>
+                    <h1 id="profiles-title">Escorts publicadas</h1>
+                    <p>Explora los perfiles de las chicas, para revisar sus fotos, historias, datos y contacto.</p>
                 </div>
                 <span *ngIf="nTotalClienteCount > 0" class="profiles-count">{{ nTotalClienteCount }} perfiles</span>
             </div>
@@ -81,7 +22,7 @@
                         <span class="verified-badge"><i class="bi bi-shield-fill-check"></i> Verificado</span>
 
                         <div class="profile-overlay">
-                            <h3>{{ i.nombrE_USUARIO }}</h3>
+                            <h2>{{ i.nombrE_USUARIO }}</h2>
                             <div class="profile-data">
                                 <span *ngIf="i.edad">{{ i.edad }} a&ntilde;os</span>
                                 <span *ngIf="getProfileLocation(i)">{{ getProfileLocation(i) }}</span>
@@ -93,71 +34,69 @@
 
             <ng-template #emptyProfiles>
                 <div class="empty-state">
-                    <span class="section-kicker">Pr&oacute;ximamente</span>
-                    <h3>Estamos preparando los primeros perfiles destacados.</h3>
-                    <p>Si eres anunciante, puedes ser parte del lanzamiento y obtener visibilidad preferente.</p>
+                    <span class="section-kicker">Lanzamiento</span>
+                    <h2>Un sitio creado para ti.</h2>
+                    <p>Si eres una chica Escort, puedes ser parte del lanzamiento y obtener visibilidad preferente.</p>
                     <a routerLink="/account/client" class="btn-premium btn-premium-primary">
-                        Publicarme gratis
+                        <i class="bi bi-stars"></i>
+                        Publicate gratis
                     </a>
                 </div>
             </ng-template>
         </div>
     </section>
 
-    <section class="why-section">
+    <section class="publisher-section" aria-labelledby="publisher-title">
         <div class="container">
-            <div class="section-head compact">
-                <span class="section-kicker">Por qu&eacute; publicar en Paramours</span>
-                <h2>Dise&ntilde;ado para darte m&aacute;s visibilidad</h2>
-            </div>
+            <div class="publisher-layout">
+                <div>
+                    <span class="section-kicker">Para nuevas anunciantes</span>
+                    <h2 id="publisher-title">Publica tu perfil gratis durante el lanzamiento</h2>
+                    <p>
+                        Puedes crear tu perfil <strong>sin costo</strong>.
+                    </p>
+                </div>
 
-            <div class="why-grid">
-                <article class="why-card">
-                    <i class="bi bi-bullseye"></i>
-                    <h3>Menos competencia</h3>
-                    <p>Al estar en etapa inicial, tu perfil puede destacar m&aacute;s.</p>
-                </article>
-                <article class="why-card">
-                    <i class="bi bi-award"></i>
-                    <h3>Posici&oacute;n preferente</h3>
-                    <p>Las primeras anunciantes tendr&aacute;n mayor exposici&oacute;n dentro del sitio.</p>
-                </article>
-                <article class="why-card">
-                    <i class="bi bi-layout-text-window-reverse"></i>
-                    <h3>Perfil optimizado</h3>
-                    <p>Una presentaci&oacute;n clara, elegante y pensada para convertir visitas en contactos.</p>
-                </article>
-                <a href="https://wa.me/56965043226?text=Hola,%20Necesito%20ayuda%20para%20publicarme"
-                    target="_blank" style="text-decoration: none;">
-                    <article class="why-card">
-                        <i class="bi bi-headset"></i>
-                        <h3>Soporte directo</h3>
-                        <p>Te ayudamos a crear y mejorar tu perfil si lo necesitas.</p>
-                    </article>
-                </a>
+                <div class="publisher-actions">
+                    <!-- <a routerLink="/account/client" class="btn-premium btn-premium-primary">
+                        <i class="bi bi-person-plus"></i>
+                        Crear perfil
+                    </a>-->
+                    <a href="https://wa.me/56965043226?text=Hola,%20Necesito%20ayuda%20para%20publicarme"
+                        target="_blank" rel="noopener noreferrer" class="btn-premium btn-premium-secondary">
+                        <i class="bi bi-whatsapp"></i>
+                        Ayuda por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="quick-panel-section" aria-label="Beneficios para anunciantes">
+        <div class="container">
+            <div class="quick-panel">
+                <div class="quick-item">
+                    <i class="bi bi-gem"></i>
+                    <span>Publicaci&oacute;n gratuita por lanzamiento</span>
+                </div>
+                <div class="quick-item">
+                    <i class="bi bi-graph-up-arrow"></i>
+                    <span>Mayor visibilidad en etapa temprana</span>
+                </div>
+                <div class="quick-item">
+                    <i class="bi bi-headset"></i>
+                    <span>Soporte para crear o mejorar tu perfil</span>
+                </div>
             </div>
         </div>
     </section>
 
     <section class="activity-section">
         <div class="container">
-            <div class="activity-strip">
+            <div class="activity-strip d-flex justify-content-center flex-wrap gap-3 text-center">
                 <span *ngFor="let mensaje of lanzamientoMensajes">
                     <i class="bi bi-circle-fill"></i> {{ mensaje }}
                 </span>
-            </div>
-        </div>
-    </section>
-
-    <section class="final-cta">
-        <div class="container">
-            <div class="final-cta-inner">
-                <span class="section-kicker">Publicaci&oacute;n gratis</span>
-                <h2>Aprovecha esta etapa inicial</h2>
-                <p>Publica tu perfil gratis y asegura una mejor posici&oacute;n mientras la plataforma crece.</p>
-                <a routerLink="/account/client" class="btn-premium btn-premium-primary">
-                    Crear mi perfil ahora
-                </a>
             </div>
         </div>
     </section>

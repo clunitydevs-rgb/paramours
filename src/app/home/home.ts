@@ -26,7 +26,7 @@ export class Home implements OnInit {
   lanzamientoMensajes: string[] = [
     'Nuevos perfiles cada semana',
     'Etapa de lanzamiento activa',
-    'Anunciantes en proceso de incorporacion'
+    'Chicas en proceso de incorporacion'
   ];
 
   constructor(

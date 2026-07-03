@@ -42,10 +42,10 @@ export class ProfilePostEditor {
   ];
 
   private readonly mobileToolbarItems: ToolbarSettingsModel['items'] = [
-    'EmojiPicker', '|',
-    'Bold', 'Italic', 'Underline', '|',
-    'FontColor', '|',
-    'OrderedList', 'UnorderedList', '|',
+    'EmojiPicker',
+    'Bold', 'Italic', 'Underline',
+    'FontColor',
+    'OrderedList', 'UnorderedList',
     'Undo', 'Redo'
   ];
 
@@ -183,9 +183,9 @@ export class ProfilePostEditor {
     }
 
     const isMobile = window.innerWidth <= 576;
-    this.editorHeight = isMobile ? '180px' : '250px';
+    this.editorHeight = isMobile ? '160px' : '250px';
     this.CustomToolbar = {
-      type: ToolbarType.Scrollable,
+      type: isMobile ? ToolbarType.Popup : ToolbarType.Scrollable,
       items: isMobile ? this.mobileToolbarItems : this.desktopToolbarItems
     };
   }

@@ -183,7 +183,7 @@ export class ProfilePostEditor {
     }
 
     const isMobile = window.innerWidth <= 576;
-    this.editorHeight = isMobile ? '210px' : '250px';
+    this.editorHeight = isMobile ? '180px' : '250px';
     this.CustomToolbar = {
       type: ToolbarType.Scrollable,
       items: isMobile ? this.mobileToolbarItems : this.desktopToolbarItems

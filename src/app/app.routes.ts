@@ -1,23 +1,15 @@
 import { Routes } from '@angular/router';
-import { Home } from './home/home';
-import { Login } from './login/login';
-import { Account } from './account/account';
-import { Profile } from './profile/profile';
-import { Settingaccount } from './settingaccount/settingaccount';
-import { Pagenotfound } from './pagenotfound/pagenotfound';
-import { Authkeys } from './authkeys/authkeys';
-import { ManageProfile } from './manage-profile/manage-profile';
 
 export const routes: Routes = [
     {path:'', redirectTo:'/home', pathMatch:'full'},
-    {path:'home', component:Home},
-    {path:'login', component:Login},
-    {path:'authkeys', component:Authkeys},
-    {path:'account/:typeuser', component:Account},
-    {path:'profile', component:Profile},
-    {path:'profile/:sUid/:sLug', component:Profile},
-    {path:'settingaccount', component: Settingaccount},
-    {path:'manage-profile', component: ManageProfile},
-    {path:'404', component:Pagenotfound},
+    {path:'home', loadComponent: () => import('./home/home').then(m => m.Home)},
+    {path:'login', loadComponent: () => import('./login/login').then(m => m.Login)},
+    {path:'authkeys', loadComponent: () => import('./authkeys/authkeys').then(m => m.Authkeys)},
+    {path:'account/:typeuser', loadComponent: () => import('./account/account').then(m => m.Account)},
+    {path:'profile', loadComponent: () => import('./profile/profile').then(m => m.Profile)},
+    {path:'profile/:sUid/:sLug', loadComponent: () => import('./profile/profile').then(m => m.Profile)},
+    {path:'settingaccount', loadComponent: () => import('./settingaccount/settingaccount').then(m => m.Settingaccount)},
+    {path:'manage-profile', loadComponent: () => import('./manage-profile/manage-profile').then(m => m.ManageProfile)},
+    {path:'404', loadComponent: () => import('./pagenotfound/pagenotfound').then(m => m.Pagenotfound)},
     {path:'**', redirectTo:'/404'}
 ];

@@ -198,11 +198,19 @@
         </div>
     </div>
 </div>
-<app-identitycheck></app-identitycheck>
+@defer (when !isOwner) {
+    <app-identitycheck></app-identitycheck>
+}
 <app-stories [iUser]="this.uIdUser.sUid" [sNomUser]="oCliente.nombrE_USUARIO" [sUrlProfile]="proFileImg"></app-stories>
-<app-story-manager *ngIf="!isOwner" (storiesChanged)="refreshStories()"></app-story-manager>
+@defer (when !isOwner) {
+    <app-story-manager (storiesChanged)="refreshStories()"></app-story-manager>
+}
 <app-gallery-lightbox [showDelete]="isOwner"></app-gallery-lightbox>
 <app-review [iUser]="this.uIdUser.sUid" [bNoOwner]="isOwner" [abrir]="mostrarModal"
     (cerrar)="cerrarModal()"></app-review>
-<app-profile-timeline [showDelete]="isOwner" [iUser]="this.uIdUser.sUid" [sNomUser]="oCliente.nombrE_USUARIO"
-    [sUrlProfile]="proFileImg"></app-profile-timeline>
+@defer (on viewport) {
+    <app-profile-timeline [showDelete]="isOwner" [iUser]="this.uIdUser.sUid" [sNomUser]="oCliente.nombrE_USUARIO"
+        [sUrlProfile]="proFileImg"></app-profile-timeline>
+} @placeholder {
+    <div class="container mt-4"></div>
+}

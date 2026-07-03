@@ -49,49 +49,9 @@
   </div>
 </div>
 
-<div class="modal fade" id="myModalPost" tabindex="-1" aria-labelledby="myModalPostLabel" aria-hidden="true">
-  <div class="modal-dialog modal-fullscreen modal-dialog-centered modal-post-container">
-    <div class="modal-content d-flex justify-content-center align-items-center md-load-post">
-      <button id="BtnCloseModal" class="close-btn" data-bs-dismiss="modal" aria-label="Close">
-        <i class="bi bi-x-circle icon-close"></i>
-      </button>
-      <div class="modal-body">
-        <form [formGroup]="frmPublication" (ngSubmit)="onPost()">
-          <div class="post-form-shell col-border-color">
-            <div class="md-head text-center">
-              <div class="lbl_title_post">Crea una nueva publicacion</div>
-            </div>
-            <div class="post-editor-shell">
-              <ejs-richtexteditor #exampleRTE [toolbarSettings]="CustomToolbar"
-                [emojiPickerSettings]="emojiPickerSettings" [height]="editorHeight" placeholder="Escribe tu publicacion aca">
-                <ng-template #valueTemplate>
-
-                </ng-template>
-              </ejs-richtexteditor>
-            </div>
-            <div class="post-actions col-bordert-color col-borderd-color">
-              <div class="loadImgContent">
-                <div class="roundImg">
-                  <input type="file" id="input-file-post" class="form-control" aria-label="Sube tu archivo"
-                    (change)="onFileSelected($event)" style="display: none;" alt="Multimedia">
-                  <label for="input-file-post" class="btn-load-data icon-position"><i
-                      class="bi bi-card-image"></i></label>
-                </div>
-                <div>
-                  <button type="submit" class="btn btn-bd-login">Postear</button>
-                </div>
-              </div>
-            </div>
-            <div class="post-preview" [hidden]="bImage && bVideo">
-              <img [src]="imageUrl" [hidden]="bImage" alt="Vista previa de la imagen">
-              <video *ngIf="videoUrl" [hidden]="bVideo" [src]="videoUrl" controls></video>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+@defer (when showDelete === false) {
+  <app-profile-post-editor (posted)="LoadPublications(true)"></app-profile-post-editor>
+}
 
 <div class="modal fade" id="myViewVideo" tabindex="-1" role="dialog" aria-labelledby="myViewVideoLabel"
   aria-hidden="true">

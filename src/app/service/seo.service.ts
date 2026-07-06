@@ -53,7 +53,7 @@ export class SeoService {
   setProfileSeo(profile: Cliente, profileUrl: string, imageUrl: string): void {
     const profileName = this.cleanText(profile.nombrE_USUARIO) || 'Perfil Paramours';
     const description = this.buildProfileDescription(profile, profileName);
-    const title = `${profileName} | Paramours`;
+    const title = `Escort ${profileName} | Paramours`;
 
     this.title.setTitle(title);
     this.setDescription(description);

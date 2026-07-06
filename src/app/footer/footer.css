@@ -556,6 +556,26 @@
     line-height: 1.7;
 }
 
+.footer-directory-link {
+    display: inline-flex;
+    margin-top: 12px;
+    opacity: 0.48;
+    line-height: 0;
+    transition: opacity 180ms ease;
+}
+
+.footer-directory-link:hover,
+.footer-directory-link:focus-visible {
+    opacity: 0.72;
+}
+
+.footer-directory-link img {
+    display: block;
+    width: auto;
+    max-width: 120px;
+    max-height: 32px;
+}
+
 .container-contact .lightbox {
     background: #0F0F10;
 }

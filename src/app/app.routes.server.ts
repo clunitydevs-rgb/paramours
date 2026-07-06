@@ -7,7 +7,7 @@ export const serverRoutes: ServerRoute[] = [
   },
   {
     path: 'profile/:sUid/:sLug',
-    renderMode: RenderMode.Client
+    renderMode: RenderMode.Server
   },
   {
     path: '**',

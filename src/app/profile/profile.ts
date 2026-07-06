@@ -14,6 +14,7 @@ import { Review } from '../review/review';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Identitycheck } from "../identitycheck/identitycheck";
 import { StoryManager } from '../story-manager/story-manager';
+import { SeoService } from '../service/seo.service';
 
 interface Files {
   mFile: File
@@ -120,7 +121,8 @@ export class Profile implements OnInit {
     private api: ApiServices,
     private methodservice: MethodService,
     private toastService: ToastService,
-    private analyticsService: AnalyticsService
+    private analyticsService: AnalyticsService,
+    private seoService: SeoService
   ) { }
 
   ngOnInit(): void {
@@ -232,6 +234,12 @@ export class Profile implements OnInit {
             else
               this.proFileImg = this.sUrlRps + 'avatar_visitante.png';
           }
+
+          this.seoService.setProfileSeo(
+            this.oCliente,
+            this.buildProfileUrl(),
+            this.proFileImg
+          );
 
           if (this.oCliente.comuna != null && this.oCliente.comuna.toString() != '')
             this.comuna = this.oComunas.filter(e => e.id.toString() === this.oCliente.comuna.toString()).map(e => e.nombre);
@@ -390,6 +398,11 @@ export class Profile implements OnInit {
 
   editProfile() {
     this.router.navigate(['/settingaccount'])
+  }
+
+  private buildProfileUrl(): string {
+    const slug = this.activateroute.snapshot.paramMap.get('sLug') || this.oCliente.nombrE_USUARIO.replace(/\s+/g, '-');
+    return `https://paramours.cl/profile/${this.oCliente.iD_USUARIO}/${slug}`;
   }
 
   public mostrarModal = false;

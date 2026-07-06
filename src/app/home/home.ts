@@ -9,6 +9,7 @@ import { Storieshome } from "../storieshome/storieshome";
 import { MethodService } from '../method/method.service';
 import { Cliente } from '../models/models.interface';
 import { EMPTY, catchError, timeout } from 'rxjs';
+import { SeoService } from '../service/seo.service';
 
 @Component({
   selector: 'app-home',
@@ -33,10 +34,13 @@ export class Home implements OnInit {
     private api: ApiServices,
     private methodservice: MethodService,
     private toastService: ToastService,
+    private seoService: SeoService,
     @Inject(PLATFORM_ID) private platformId: object
   ) { }
 
   ngOnInit(): void {
+    this.seoService.setHomeSeo();
+
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }

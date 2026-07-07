@@ -73,6 +73,9 @@
                 
             </div>-->
             <div class="ps-2 small mb-2">
+                <span *ngIf="ciudad != null && ciudad.toString() !== ''"><i
+                        class="bi bi-geo-alt asset-color-silver"></i> </span> {{ ciudad != null && ciudad.toString() !==
+                '' ? ciudad + ' ·' : '' }}
                 <span *ngIf="comuna != null && comuna.toString() !== ''"><i
                         class="bi bi-geo-alt asset-color-silver"></i> </span> {{ comuna != null && comuna.toString() !==
                 '' ? comuna + ' ·' : '' }}

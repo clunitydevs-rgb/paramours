@@ -39,6 +39,8 @@ export class Settingaccount {
   public proFileImg: string | null = null;
   public dataOutput: string = '';
   public bShowComuna = true;
+  public bShowMetro = true;
+  public oCiudades:any;
   public oComunas: any;
   public oNacionalidades: any;
   public oGeneros: any;
@@ -116,6 +118,7 @@ export class Settingaccount {
     peso: new FormControl(''),
     horario: new FormControl(''),
     horario_parttime: new FormControl(''),
+    ciudad: new FormControl(''),
     ubicacion: new FormControl(''),
     metro: new FormControl(''),
     valor: new FormControl(''),
@@ -169,6 +172,10 @@ export class Settingaccount {
   LoadProfile() {
     var sUid = this.methodservice.getItemLocalStorage("cl.paramours.sUid");
 
+    this.api.getCiudades().subscribe(data => {
+      this.oCiudades = data;
+    });
+
     this.api.getComunas().subscribe(data => {
       this.oComunas = data;
     });
@@ -211,10 +218,18 @@ export class Settingaccount {
           if (this.oCliente.horariO_ATENCION != null)
             this.frmAccount.controls.horario.setValue(this.oCliente.horariO_ATENCION.toString());
 
+          if (this.oCliente.ciudad != null){
+            this.frmAccount.controls.ciudad.setValue(this.oCliente.ciudad.toString());
+            if (this.oCliente.ciudad.toString() != '') {
+              this.bShowComuna = false;
+              this.getComunas(this.oCliente.ciudad.toString());
+            }
+          }
+
           if (this.oCliente.comuna != null) {
             this.frmAccount.controls.ubicacion.setValue(this.oCliente.comuna.toString());
             if (this.oCliente.comuna.toString() != '') {
-              this.bShowComuna = false;
+              this.bShowMetro = false;
               this.getMetros(this.oCliente.comuna.toString());
             }
           }
@@ -308,9 +323,30 @@ export class Settingaccount {
     });
   }
 
-  onComunaSelect(event: Event): void {
+  onCiudadSelect(event: Event): void {
     const nValue = (event.target as HTMLInputElement).value;
     this.bShowComuna = false;
+
+    this.getComunas(nValue);
+
+  }
+
+  getComunas(dVal: string) {
+    this.api.getComunas().subscribe(data => {
+      this.oComunas = [];
+
+      for (let items of data) {
+        if (items["id_ciudad"] == dVal) {
+          this.oComunas.push(items);
+        }
+      }
+
+    })
+  }
+
+  onComunaSelect(event: Event): void {
+    const nValue = (event.target as HTMLInputElement).value;
+    this.bShowMetro = false;
 
     this.getMetros(nValue);
 
@@ -343,7 +379,7 @@ export class Settingaccount {
       this.oCliente.peso = parseInt(this.frmAccount.get('peso')?.value!);
     this.oCliente.horariO_ATENCION = parseInt(this.frmAccount.get('horario')?.value!);
     this.oCliente.horariO_PART_TIME = this.frmAccount.get('horario_parttime')?.value!;
-    this.oCliente.ciudad = 0;
+    this.oCliente.ciudad = parseInt(this.frmAccount.get('ciudad')?.value!);
     this.oCliente.comuna = parseInt(this.frmAccount.get('ubicacion')?.value!);
     this.oCliente.metro = parseInt(this.frmAccount.get('metro')?.value!);
     if (this.frmAccount.get('valor')?.value! != null && this.frmAccount.get('valor')?.value! != '') {

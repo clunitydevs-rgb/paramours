@@ -208,6 +208,11 @@ export class ApiServices{
         return this._http.post<ResponseI>(cUrl, form);
     }
 
+    getCiudades():Observable<any>{
+        let cUrl = "/assets/data/ciudades.json";
+        return this._http.get<any>(cUrl);
+    }
+
     getComunas():Observable<any>{
         let cUrl = "/assets/data/comunas.json";
         return this._http.get<any>(cUrl);

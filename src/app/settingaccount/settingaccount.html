@@ -95,11 +95,15 @@
             <div class="form-grid three">
                 <div class="field-group">
                     <label class="form-label">Ubicación</label>
-                    <select class="form-select mb-2" formControlName="ubicacion" (change)="onComunaSelect($event)">
+                    <select class="form-select mb-2" formControlName="ciudad" (change)="onCiudadSelect($event)">
+                        <option value="">Seleccione ciudad</option>
+                        <option *ngFor="let ciudad of oCiudades" value="{{ ciudad.id }}">{{ ciudad.nombre }}</option>
+                    </select>
+                    <select [hidden]="bShowComuna" class="form-select mb-2" formControlName="ubicacion" (change)="onComunaSelect($event)">
                         <option value="">Seleccione comuna</option>
                         <option *ngFor="let comunas of oComunas" value="{{ comunas.id }}">{{ comunas.nombre }}</option>
                     </select>
-                    <select [hidden]="bShowComuna" class="form-select" formControlName="metro">
+                    <select [hidden]="bShowMetro" class="form-select" formControlName="metro">
                         <option value="">Seleccione metro</option>
                         <option *ngFor="let metros of oMetros" value="{{ metros.idMetro }}">{{ metros.NombreMetro }}</option>
                     </select>

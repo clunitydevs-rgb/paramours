@@ -40,6 +40,9 @@ export class Profile implements OnInit {
 
   nCount = 0;
 
+  public oCiudades: Array<any> = [];
+  public ciudad: Array<any> = [];
+
   public oComunas: Array<any> = [];
   public comuna: Array<any> = [];
 
@@ -169,6 +172,12 @@ export class Profile implements OnInit {
 
   LoadProfile() {
 
+    this.api.getCiudades().subscribe(data => {
+      for (let items of data) {
+        this.oCiudades.push(items);
+      }
+    });
+
     this.api.getComunas().subscribe(data => {
       for (let items of data) {
         this.oComunas.push(items);
@@ -240,6 +249,9 @@ export class Profile implements OnInit {
             this.buildProfileUrl(),
             this.proFileImg
           );
+
+          if (this.oCliente.ciudad != null && this.oCliente.ciudad.toString() != '')
+            this.ciudad = this.oCiudades.filter(e => e.id.toString() === this.oCliente.ciudad.toString()).map(e => e.nombre);
 
           if (this.oCliente.comuna != null && this.oCliente.comuna.toString() != '')
             this.comuna = this.oComunas.filter(e => e.id.toString() === this.oCliente.comuna.toString()).map(e => e.nombre);

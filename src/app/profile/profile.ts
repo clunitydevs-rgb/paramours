@@ -253,8 +253,10 @@ export class Profile implements OnInit {
           if (this.oCliente.ciudad != null && this.oCliente.ciudad.toString() != '')
             this.ciudad = this.oCiudades.filter(e => e.id.toString() === this.oCliente.ciudad.toString()).map(e => e.nombre);
 
-          if (this.oCliente.comuna != null && this.oCliente.comuna.toString() != '')
+          if (this.oCliente.ciudad?.toString() === '0' && this.oCliente.comuna != null && this.oCliente.comuna.toString() != '')
             this.comuna = this.oComunas.filter(e => e.id.toString() === this.oCliente.comuna.toString()).map(e => e.nombre);
+          else
+            this.comuna = [];
 
           if (this.oCliente.metro != null && this.oCliente.metro.toString() != '')
             this.metro = this.oMetros.filter(e => e.idComuna.toString() === this.oCliente.comuna.toString() && e.idMetro.toString() === this.oCliente.metro.toString()).map(e => e.NombreMetro);

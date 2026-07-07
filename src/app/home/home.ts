@@ -24,6 +24,8 @@ export class Home implements OnInit {
   arrItems: Cliente[] = [];
   nTotalClienteCount: number = 0;
   oData: Cliente[] = [];
+  oCiudades: Array<any> = [];
+  oComunas: Array<any> = [];
   lanzamientoMensajes: string[] = [
     'Nuevos perfiles cada semana',
     'Etapa de lanzamiento activa',
@@ -70,6 +72,14 @@ export class Home implements OnInit {
       }
     });
 
+    this.api.getCiudades().subscribe(data => {
+      this.oCiudades = data;
+    });
+
+    this.api.getComunas().subscribe(data => {
+      this.oComunas = data;
+    });
+
     this.getStories();
   }
 
@@ -78,13 +88,43 @@ export class Home implements OnInit {
   }
 
   getProfileLocation(item: Cliente): string {
-    const comuna = this.getLocationName((item as any).comuna);
-    const ciudad = this.getLocationName((item as any).ciudad);
-    return [comuna, ciudad].filter(Boolean).join(', ');
+    const ciudadId = this.getLocationId((item as any).ciudad);
+
+    if (ciudadId === 0) {
+      return this.getComunaName((item as any).comuna);
+    }
+
+    if (ciudadId !== null) {
+      return this.getCiudadName(ciudadId);
+    }
+
+    return this.getLocationName((item as any).ciudad);
   }
 
   private getLocationName(value: unknown): string {
     return typeof value === 'string' ? value.trim() : '';
+  }
+
+  private getLocationId(value: unknown): number | null {
+    if (typeof value === 'number') {
+      return value;
+    }
+
+    if (typeof value === 'string' && value.trim() !== '') {
+      const parsedValue = Number(value);
+      return Number.isNaN(parsedValue) ? null : parsedValue;
+    }
+
+    return null;
+  }
+
+  private getCiudadName(ciudadId: number): string {
+    return this.oCiudades.find(ciudad => ciudad.id === ciudadId)?.nombre ?? '';
+  }
+
+  private getComunaName(comunaId: unknown): string {
+    const normalizedComunaId = comunaId?.toString();
+    return this.oComunas.find(comuna => comuna.id?.toString() === normalizedComunaId)?.nombre ?? '';
   }
 
   getStories() {

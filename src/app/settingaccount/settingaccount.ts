@@ -41,7 +41,7 @@ export class Settingaccount {
   public bShowComuna = true;
   public bShowMetro = true;
   public oCiudades:any;
-  public oComunas: any;
+  public oComunas: Array<any> = [];
   public oNacionalidades: any;
   public oGeneros: any;
   public oMetros: Array<any> = [];
@@ -221,16 +221,7 @@ export class Settingaccount {
           if (this.oCliente.ciudad != null){
             this.frmAccount.controls.ciudad.setValue(this.oCliente.ciudad.toString());
             if (this.oCliente.ciudad.toString() != '') {
-              this.bShowComuna = false;
-              this.getComunas(this.oCliente.ciudad.toString());
-            }
-          }
-
-          if (this.oCliente.comuna != null) {
-            this.frmAccount.controls.ubicacion.setValue(this.oCliente.comuna.toString());
-            if (this.oCliente.comuna.toString() != '') {
-              this.bShowMetro = false;
-              this.getMetros(this.oCliente.comuna.toString());
+              this.getComunas(this.oCliente.ciudad.toString(), this.oCliente.comuna?.toString());
             }
           }
 
@@ -325,20 +316,38 @@ export class Settingaccount {
 
   onCiudadSelect(event: Event): void {
     const nValue = (event.target as HTMLInputElement).value;
-    this.bShowComuna = false;
+    this.frmAccount.controls.ubicacion.setValue('');
+    this.frmAccount.controls.metro.setValue('');
+    this.bShowComuna = true;
+    this.bShowMetro = true;
+    this.oComunas = [];
+    this.oMetros = [];
 
     this.getComunas(nValue);
 
   }
 
-  getComunas(dVal: string) {
-    this.api.getComunas().subscribe(data => {
-      this.oComunas = [];
+  getComunas(dVal: string, selectedComuna: string = '') {
+    if (dVal === '') {
+      this.bShowComuna = true;
+      this.bShowMetro = true;
+      return;
+    }
 
-      for (let items of data) {
-        if (items["id_ciudad"] == dVal) {
-          this.oComunas.push(items);
-        }
+    this.api.getComunas().subscribe(data => {
+      this.oComunas = data.filter((items: any) => items["id_ciudad"] == dVal);
+      this.bShowComuna = this.oComunas.length === 0;
+      this.bShowMetro = true;
+
+      if (this.bShowComuna) {
+        this.frmAccount.controls.ubicacion.setValue('');
+        this.frmAccount.controls.metro.setValue('');
+        return;
+      }
+
+      if (selectedComuna !== '' && this.oComunas.some((items: any) => items["id"] == selectedComuna)) {
+        this.frmAccount.controls.ubicacion.setValue(selectedComuna);
+        this.getMetros(selectedComuna);
       }
 
     })
@@ -346,20 +355,28 @@ export class Settingaccount {
 
   onComunaSelect(event: Event): void {
     const nValue = (event.target as HTMLInputElement).value;
-    this.bShowMetro = false;
+    this.frmAccount.controls.metro.setValue('');
+    this.bShowMetro = true;
+    this.oMetros = [];
 
     this.getMetros(nValue);
 
   }
 
   getMetros(dVal: string) {
-    this.api.getMetros().subscribe(data => {
-      this.oMetros = [];
+    if (dVal === '') {
+      this.bShowMetro = true;
+      return;
+    }
 
-      for (let items of data) {
-        if (items["idComuna"] == dVal) {
-          this.oMetros.push(items);
-        }
+    this.api.getMetros().subscribe(data => {
+      this.oMetros = data.filter((items: any) =>
+        items["idComuna"] == dVal && items["NombreMetro"] !== 'Sin estaciones'
+      );
+      this.bShowMetro = this.oMetros.length === 0;
+
+      if (this.bShowMetro) {
+        this.frmAccount.controls.metro.setValue('');
       }
 
     })
@@ -379,9 +396,9 @@ export class Settingaccount {
       this.oCliente.peso = parseInt(this.frmAccount.get('peso')?.value!);
     this.oCliente.horariO_ATENCION = parseInt(this.frmAccount.get('horario')?.value!);
     this.oCliente.horariO_PART_TIME = this.frmAccount.get('horario_parttime')?.value!;
-    this.oCliente.ciudad = parseInt(this.frmAccount.get('ciudad')?.value!);
-    this.oCliente.comuna = parseInt(this.frmAccount.get('ubicacion')?.value!);
-    this.oCliente.metro = parseInt(this.frmAccount.get('metro')?.value!);
+    this.oCliente.ciudad = this.parseFormNumber('ciudad');
+    this.oCliente.comuna = this.bShowComuna ? 0 : this.parseFormNumber('ubicacion');
+    this.oCliente.metro = this.bShowMetro ? 0 : this.parseFormNumber('metro');
     if (this.frmAccount.get('valor')?.value! != null && this.frmAccount.get('valor')?.value! != '') {
       const valor = this.frmAccount.get('valor')?.value!;
       this.oCliente.valor = parseInt(valor.replace(/[.,]/g, ''));
@@ -407,6 +424,12 @@ export class Settingaccount {
           this.toastService.error('Problemas con los servicios para actualizar los datos del perfil!');
       }
     });
+  }
+
+  private parseFormNumber(controlName: string): number {
+    const value = this.frmAccount.get(controlName)?.value;
+    const parsedValue = parseInt(value ?? '');
+    return Number.isNaN(parsedValue) ? 0 : parsedValue;
   }
 
   archivos: any = [];

@@ -26,6 +26,7 @@ export class Home implements OnInit {
   oData: Cliente[] = [];
   oCiudades: Array<any> = [];
   oComunas: Array<any> = [];
+  oMetros: Array<any> = [];
   lanzamientoMensajes: string[] = [
     'Nuevos perfiles cada semana',
     'Etapa de lanzamiento activa',
@@ -80,6 +81,10 @@ export class Home implements OnInit {
       this.oComunas = data;
     });
 
+    this.api.getMetros().subscribe(data => {
+      this.oMetros = data;
+    });
+
     this.getStories();
   }
 
@@ -89,16 +94,25 @@ export class Home implements OnInit {
 
   getProfileLocation(item: Cliente): string {
     const ciudadId = this.getLocationId((item as any).ciudad);
+    const ciudadName = ciudadId !== null
+      ? this.getCiudadName(ciudadId)
+      : this.getLocationName((item as any).ciudad);
 
-    if (ciudadId === 0) {
+    if (ciudadId === 0 || ciudadName.toLowerCase() === 'santiago') {
+      const metroName = this.getMetroName((item as any).metro, (item as any).comuna);
+
+      if (metroName !== '' && metroName.toLowerCase() !== 'sin estaciones') {
+        return metroName;
+      }
+
       return this.getComunaName((item as any).comuna);
     }
 
     if (ciudadId !== null) {
-      return this.getCiudadName(ciudadId);
+      return ciudadName;
     }
 
-    return this.getLocationName((item as any).ciudad);
+    return ciudadName;
   }
 
   private getLocationName(value: unknown): string {
@@ -125,6 +139,33 @@ export class Home implements OnInit {
   private getComunaName(comunaId: unknown): string {
     const normalizedComunaId = comunaId?.toString();
     return this.oComunas.find(comuna => comuna.id?.toString() === normalizedComunaId)?.nombre ?? '';
+  }
+
+  private getMetroName(metroId: unknown, comunaId: unknown): string {
+    const normalizedMetroId = metroId?.toString().trim();
+    const normalizedComunaId = comunaId?.toString().trim();
+
+    if (!normalizedMetroId) {
+      return '';
+    }
+
+    const belongsToComuna = (metro: any) =>
+      !normalizedComunaId || metro.idComuna?.toString() === normalizedComunaId;
+
+    const metroById = this.oMetros.find(metro =>
+      metro.idMetro?.toString() === normalizedMetroId && belongsToComuna(metro)
+    );
+
+    if (metroById) {
+      return metroById.NombreMetro ?? '';
+    }
+
+    const metroByName = this.oMetros.find(metro =>
+      metro.NombreMetro?.toString().trim().toLowerCase() === normalizedMetroId.toLowerCase()
+      && belongsToComuna(metro)
+    );
+
+    return metroByName ? metroByName.NombreMetro : normalizedMetroId;
   }
 
   getStories() {

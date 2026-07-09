@@ -12,6 +12,7 @@ import { ToastService } from '../service/toast.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Identitycheck } from "../identitycheck/identitycheck";
 import { AnalyticsService } from '../service/analytics.service';
+import { forkJoin } from 'rxjs';
 
 interface Item {
   iId: number,
@@ -40,11 +41,13 @@ export class Settingaccount {
   public dataOutput: string = '';
   public bShowComuna = true;
   public bShowMetro = true;
-  public oCiudades:any;
+  public oCiudades: Array<any> = [];
   public oComunas: Array<any> = [];
+  private oComunasCatalog: Array<any> = [];
   public oNacionalidades: any;
   public oGeneros: any;
   public oMetros: Array<any> = [];
+  private oMetrosCatalog: Array<any> = [];
   public oColorOjos: any;
   public oColorCabello: any;
   public oBiotipo: any;
@@ -172,14 +175,6 @@ export class Settingaccount {
   LoadProfile() {
     var sUid = this.methodservice.getItemLocalStorage("cl.paramours.sUid");
 
-    this.api.getCiudades().subscribe(data => {
-      this.oCiudades = data;
-    });
-
-    this.api.getComunas().subscribe(data => {
-      this.oComunas = data;
-    });
-
     this.api.getNaciones().subscribe(data => {
       this.oNacionalidades = data;
     });
@@ -200,8 +195,17 @@ export class Settingaccount {
       this.oBiotipo = data;
     });
 
-    this.api.getClientByToken().subscribe({
-      next: (data: ResponseClient) => {
+    forkJoin({
+      ciudades: this.api.getCiudades(),
+      comunas: this.api.getComunas(),
+      metros: this.api.getMetros(),
+      cliente: this.api.getClientByToken()
+    }).subscribe({
+      next: ({ ciudades, comunas, metros, cliente: data }) => {
+        this.oCiudades = ciudades;
+        this.oComunasCatalog = comunas;
+        this.oMetrosCatalog = metros;
+
         if ((data.ncoderror == '0') && (sUid === data.oClient.iD_USUARIO.toString())) {
           this.oCliente = data.oClient;
           this.frmAccount.controls.email.setValue(this.oCliente.correo);
@@ -218,15 +222,13 @@ export class Settingaccount {
           if (this.oCliente.horariO_ATENCION != null)
             this.frmAccount.controls.horario.setValue(this.oCliente.horariO_ATENCION.toString());
 
-          if (this.oCliente.ciudad != null){
-            this.frmAccount.controls.ciudad.setValue(this.oCliente.ciudad.toString());
-            if (this.oCliente.ciudad.toString() != '') {
-              this.getComunas(this.oCliente.ciudad.toString(), this.oCliente.comuna?.toString());
+          if (this.oCliente.ciudad != null) {
+            const ciudad = this.normalizeOptionValue(this.oCliente.ciudad, this.oCiudades, 'id', 'nombre');
+            this.frmAccount.controls.ciudad.setValue(ciudad);
+            if (ciudad !== '') {
+              this.getComunas(ciudad, this.oCliente.comuna?.toString(), this.oCliente.metro?.toString());
             }
           }
-
-          if (this.oCliente.metro != null)
-            this.frmAccount.controls.metro.setValue(this.oCliente.metro.toString());
 
           this.frmAccount.controls.medidas.setValue(this.oCliente.medidas);
           this.frmAccount.controls.altura.setValue(this.oCliente.altura);
@@ -327,30 +329,31 @@ export class Settingaccount {
 
   }
 
-  getComunas(dVal: string, selectedComuna: string = '') {
-    if (dVal === '') {
+  getComunas(dVal: string, selectedComuna: string = '', selectedMetro: string = '') {
+    const ciudad = this.normalizeOptionValue(dVal, this.oCiudades, 'id', 'nombre');
+
+    if (ciudad === '') {
       this.bShowComuna = true;
       this.bShowMetro = true;
       return;
     }
 
-    this.api.getComunas().subscribe(data => {
-      this.oComunas = data.filter((items: any) => items["id_ciudad"] == dVal);
-      this.bShowComuna = this.oComunas.length === 0;
-      this.bShowMetro = true;
+    const comunas = this.oComunasCatalog;
+    this.oComunas = comunas.filter((items: any) => items["id_ciudad"]?.toString() === ciudad);
+    this.bShowComuna = this.oComunas.length === 0;
+    this.bShowMetro = true;
 
-      if (this.bShowComuna) {
-        this.frmAccount.controls.ubicacion.setValue('');
-        this.frmAccount.controls.metro.setValue('');
-        return;
-      }
+    if (this.bShowComuna) {
+      this.frmAccount.controls.ubicacion.setValue('');
+      this.frmAccount.controls.metro.setValue('');
+      return;
+    }
 
-      if (selectedComuna !== '' && this.oComunas.some((items: any) => items["id"] == selectedComuna)) {
-        this.frmAccount.controls.ubicacion.setValue(selectedComuna);
-        this.getMetros(selectedComuna);
-      }
-
-    })
+    const comuna = this.normalizeOptionValue(selectedComuna, this.oComunas, 'id', 'nombre');
+    if (comuna !== '' && this.oComunas.some((items: any) => items["id"]?.toString() === comuna)) {
+      this.frmAccount.controls.ubicacion.setValue(comuna);
+      this.getMetros(comuna, selectedMetro);
+    }
   }
 
   onComunaSelect(event: Event): void {
@@ -363,23 +366,29 @@ export class Settingaccount {
 
   }
 
-  getMetros(dVal: string) {
-    if (dVal === '') {
+  getMetros(dVal: string, selectedMetro: string = '') {
+    const comuna = this.normalizeOptionValue(dVal, this.oComunas, 'id', 'nombre');
+
+    if (comuna === '') {
       this.bShowMetro = true;
       return;
     }
 
-    this.api.getMetros().subscribe(data => {
-      this.oMetros = data.filter((items: any) =>
-        items["idComuna"] == dVal && items["NombreMetro"] !== 'Sin estaciones'
-      );
-      this.bShowMetro = this.oMetros.length === 0;
+    const metros = this.oMetrosCatalog;
+    this.oMetros = metros.filter((items: any) =>
+      items["idComuna"]?.toString() === comuna && items["NombreMetro"] !== 'Sin estaciones'
+    );
+    this.bShowMetro = this.oMetros.length === 0;
 
-      if (this.bShowMetro) {
-        this.frmAccount.controls.metro.setValue('');
-      }
+    if (this.bShowMetro) {
+      this.frmAccount.controls.metro.setValue('');
+      return;
+    }
 
-    })
+    const metro = this.normalizeOptionValue(selectedMetro, this.oMetros, 'idMetro', 'NombreMetro');
+    if (metro !== '' && this.oMetros.some((items: any) => items["idMetro"]?.toString() === metro)) {
+      this.frmAccount.controls.metro.setValue(metro);
+    }
   }
 
   goBtnAceptar() {
@@ -430,6 +439,28 @@ export class Settingaccount {
     const value = this.frmAccount.get(controlName)?.value;
     const parsedValue = parseInt(value ?? '');
     return Number.isNaN(parsedValue) ? 0 : parsedValue;
+  }
+
+  private normalizeOptionValue(value: unknown, options: Array<any>, idKey: string, labelKey: string): string {
+    if (value === null || value === undefined) {
+      return '';
+    }
+
+    const normalizedValue = value.toString().trim();
+    if (normalizedValue === '') {
+      return '';
+    }
+
+    const optionById = options.find(option => option[idKey]?.toString() === normalizedValue);
+    if (optionById) {
+      return optionById[idKey].toString();
+    }
+
+    const optionByLabel = options.find(option =>
+      option[labelKey]?.toString().trim().toLowerCase() === normalizedValue.toLowerCase()
+    );
+
+    return optionByLabel ? optionByLabel[idKey].toString() : normalizedValue;
   }
 
   archivos: any = [];

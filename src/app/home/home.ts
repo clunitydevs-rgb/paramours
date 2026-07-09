@@ -8,7 +8,7 @@ import { ResponseClient, rStoriesHome } from '../models/response.interface';
 import { Storieshome } from "../storieshome/storieshome";
 import { MethodService } from '../method/method.service';
 import { Cliente } from '../models/models.interface';
-import { EMPTY, catchError, timeout } from 'rxjs';
+import { EMPTY, catchError, forkJoin, of, timeout } from 'rxjs';
 import { SeoService } from '../service/seo.service';
 
 @Component({
@@ -48,16 +48,27 @@ export class Home implements OnInit {
       return;
     }
 
-    this.api.getClients().pipe(
-      timeout(6000),
-      catchError(() => {
-        this.arrItems = [];
-        this.nTotalClienteCount = 0;
-        return EMPTY;
-      })
-    ).subscribe({
-      next: (data: ResponseClient) => {
-        const responseClients = data.oClient as unknown;
+    forkJoin({
+      clients: this.api.getClients().pipe(
+        timeout(6000),
+        catchError(() => of(null))
+      ),
+      ciudades: this.api.getCiudades(),
+      comunas: this.api.getComunas(),
+      metros: this.api.getMetros()
+    }).subscribe({
+      next: ({ clients, ciudades, comunas, metros }) => {
+        this.oCiudades = ciudades;
+        this.oComunas = comunas;
+        this.oMetros = metros;
+
+        if (!clients) {
+          this.arrItems = [];
+          this.nTotalClienteCount = 0;
+          return;
+        }
+
+        const responseClients = clients.oClient as unknown;
         const clientes = Array.isArray(responseClients) ? responseClients as Cliente[] : [];
         this.oData = clientes;
         this.arrItems = [...clientes];
@@ -73,18 +84,6 @@ export class Home implements OnInit {
       }
     });
 
-    this.api.getCiudades().subscribe(data => {
-      this.oCiudades = data;
-    });
-
-    this.api.getComunas().subscribe(data => {
-      this.oComunas = data;
-    });
-
-    this.api.getMetros().subscribe(data => {
-      this.oMetros = data;
-    });
-
     this.getStories();
   }
 
@@ -98,10 +97,10 @@ export class Home implements OnInit {
       ? this.getCiudadName(ciudadId)
       : this.getLocationName((item as any).ciudad);
 
-    if (ciudadId === 0 || ciudadName.toLowerCase() === 'santiago') {
+    if (ciudadId === 0 || this.isSantiago(ciudadName)) {
       const metroName = this.getMetroName((item as any).metro, (item as any).comuna);
 
-      if (metroName !== '' && metroName.toLowerCase() !== 'sin estaciones') {
+      if (metroName !== '' && !this.isSinEstaciones(metroName)) {
         return metroName;
       }
 
@@ -133,7 +132,7 @@ export class Home implements OnInit {
   }
 
   private getCiudadName(ciudadId: number): string {
-    return this.oCiudades.find(ciudad => ciudad.id === ciudadId)?.nombre ?? '';
+    return this.oCiudades.find(ciudad => ciudad.id?.toString() === ciudadId.toString())?.nombre ?? '';
   }
 
   private getComunaName(comunaId: unknown): string {
@@ -145,7 +144,15 @@ export class Home implements OnInit {
     const normalizedMetroId = metroId?.toString().trim();
     const normalizedComunaId = comunaId?.toString().trim();
 
-    if (!normalizedMetroId) {
+    if (!normalizedMetroId || normalizedMetroId === '0') {
+      const metroSinEstaciones = this.oMetros.find(metro =>
+        metro.idComuna?.toString() === normalizedComunaId && this.isSinEstaciones(metro.NombreMetro)
+      );
+
+      return metroSinEstaciones?.NombreMetro ?? '';
+    }
+
+    if (!normalizedComunaId) {
       return '';
     }
 
@@ -166,6 +173,14 @@ export class Home implements OnInit {
     );
 
     return metroByName ? metroByName.NombreMetro : normalizedMetroId;
+  }
+
+  private isSantiago(value: string): boolean {
+    return value.trim().toLowerCase() === 'santiago';
+  }
+
+  private isSinEstaciones(value: unknown): boolean {
+    return value?.toString().trim().toLowerCase() === 'sin estaciones';
   }
 
   getStories() {

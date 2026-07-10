@@ -19,6 +19,8 @@ import { SeoService } from '../service/seo.service';
 interface Files {
   mFile: File
 }
+
+type ProfileViewState = 'loading' | 'ready' | 'inactive' | 'error';
 //ProfileTimeline
 @Component({
   selector: 'app-profile',
@@ -38,6 +40,7 @@ export class Profile implements OnInit {
   public isProfileUser: boolean = false;
   public bHiddenProfileValided: boolean = true;
   public isProfileLoaded: boolean = false;
+  public profileViewState: ProfileViewState = 'loading';
 
   nCount = 0;
 
@@ -173,6 +176,7 @@ export class Profile implements OnInit {
 
   LoadProfile() {
     this.isProfileLoaded = false;
+    this.profileViewState = 'loading';
 
     this.api.getCiudades().subscribe(data => {
       for (let items of data) {
@@ -289,14 +293,15 @@ export class Profile implements OnInit {
               this.isProfileActive = false;
               break;
           }
-
           this.isProfileLoaded = true;
 
-          if (this.showInactiveProfileMessage) {
+          if (this.isOwner && this.oCliente.estado !== 'V') {
+            this.profileViewState = 'inactive';
             this.seoService.setInactiveProfileSeo(this.buildProfileUrl());
             return;
           }
 
+          this.profileViewState = 'ready';
           this.seoService.setProfileSeo(
             this.oCliente,
             this.buildProfileUrl(),
@@ -306,10 +311,15 @@ export class Profile implements OnInit {
           this.Reviews();
           this.getMediaFiles();
 
+        } else {
+          this.isProfileLoaded = true;
+          this.profileViewState = 'error';
+          this.toastService.error('Perfil no encontrado!');
         }
       },
       error: (err) => {
         this.isProfileLoaded = true;
+        this.profileViewState = 'error';
         this.toastService.error('Error en cargar el perfil!');
       }
 
@@ -318,7 +328,7 @@ export class Profile implements OnInit {
   }
 
   get showInactiveProfileMessage(): boolean {
-    return this.isProfileLoaded && this.isOwner && this.oCliente.estado !== 'V';
+    return this.profileViewState === 'inactive';
   }
 
   Reviews() {

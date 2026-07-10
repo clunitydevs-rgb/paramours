@@ -1,16 +1,25 @@
-@if (!isProfileLoaded) {
-    <div class="container mt-3">
-        <div class="profile-status-message" aria-live="polite">
-            <i class="bi bi-hourglass-split"></i>
+@if (profileViewState === 'loading') {
+    <div class="container mt-3 profile-status-shell">
+        <section class="profile-status-message profile-status-message-loading" aria-live="polite">
+            <span class="profile-status-kicker">Paramours</span>
             <h1>Cargando perfil</h1>
-        </div>
+        </section>
     </div>
 } @else if (showInactiveProfileMessage) {
-    <div class="container mt-3">
+    <div class="container mt-3 profile-status-shell">
         <section class="profile-status-message" aria-labelledby="inactive-profile-title">
-            <i class="bi bi-exclamation-circle"></i>
-            <h1 id="inactive-profile-title">Perfil no activo</h1>
-            <p>Este perfil no se encuentra activo actualmente.</p>
+            <span class="profile-status-kicker">Perfil no disponible</span>
+            <h1 id="inactive-profile-title">Este perfil no esta activo</h1>
+            <p>El anuncio se encuentra temporalmente fuera de publicacion.</p>
+            <a class="btn-gold profile-status-action" href="/home">Ver perfiles publicados</a>
+        </section>
+    </div>
+} @else if (profileViewState === 'error') {
+    <div class="container mt-3 profile-status-shell">
+        <section class="profile-status-message" aria-labelledby="profile-error-title">
+            <span class="profile-status-kicker">Paramours</span>
+            <h1 id="profile-error-title">No pudimos cargar el perfil</h1>
+            <p>Intentalo nuevamente en unos minutos.</p>
         </section>
     </div>
 } @else {

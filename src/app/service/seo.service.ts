@@ -88,6 +88,31 @@ export class SeoService {
     });
   }
 
+  setInactiveProfileSeo(profileUrl: string): void {
+    const title = 'Perfil no activo | Paramours';
+    const description = 'Este perfil de Paramours no se encuentra activo actualmente.';
+
+    this.title.setTitle(title);
+    this.setDescription(description);
+    this.setCanonical(profileUrl);
+
+    this.setOpenGraph({
+      title,
+      description,
+      image: this.defaultImage,
+      url: profileUrl,
+      type: 'website'
+    });
+
+    this.setTwitter({
+      title,
+      description,
+      image: this.defaultImage
+    });
+
+    this.removeJsonLd('profile-schema');
+  }
+
   private buildProfileDescription(profile: Cliente, profileName: string): string {
     const description = this.cleanText(profile.descripcion);
 

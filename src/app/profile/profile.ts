@@ -37,6 +37,7 @@ export class Profile implements OnInit {
   public isProfileBlocked: boolean = false;
   public isProfileUser: boolean = false;
   public bHiddenProfileValided: boolean = true;
+  public isProfileLoaded: boolean = false;
 
   nCount = 0;
 
@@ -171,6 +172,7 @@ export class Profile implements OnInit {
   }
 
   LoadProfile() {
+    this.isProfileLoaded = false;
 
     this.api.getCiudades().subscribe(data => {
       for (let items of data) {
@@ -244,12 +246,6 @@ export class Profile implements OnInit {
               this.proFileImg = this.sUrlRps + 'avatar_visitante.png';
           }
 
-          this.seoService.setProfileSeo(
-            this.oCliente,
-            this.buildProfileUrl(),
-            this.proFileImg
-          );
-
           if (this.oCliente.ciudad != null && this.oCliente.ciudad.toString() != '')
             this.ciudad = this.oCiudades.filter(e => e.id.toString() === this.oCliente.ciudad.toString()).map(e => e.nombre);
 
@@ -294,17 +290,35 @@ export class Profile implements OnInit {
               break;
           }
 
+          this.isProfileLoaded = true;
+
+          if (this.showInactiveProfileMessage) {
+            this.seoService.setInactiveProfileSeo(this.buildProfileUrl());
+            return;
+          }
+
+          this.seoService.setProfileSeo(
+            this.oCliente,
+            this.buildProfileUrl(),
+            this.proFileImg
+          );
+
           this.Reviews();
           this.getMediaFiles();
 
         }
       },
       error: (err) => {
+        this.isProfileLoaded = true;
         this.toastService.error('Error en cargar el perfil!');
       }
 
     });
 
+  }
+
+  get showInactiveProfileMessage(): boolean {
+    return this.isProfileLoaded && this.isOwner && this.oCliente.estado !== 'V';
   }
 
   Reviews() {
@@ -464,5 +478,3 @@ export class Profile implements OnInit {
   }
 
 }
-
-

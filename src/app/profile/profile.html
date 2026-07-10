@@ -1,3 +1,19 @@
+@if (!isProfileLoaded) {
+    <div class="container mt-3">
+        <div class="profile-status-message" aria-live="polite">
+            <i class="bi bi-hourglass-split"></i>
+            <h1>Cargando perfil</h1>
+        </div>
+    </div>
+} @else if (showInactiveProfileMessage) {
+    <div class="container mt-3">
+        <section class="profile-status-message" aria-labelledby="inactive-profile-title">
+            <i class="bi bi-exclamation-circle"></i>
+            <h1 id="inactive-profile-title">Perfil no activo</h1>
+            <p>Este perfil no se encuentra activo actualmente.</p>
+        </section>
+    </div>
+} @else {
 <div class="container mt-3">
     <div class="row">
         <div class="col-md-12 section-pub">
@@ -216,4 +232,6 @@
         [sUrlProfile]="proFileImg"></app-profile-timeline>
 } @placeholder {
     <div class="container mt-4"></div>
+}
+
 }

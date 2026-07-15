@@ -483,6 +483,12 @@ export class Profile implements OnInit {
     }
   }
 
+  onClickWsp() {
+    this.analyticsService.trackEvent('click_whatsapp', {
+      click_whatsapp: this.oCliente.nombrE_USUARIO
+    });
+  }
+
   ngOnDestroy() {
 
   }

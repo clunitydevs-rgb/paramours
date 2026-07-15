@@ -489,6 +489,12 @@ export class Profile implements OnInit {
     });
   }
 
+  onClicPhone() {
+    this.analyticsService.trackEvent('onClicPhone', {
+      onClicPhone: this.oCliente.nombrE_USUARIO
+    });
+  }
+
   ngOnDestroy() {
 
   }

@@ -60,6 +60,10 @@
                     class="alert alert-info text-center label-alert-validprofile" role="alert">
                     <i class="bi bi-exclamation-triangle-fill"></i> Tu identidad esta en proceso de validación, te avisaremos directamente a tu WhatsApp el resultado.
                 </div>
+                <div *ngIf="!isOwner && bHiddenProfileValided && this.oCliente.estado === 'B'"
+                    class="alert alert-info text-center label-alert-validprofile" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Tu perfil esta siendo revisado, te avisaremos directamente a tu WhatsApp cuando ya este activo.
+                </div>
             </div>
 
             <div class="ps-2 mb-1">

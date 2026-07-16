@@ -50,19 +50,19 @@
                         <label class="form-check-label ms-1" for="switchCheckDefault">Activa tu Perfil</label>
                     </ng-template>
                 </div>
-                <div *ngIf="!isOwner && bHiddenProfileValided && this.oCliente.estado != 'P'"
+                <!-- <div *ngIf="!isOwner && bHiddenProfileValided && this.oCliente.estado != 'P'"
                     class="alert alert-warning text-center label-alert-validprofile" role="alert">
                     <i class="bi bi-exclamation-triangle-fill"></i> No puedes activar tu perfil, hasta que no valides tu
                     identidad, <a href="#" class="alert-link" data-bs-toggle="modal"
                         data-bs-target="#myModalIdentityCheck">hazlo aquí</a>
-                </div>
+                </div> -->
                 <div *ngIf="!isOwner && bHiddenProfileValided && this.oCliente.estado === 'P'"
                     class="alert alert-info text-center label-alert-validprofile" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill"></i> Tu identidad esta en proceso de validación, te avisaremos directamente a tu WhatsApp el resultado.
+                    <i class="bi bi-exclamation-triangle-fill"></i> Tu perfil esta en proceso de revisión, te avisaremos directamente a tu WhatsApp cuando ya este activo.
                 </div>
                 <div *ngIf="!isOwner && bHiddenProfileValided && this.oCliente.estado === 'B'"
                     class="alert alert-info text-center label-alert-validprofile" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill"></i> Tu perfil esta siendo revisado, te avisaremos directamente a tu WhatsApp cuando ya este activo.
+                    <i class="bi bi-exclamation-triangle-fill"></i> Tu perfil esta bloqueado, te avisaremos directamente a tu WhatsApp cuando ya este activo.
                 </div>
             </div>
 

@@ -40,6 +40,7 @@ export class Account implements OnInit {
   public bMsgPassValid = true;
   public bMsgUserNameValid = true;
   public bMsgEAgeEnable = true;
+  public bMsgRequiredFields = true;
   public sTitle: string = "";
 
   constructor(
@@ -57,13 +58,34 @@ export class Account implements OnInit {
       if (this.typeUser == "client") {
         this.sTitle = "Publicate";
         this.hddUserClient = false;
+        this.frmAccount.controls.email.setValidators([Validators.required, Validators.email]);
+        this.frmAccount.controls.password.setValidators(Validators.required);
+        this.frmAccount.controls.dia.setValidators([Validators.required, Validators.pattern("^[0-9]*$")]);
+        this.frmAccount.controls.mes.setValidators(Validators.required);
+        this.frmAccount.controls.ano.setValidators([Validators.required, Validators.pattern("^[0-9]*$")]);
+        this.frmAccount.controls.username.setValidators(Validators.required);
+        this.frmAccount.controls.celular.setValidators(Validators.required);
         this.frmAccount.controls.servicio.setValidators(Validators.required);
       }
       else {
         this.sTitle = "Registrate";
         this.hddUserClient = true;
+        this.frmAccount.controls.email.setValidators([Validators.required, Validators.email]);
+        this.frmAccount.controls.password.setValidators(Validators.required);
+        this.frmAccount.controls.dia.setValidators([Validators.required, Validators.pattern("^[0-9]*$")]);
+        this.frmAccount.controls.mes.setValidators(Validators.required);
+        this.frmAccount.controls.ano.setValidators([Validators.required, Validators.pattern("^[0-9]*$")]);
+        this.frmAccount.controls.username.setValidators(Validators.required);
+        this.frmAccount.controls.celular.clearValidators();
         this.frmAccount.controls.servicio.clearValidators();
       }
+      this.frmAccount.controls.email.updateValueAndValidity();
+      this.frmAccount.controls.password.updateValueAndValidity();
+      this.frmAccount.controls.dia.updateValueAndValidity();
+      this.frmAccount.controls.mes.updateValueAndValidity();
+      this.frmAccount.controls.ano.updateValueAndValidity();
+      this.frmAccount.controls.username.updateValueAndValidity();
+      this.frmAccount.controls.celular.updateValueAndValidity();
       this.frmAccount.controls.servicio.updateValueAndValidity();
       this.setForms();
     });
@@ -77,6 +99,11 @@ export class Account implements OnInit {
 
   get ano() {
     return this.frmAccount.get('ano') as FormControl;
+  }
+
+  isFieldRequired(field: string): boolean {
+    const control = this.frmAccount.get(field);
+    return !!control?.hasError('required') && (control.touched || control.dirty);
   }
 
   frmAccount = new FormGroup({
@@ -106,9 +133,17 @@ export class Account implements OnInit {
     this.bMsgEAgeEnable = true;
     this.bMsgEmailValid = true;
     this.bMsgUserNameValid = true;
+    this.bMsgRequiredFields = true;
 
     let bEndPointExec = true;
     let sPass: string = this.frmAccount.get('password')?.value!;
+
+    if (this.frmAccount.invalid) {
+      this.frmAccount.markAllAsTouched();
+      this.bMsgRequiredFields = false;
+      this.toastService.error('Debes llenar o seleccionar los campos obligatorios.');
+      return;
+    }
 
     if (sPass.length < 4) {
       this.bMsgPassValid = false;
@@ -195,3 +230,4 @@ export class Account implements OnInit {
 
   }
 }
+

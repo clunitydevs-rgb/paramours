@@ -19,10 +19,15 @@
 
             <div class="field-group">
                 <label for="login-password">Contraseña</label>
-                <div class="field-control">
+                <div class="field-control password-control">
                     <i class="bi bi-lock"></i>
-                    <input id="login-password" type="password" formControlName="password"
+                    <input id="login-password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
                         autocomplete="current-password" placeholder="Ingresa tu contraseña">
+                    <button type="button" class="password-toggle" (click)="togglePasswordVisibility()"
+                        [attr.aria-label]="showPassword ? 'Ocultar clave' : 'Mostrar clave'"
+                        [attr.title]="showPassword ? 'Ocultar clave' : 'Mostrar clave'">
+                        <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+                    </button>
                 </div>
                 <span [hidden]="bMsgPassValid" class="field-error">La contraseña debe tener mínimo 4 caracteres.</span>
             </div>
@@ -75,3 +80,5 @@
         </div>
     </div>
 </div>
+
+

@@ -119,6 +119,12 @@
     color: #fff !important;
 }
 
+.field-control:has(.ng-invalid.ng-touched),
+.birth-grid input.ng-invalid.ng-touched,
+.birth-grid select.ng-invalid.ng-touched {
+    border-color: rgba(255, 180, 196, 0.72) !important;
+    box-shadow: 0 0 0 3px rgba(255, 180, 196, 0.08);
+}
 .select-control select {
     cursor: pointer;
 }
@@ -127,6 +133,14 @@
     color: #ffb4c4;
     font-size: 0.78rem;
     line-height: 1.35;
+}
+
+.form-error {
+    display: block;
+    padding: 10px 12px;
+    border: 1px solid rgba(255, 180, 196, 0.22);
+    border-radius: 8px;
+    background: rgba(255, 180, 196, 0.08);
 }
 
 .account-submit {
@@ -155,3 +169,4 @@
         grid-template-columns: 1fr;
     }
 }
+

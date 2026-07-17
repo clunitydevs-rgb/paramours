@@ -28,6 +28,7 @@ export class Login {
   public bMsgEmailValid = true;
   public bMsgPassValid = true;
   public bMsgErrorLogin = true;
+  public showPassword = false;
 
   constructor(
     private api: ApiServices,
@@ -46,6 +47,10 @@ export class Login {
   frmClave = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email])
   });
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
 
   goBtnAceptar() {
     this.bMsgEmailValid = true;
@@ -138,3 +143,4 @@ export class Login {
 
   }
 }
+

@@ -95,6 +95,36 @@
 .field-control input::placeholder {
     color: rgba(250, 250, 250, 0.34);
 }
+.password-control {
+    grid-template-columns: 42px 1fr 44px;
+}
+
+.password-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    min-height: 46px;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: rgba(232, 223, 200, 0.7);
+    cursor: pointer;
+}
+
+.password-toggle i {
+    color: inherit;
+    font-size: 1rem;
+}
+
+.password-toggle:hover,
+.password-toggle:focus-visible {
+    color: var(--champagne-gold, #C6A75E);
+}
+
+.password-toggle:focus-visible {
+    box-shadow: inset 0 0 0 2px rgba(198, 167, 94, 0.35);
+}
 
 .field-control:focus-within {
     border-color: rgba(198, 167, 94, 0.62);
@@ -299,4 +329,5 @@
     background-image: none !important;
     color: #fff !important;
 }*/
+
 

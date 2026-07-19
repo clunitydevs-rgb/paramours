@@ -6,10 +6,10 @@
             <div class="profiles-intro">
                 <div>
                     <span class="section-kicker">Paramours Chile</span>
-                    <h1 id="profiles-title">Escorts VIP e Independientes en Santiago</h1>
-                    <p>El cat&aacute;logo m&aacute;s exclusivo de damas de compa&ntilde;&iacute;a, masajes sensitivos y servicios VIP en el sector oriente y Santiago Centro.</p>
+                    <h1 id="profiles-title">Escorts VIP en Santiago</h1>
                 </div>
                 <span *ngIf="nTotalClienteCount > 0" class="profiles-count">{{ nTotalClienteCount }} perfiles</span>
+                <p>El cat&aacute;logo m&aacute;s exclusivo de damas de compa&ntilde;&iacute;a, masajes sensitivos y servicios VIP en el sector oriente y Santiago Centro.</p>
             </div>
 
             <div *ngIf="arrItems.length > 0" class="profiles-grid">
@@ -17,7 +17,7 @@
                     <a class="profile-card" [href]="getProfileUrl(i)" target="_blank" rel="noopener noreferrer"
                         [attr.aria-label]="'Ver perfil de ' + i.nombrE_USUARIO">
                         <img class="image-show"
-                            [attr.alt]="'Escort -VIP- ' + (getProfileLocation(i) || 'Santiago')"
+                            [attr.alt]="'Escort-VIP-' + (getProfileLocation(i) || 'Santiago')"
                             [src]="i.fotO_PERFIL != null && i.fotO_PERFIL != '' ? sUrlRps + i.fotO_PERFIL : proFileImg"
                             loading="lazy">
                         <span class="verified-badge"><i class="bi bi-shield-fill-check"></i> Verificado</span>
@@ -38,7 +38,7 @@
 
     <section class="escort-access" aria-label="Acceso para anunciantes">
         <div class="container">
-            <p>Si eres chica escort, <a routerLink="/account/client">pincha aqu&iacute;</a>.</p>
+            <p>Si eres chica escort, <a routerLink="/account/client">publicate aqu&iacute;</a>.</p>
         </div>
     </section>
     <section class="seo-content">

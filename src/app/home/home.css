@@ -34,7 +34,8 @@
 }
 
 .profiles-intro {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: flex-end;
     justify-content: space-between;
     gap: 18px;
@@ -64,6 +65,12 @@
     margin: 8px 0 0;
     color: rgba(250, 250, 250, 0.7);
     line-height: 1.6;
+}
+
+.profiles-intro p {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: none;
 }
 
 .publisher-highlight {
@@ -345,11 +352,13 @@
 }
 
 .seo-content p {
-    max-width: 920px;
+    width: 100%;
+    max-width: none;
     margin: 0;
     color: rgba(250, 250, 250, 0.68);
     font-size: clamp(0.9rem, 1.5vw, 1rem);
     line-height: 1.75;
+    text-align: justify;
 }
 
 .seo-content p + p {
@@ -398,7 +407,7 @@
 @media (max-width: 767.98px) {
     .profiles-intro {
         align-items: flex-start;
-        flex-direction: column;
+        grid-template-columns: 1fr;
         gap: 10px;
     }
 
@@ -440,9 +449,6 @@
         line-height: 1.08;
     }
 
-    .profiles-intro p {
-        display: none;
-    }
 
     .profiles-count {
         padding: 6px 9px;

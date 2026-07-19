@@ -9,10 +9,11 @@ import { MethodService } from './method/method.service';
 import { filter } from 'rxjs/operators';
 import { AnalyticsService } from './service/analytics.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { LegalModals } from './public/legal-modals/legal-modals';
 
 @Component({
   selector: 'app-root',
-  imports: [CommonModule, Headermenu, NgxSpinnerModule, ToastContainer, Footer, RouterOutlet],
+  imports: [CommonModule, Headermenu, NgxSpinnerModule, ToastContainer, Footer, RouterOutlet, LegalModals],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

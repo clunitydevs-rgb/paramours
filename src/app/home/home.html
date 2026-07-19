@@ -6,17 +6,18 @@
             <div class="profiles-intro">
                 <div>
                     <span class="section-kicker">Paramours Chile</span>
-                    <h1 id="profiles-title">Escorts publicadas</h1>
-                    <p>Explora los perfiles de las chicas, para revisar sus fotos, historias, datos y contacto.</p>
+                    <h1 id="profiles-title">Escorts VIP e Independientes en Santiago</h1>
+                    <p>El cat&aacute;logo m&aacute;s exclusivo de damas de compa&ntilde;&iacute;a, masajes sensitivos y servicios VIP en el sector oriente y Santiago Centro.</p>
                 </div>
                 <span *ngIf="nTotalClienteCount > 0" class="profiles-count">{{ nTotalClienteCount }} perfiles</span>
             </div>
 
-            <div *ngIf="arrItems.length > 0; else emptyProfiles" class="profiles-grid">
+            <div *ngIf="arrItems.length > 0" class="profiles-grid">
                 <article *ngFor="let i of arrItems" class="profile-card-wrap">
                     <a class="profile-card" [href]="getProfileUrl(i)" target="_blank" rel="noopener noreferrer"
                         [attr.aria-label]="'Ver perfil de ' + i.nombrE_USUARIO">
-                        <img class="image-show" alt="{{i.nombrE_USUARIO}}"
+                        <img class="image-show"
+                            [attr.alt]="'Escort -VIP- ' + (getProfileLocation(i) || 'Santiago')"
                             [src]="i.fotO_PERFIL != null && i.fotO_PERFIL != '' ? sUrlRps + i.fotO_PERFIL : proFileImg"
                             loading="lazy">
                         <span class="verified-badge"><i class="bi bi-shield-fill-check"></i> Verificado</span>
@@ -32,73 +33,18 @@
                 </article>
             </div>
 
-            <ng-template #emptyProfiles>
-                <div class="empty-state">
-                    <span class="section-kicker">Lanzamiento</span>
-                    <h2>Un sitio creado para ti.</h2>
-                    <p>Si eres una chica Escort, puedes ser parte del lanzamiento y obtener visibilidad preferente.</p>
-                    <a routerLink="/account/client" class="btn-premium btn-premium-primary">
-                        <i class="bi bi-stars"></i>
-                        Publicate gratis
-                    </a>
-                </div>
-            </ng-template>
         </div>
     </section>
 
-    <section class="publisher-section" aria-labelledby="publisher-title">
+    <section class="escort-access" aria-label="Acceso para anunciantes">
         <div class="container">
-            <div class="publisher-layout">
-                <div>
-                    <span class="section-kicker">Para nuevas anunciantes</span>
-                    <h2 id="publisher-title">Publica tu perfil gratis durante el lanzamiento</h2>
-                    <p class="publisher-highlight">
-                        <i class="bi bi-gem"></i>
-                        <span>Puedes crear tu perfil <strong>sin costo</strong>.</span>
-                    </p>
-                </div>
-
-                <div class="publisher-actions">
-                    <a routerLink="/account/client" class="btn-premium btn-premium-primary">
-                        <i class="bi bi-person-plus"></i>
-                        Publicate gratis
-                    </a>
-                    <a href="https://wa.me/56965043226?text=Hola,%20Necesito%20ayuda%20para%20publicarme"
-                        target="_blank" rel="noopener noreferrer" class="btn-premium btn-premium-secondary">
-                        <i class="bi bi-whatsapp"></i>
-                        Ayuda por WhatsApp
-                    </a>
-                </div>
-            </div>
+            <p>Si eres chica escort, <a routerLink="/account/client">pincha aqu&iacute;</a>.</p>
         </div>
     </section>
-
-    <section class="quick-panel-section" aria-label="Beneficios para anunciantes">
+    <section class="seo-content">
         <div class="container">
-            <div class="quick-panel">
-                <div class="quick-item">
-                    <i class="bi bi-gem"></i>
-                    <span>Publicaci&oacute;n gratuita por lanzamiento</span>
-                </div>
-                <div class="quick-item">
-                    <i class="bi bi-graph-up-arrow"></i>
-                    <span>Mayor visibilidad en etapa temprana</span>
-                </div>
-                <div class="quick-item">
-                    <i class="bi bi-headset"></i>
-                    <span>Soporte para crear o mejorar tu perfil</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="activity-section">
-        <div class="container">
-            <div class="activity-strip d-flex justify-content-center flex-wrap gap-3 text-center">
-                <span *ngFor="let mensaje of lanzamientoMensajes">
-                    <i class="bi bi-circle-fill"></i> {{ mensaje }}
-                </span>
-            </div>
+            <p>Bienvenido a Paramours, el directorio exclusivo de damas de compa&ntilde;&iacute;a en Chile. Aqu&iacute; encontrar&aacute;s una selecci&oacute;n rigurosa de escorts VIP independientes con fotos 100% reales y verificadas. Nuestro portal te conecta de forma directa y confidencial con acompa&ntilde;antes que ofrecen servicios de masajes sensitivos, atenci&oacute;n en departamento privado y domicilios en las principales comunas del sector oriente y Santiago Centro.</p>
+            <p>Explora perfiles detallados, historias exclusivas y conecta de manera segura con las mejores alternativas de entretenimiento para adultos en Santiago.</p>
         </div>
     </section>
 </main>

@@ -1,0 +1,33 @@
+.legal-modal { position: relative; }
+
+.modal-content {
+    color: #fff;
+    background: #0f0f10;
+}
+
+.close-btn {
+    position: fixed;
+    top: max(12px, env(safe-area-inset-top));
+    right: max(14px, env(safe-area-inset-right));
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    border: 1px solid rgba(232, 220, 190, 0.18);
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.48);
+    cursor: pointer;
+}
+
+.close-btn:hover,
+.close-btn:focus-visible {
+    border-color: rgba(198, 167, 94, 0.58);
+    background: rgba(18, 18, 18, 0.78);
+}
+
+.close-btn i { font-size: 1rem; }

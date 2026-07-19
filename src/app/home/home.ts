@@ -27,11 +27,6 @@ export class Home implements OnInit {
   oCiudades: Array<any> = [];
   oComunas: Array<any> = [];
   oMetros: Array<any> = [];
-  lanzamientoMensajes: string[] = [
-    'Nuevos perfiles cada semana',
-    'Etapa de lanzamiento activa',
-    'Chicas en proceso de incorporacion'
-  ];
 
   constructor(
     private api: ApiServices,

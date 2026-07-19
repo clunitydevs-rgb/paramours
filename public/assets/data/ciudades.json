@@ -1,122 +1,152 @@
 [
-  {
-    "id": 0,
-    "nombre": "Santiago"
-  },
-  {
-    "id": 1,
-    "nombre": "Arica"
-  },
-  {
-    "id": 2,
-    "nombre": "Iquique"
-  },
-  {
-    "id": 3,
-    "nombre": "Calama"
-  },
-  {
-    "id": 4,
-    "nombre": "Antofagasta"
-  },
-  {
-    "id": 5,
-    "nombre": "Caldera"
-  },
-  {
-    "id": 6,
-    "nombre": "Copiapó"
-  },
-  {
-    "id": 7,
-    "nombre": "Vallenar"
-  },
-  {
-    "id": 8,
-    "nombre": "La Serena"
-  },
-  {
-    "id": 9,
-    "nombre": "Ovalle"
-  },
-  {
-    "id": 10,
-    "nombre": "Los Andes"
-  },
-  {
-    "id": 11,
-    "nombre": "Quillota"
-  },
-  {
-    "id": 12,
-    "nombre": "Valparaíso"
-  },
-  {
-    "id": 13,
-    "nombre": "Viña del Mar"
-  },
-  {
-    "id": 14,
-    "nombre": "Melipilla"
-  },
-  {
-    "id": 15,
-    "nombre": "Rancagua"
-  },
-  {
-    "id": 16,
-    "nombre": "San Fernando"
-  },
-  {
-    "id": 17,
-    "nombre": "Curicó"
-  },
-  {
-    "id": 18,
-    "nombre": "Talca"
-  },
-  {
-    "id": 19,
-    "nombre": "Linares"
-  },
-  {
-    "id": 20,
-    "nombre": "Chillán"
-  },
-  {
-    "id": 21,
-    "nombre": "Concepción"
-  },
-  {
-    "id": 22,
-    "nombre": "Los Ángeles"
-  },
-  {
-    "id": 23,
-    "nombre": "Temuco"
-  },
-  {
-    "id": 24,
-    "nombre": "Pucón"
-  },
-  {
-    "id": 25,
-    "nombre": "Valdivia"
-  },
-  {
-    "id": 26,
-    "nombre": "Osorno"
-  },
-  {
-    "id": 27,
-    "nombre": "Puerto Montt"
-  },
-  {
-    "id": 28,
-    "nombre": "Castro"
-  },
-  {
-    "id": 29,
-    "nombre": "Punta Arenas"
-  }
+    {
+        "id":  0,
+        "nombre":  "Santiago",
+        "slug":  "santiago"
+    },
+    {
+        "id":  1,
+        "nombre":  "Arica",
+        "slug":  "arica"
+    },
+    {
+        "id":  2,
+        "nombre":  "Iquique",
+        "slug":  "iquique"
+    },
+    {
+        "id":  3,
+        "nombre":  "Calama",
+        "slug":  "calama"
+    },
+    {
+        "id":  4,
+        "nombre":  "Antofagasta",
+        "slug":  "antofagasta"
+    },
+    {
+        "id":  5,
+        "nombre":  "Caldera",
+        "slug":  "caldera"
+    },
+    {
+        "id":  6,
+        "nombre":  "Copiapó",
+        "slug":  "copiapo"
+    },
+    {
+        "id":  7,
+        "nombre":  "Vallenar",
+        "slug":  "vallenar"
+    },
+    {
+        "id":  8,
+        "nombre":  "La Serena",
+        "slug":  "la-serena"
+    },
+    {
+        "id":  9,
+        "nombre":  "Ovalle",
+        "slug":  "ovalle"
+    },
+    {
+        "id":  10,
+        "nombre":  "Los Andes",
+        "slug":  "los-andes"
+    },
+    {
+        "id":  11,
+        "nombre":  "Quillota",
+        "slug":  "quillota"
+    },
+    {
+        "id":  12,
+        "nombre":  "Valparaíso",
+        "slug":  "valparaiso"
+    },
+    {
+        "id":  13,
+        "nombre":  "Viña del Mar",
+        "slug":  "vina-del-mar"
+    },
+    {
+        "id":  14,
+        "nombre":  "Melipilla",
+        "slug":  "melipilla"
+    },
+    {
+        "id":  15,
+        "nombre":  "Rancagua",
+        "slug":  "rancagua"
+    },
+    {
+        "id":  16,
+        "nombre":  "San Fernando",
+        "slug":  "san-fernando"
+    },
+    {
+        "id":  17,
+        "nombre":  "Curicó",
+        "slug":  "curico"
+    },
+    {
+        "id":  18,
+        "nombre":  "Talca",
+        "slug":  "talca"
+    },
+    {
+        "id":  19,
+        "nombre":  "Linares",
+        "slug":  "linares"
+    },
+    {
+        "id":  20,
+        "nombre":  "Chillán",
+        "slug":  "chillan"
+    },
+    {
+        "id":  21,
+        "nombre":  "Concepción",
+        "slug":  "concepcion"
+    },
+    {
+        "id":  22,
+        "nombre":  "Los Ángeles",
+        "slug":  "los-angeles"
+    },
+    {
+        "id":  23,
+        "nombre":  "Temuco",
+        "slug":  "temuco"
+    },
+    {
+        "id":  24,
+        "nombre":  "Pucón",
+        "slug":  "pucon"
+    },
+    {
+        "id":  25,
+        "nombre":  "Valdivia",
+        "slug":  "valdivia"
+    },
+    {
+        "id":  26,
+        "nombre":  "Osorno",
+        "slug":  "osorno"
+    },
+    {
+        "id":  27,
+        "nombre":  "Puerto Montt",
+        "slug":  "puerto-montt"
+    },
+    {
+        "id":  28,
+        "nombre":  "Castro",
+        "slug":  "castro"
+    },
+    {
+        "id":  29,
+        "nombre":  "Punta Arenas",
+        "slug":  "punta-arenas"
+    }
 ]

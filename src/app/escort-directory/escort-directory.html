@@ -1,0 +1,50 @@
+<main class="home-shell">
+  <section class="profiles-section profiles-section-first" aria-labelledby="profiles-title">
+    <div class="container">
+      <div class="profiles-intro">
+        <div>
+          <span class="section-kicker">Paramours Chile</span>
+          <h1 id="profiles-title">Escorts en {{ locationName }}</h1>
+        </div>
+        <span *ngIf="!loading && profiles.length > 0" class="profiles-count">{{ profiles.length }} perfiles</span>
+        <p *ngIf="locationName">Explora perfiles verificados de escorts disponibles en {{ locationName }}, con fotograf&iacute;as reales y contacto directo.</p>
+      </div>
+
+      <p *ngIf="loading">Cargando perfiles...</p>
+
+      <div *ngIf="!loading && profiles.length > 0" class="profiles-grid">
+        <article *ngFor="let profile of profiles" class="profile-card-wrap">
+          <a class="profile-card" [href]="getProfileUrl(profile)" target="_blank" rel="noopener noreferrer"
+            [attr.aria-label]="'Ver perfil de ' + profile.nombrE_USUARIO">
+            <img class="image-show" [attr.alt]="'Escort en ' + locationName"
+              [src]="profile.fotO_PERFIL ? sUrlRps + profile.fotO_PERFIL : proFileImg" loading="lazy">
+            <span class="verified-badge"><i class="bi bi-shield-fill-check"></i> Verificado</span>
+            <div class="profile-overlay">
+              <h2>{{ profile.nombrE_USUARIO }}</h2>
+              <div class="profile-data">
+                <span *ngIf="profile.edad">{{ profile.edad }} a&ntilde;os</span>
+                <span>{{ locationName }}</span>
+              </div>
+            </div>
+          </a>
+        </article>
+      </div>
+
+      <div *ngIf="!loading && !loadError && profiles.length === 0" class="profiles-intro">
+        <h2>No hay perfiles disponibles actualmente</h2>
+        <p>En este momento no encontramos escorts activas en {{ locationName }}.</p>
+      </div>
+      <div *ngIf="loadError" class="profiles-intro">
+        <h2>No pudimos cargar los perfiles</h2>
+        <p>Por favor, intenta nuevamente en unos minutos.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="escort-access" aria-label="Acceso para anunciantes">
+    <div class="container"><p>Si eres chica escort, <a routerLink="/account/client">publ&iacute;cate aqu&iacute;</a>.</p></div>
+  </section>
+  <section *ngIf="locationName" class="seo-content">
+    <div class="container"><p>Paramours reúne perfiles de escorts en {{ locationName }} para consultar informaci&oacute;n actualizada y contactar directamente con cada anunciante.</p></div>
+  </section>
+</main>

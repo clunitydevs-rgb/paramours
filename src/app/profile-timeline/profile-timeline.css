@@ -309,9 +309,10 @@
 }
 
 /* El editor enriquecido puede guardar colores inline (por ejemplo, negro).
-   Normalizamos el contenido publicado para mantener contraste sobre la tarjeta oscura. */
-.comments-text :where(*) {
-    color: inherit !important;
+   ::ng-deep permite alcanzar los nodos creados dinámicamente por innerHTML. */
+:host ::ng-deep .comments-text,
+:host ::ng-deep .comments-text * {
+    color: rgba(250, 250, 250, 0.9) !important;
 }
 
 .comments-text :where(p, ul, ol, blockquote) {

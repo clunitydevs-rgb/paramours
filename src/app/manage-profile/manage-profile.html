@@ -50,7 +50,10 @@
                             <td class="text-start align-middle">{{i.correo}}</td>
                             <td class="text-center align-middle">{{i.fechA_CREACION | date:'shortDate'}}</td>
                             <td class="text-center align-middle">
-                                {{i.glosA_ESTADO}}
+                                <a [routerLink]="getProfileLink(i)" class="btn btn-outline-light btn-sm">
+                                    Ver perfil
+                                </a>
+                                <div class="mt-1">{{i.glosA_ESTADO}}</div>
                             </td>
                             <td class="text-center align-middle">
                                 @if (i.fotO_VERIFICACION != null && i.fotO_VERIFICACION !== ''){
@@ -131,6 +134,9 @@
                     </div>
 
                     <div class="d-grid">
+                        <a [routerLink]="getProfileLink(item)" class="btn btn-outline-light btn-sm mb-2">
+                            Ver perfil
+                        </a>
                         <button class="btn btn-outline-light btn-sm mb-2" (click)="onPreviewImg(item.fotO_VERIFICACION)"
                             data-bs-toggle="modal" data-bs-target="#myViewImage">
                             Ver foto verificación

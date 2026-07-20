@@ -40,6 +40,7 @@ export class Profile implements OnInit {
   public isProfileUser: boolean = false;
   public bHiddenProfileValided: boolean = true;
   public isProfileLoaded: boolean = false;
+  public isAdministrator: boolean = false;
   public profileViewState: ProfileViewState = 'loading';
   // dssfs
   nCount = 0;
@@ -133,6 +134,8 @@ export class Profile implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    this.isAdministrator = this.methodservice.getItemLocalStorage('cl.paramours.typeuser') === '0';
 
     this.activateroute.paramMap.subscribe({
       next: (params) => {
@@ -295,7 +298,7 @@ export class Profile implements OnInit {
           }
           this.isProfileLoaded = true;
 
-          if (this.isOwner && this.oCliente.estado !== 'V') {
+          if (this.isOwner && !this.isAdministrator && this.oCliente.estado !== 'V') {
             this.profileViewState = 'inactive';
             this.seoService.setInactiveProfileSeo(this.buildProfileUrl());
             return;

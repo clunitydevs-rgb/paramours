@@ -19,6 +19,10 @@ export class Headermenu implements OnInit {
   public bShowLoginAndRegister = false;
   public sTypeUser: string | null = null;
 
+  get isAdministrator(): boolean {
+    return this.bShowLoginAndRegister && this.sTypeUser === '0';
+  }
+
   constructor(
     private methodservice: MethodService,
     private router: Router,

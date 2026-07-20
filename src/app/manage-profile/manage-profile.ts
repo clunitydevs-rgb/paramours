@@ -6,12 +6,12 @@ import { ToastService } from '../service/toast.service';
 import { ResponseClient } from '../models/response.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActiveProfile } from '../models/models.interface';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-manage-profile',
-  imports: [CommonModule, FormsModule ],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './manage-profile.html',
   styleUrl: './manage-profile.css'
 })
@@ -83,6 +83,11 @@ export class ManageProfile implements OnInit {
         String(valor ?? '').toLowerCase().includes(texto)
       )
     );
+  }
+
+  getProfileLink(item: any): string[] {
+    const slug = item.slug || item.nombrE_USUARIO?.trim().replace(/\s+/g, '-') || 'perfil';
+    return ['/profile', item.iD_USUARIO, slug];
   }
 
   onPreviewImg(oFile: string): void {

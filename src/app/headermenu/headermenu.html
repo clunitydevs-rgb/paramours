@@ -112,6 +112,10 @@
     </div>
 
     <nav class="menu-actions" aria-label="Cuenta">
+      <a *ngIf="isAdministrator" routerLink="/manage-profile" (click)="closeOffcanvas('profileMenu')" class="menu-action">
+        <i class="bi bi-people-fill"></i>
+        <span>Administrar perfiles</span>
+      </a>
       <a routerLink="/profile" (click)="closeOffcanvas('profileMenu')" class="menu-action">
         <i class="bi bi-person-lines-fill"></i>
         <span>Mi Perfil</span>
@@ -171,6 +175,10 @@
       </div>
 
       <nav class="menu-actions" aria-label="Cuenta móvil">
+        <a *ngIf="isAdministrator" routerLink="/manage-profile" (click)="closeOffcanvas('mobileMenu')" class="menu-action">
+          <i class="bi bi-people-fill"></i>
+          <span>Administrar perfiles</span>
+        </a>
         <a routerLink="/profile" (click)="closeOffcanvas('mobileMenu')" class="menu-action">
           <i class="bi bi-person-lines-fill"></i>
           <span>Mi Perfil</span>

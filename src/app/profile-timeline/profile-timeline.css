@@ -308,6 +308,12 @@
     overflow-wrap: anywhere;
 }
 
+/* El editor enriquecido puede guardar colores inline (por ejemplo, negro).
+   Normalizamos el contenido publicado para mantener contraste sobre la tarjeta oscura. */
+.comments-text :where(*) {
+    color: inherit !important;
+}
+
 .comments-text :where(p, ul, ol, blockquote) {
     margin-bottom: 0.75rem;
 }

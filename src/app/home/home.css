@@ -333,6 +333,10 @@
     text-align: center;
 }
 
+.escort-access p + p {
+    margin-top: 8px;
+}
+
 .escort-access a {
     color: var(--champagne-gold, #c6a75e);
     font-weight: 700;
@@ -345,6 +349,10 @@
 .escort-access a:focus-visible {
     color: #f2dfad;
     text-decoration-color: currentColor;
+}
+
+.escort-access .whatsapp-link i {
+    margin-right: 2px;
 }
 .seo-content {
     padding: clamp(38px, 6vw, 70px) 0 clamp(42px, 7vw, 82px);

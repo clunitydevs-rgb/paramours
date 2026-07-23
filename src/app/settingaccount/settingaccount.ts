@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+﻿import { Component } from '@angular/core';
 import { ActiveProfile, Cliente, ImageProfile, UidUser } from '../models/models.interface';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -15,8 +15,10 @@ import { AnalyticsService } from '../service/analytics.service';
 import { forkJoin } from 'rxjs';
 import {
   EmojiPickerService,
+  EmojiSettingsModel,
   HtmlEditorService,
   LinkService,
+  QuickToolbarService,
   RichTextEditorModule,
   ToolbarService,
   ToolbarSettingsModel
@@ -39,7 +41,7 @@ interface Files {
   imports: [ReactiveFormsModule, CommonModule, GalleryLightbox, Identitycheck, RichTextEditorModule],
   templateUrl: './settingaccount.html',
   styleUrl: './settingaccount.css',
-  providers: [ToolbarService, LinkService, HtmlEditorService, EmojiPickerService]
+  providers: [ToolbarService, LinkService, HtmlEditorService, EmojiPickerService, QuickToolbarService]
 })
 export class Settingaccount {
 
@@ -75,6 +77,38 @@ export class Settingaccount {
       'OrderedList', 'UnorderedList', '|',
       'CreateLink', 'EmojiPicker'
     ]
+  };
+
+  public emojiPickerSettings: EmojiSettingsModel = {
+    iconsSet: [{
+      name: 'Caras y personas',
+      code: '1F600',
+      iconCss: 'e-emoji',
+      icons: [
+        { code: '1F600', desc: 'Sonrisa' },
+        { code: '1F602', desc: 'Risa' },
+        { code: '1F607', desc: 'Angel' },
+        { code: '1F609', desc: 'Guino' },
+        { code: '1F60D', desc: 'Enamorado' },
+        { code: '1F618', desc: 'Beso' },
+        { code: '1F60E', desc: 'Genial' },
+        { code: '1F970', desc: 'Con corazones' },
+        { code: '1F973', desc: 'Fiesta' }
+      ]
+    }, {
+      name: 'Simbolos',
+      code: '2764',
+      iconCss: 'e-symbols',
+      icons: [
+        { code: '2764', desc: 'Corazon' },
+        { code: '1F5A4', desc: 'Corazon negro' },
+        { code: '1F48B', desc: 'Beso' },
+        { code: '1F525', desc: 'Fuego' },
+        { code: '1F4A6', desc: 'Gotas' },
+        { code: '1F339', desc: 'Rosa' },
+        { code: '2714', desc: 'Correcto' }
+      ]
+    }]
   };
 
   ActiveProfileFrm: ActiveProfile = {

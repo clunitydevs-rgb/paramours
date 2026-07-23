@@ -1,4 +1,4 @@
-@import '@syncfusion/ej2-base/styles/tailwind3.css';
+﻿@import '@syncfusion/ej2-base/styles/tailwind3.css';
 @import '@syncfusion/ej2-icons/styles/tailwind3.css';
 @import '@syncfusion/ej2-buttons/styles/tailwind3.css';
 @import '@syncfusion/ej2-splitbuttons/styles/tailwind3.css';
@@ -225,7 +225,8 @@ textarea.form-control {
 }
 
 .description-editor {
-    overflow: hidden;
+    position: relative;
+    overflow: visible;
     border: 1px solid rgba(232, 220, 190, 0.14);
     border-radius: 8px;
     background: #28252A;
@@ -258,6 +259,11 @@ textarea.form-control {
     color: #fff;
     font-family: inherit;
     line-height: 1.55;
+}
+
+
+:host ::ng-deep .description-editor .e-rte-emojipicker-popup.e-popup.e-popup-open {
+    z-index: 10002 !important;
 }
 
 :host ::ng-deep .description-editor .e-rte-placeholder {

@@ -1,3 +1,14 @@
+@import '@syncfusion/ej2-base/styles/tailwind3.css';
+@import '@syncfusion/ej2-icons/styles/tailwind3.css';
+@import '@syncfusion/ej2-buttons/styles/tailwind3.css';
+@import '@syncfusion/ej2-splitbuttons/styles/tailwind3.css';
+@import '@syncfusion/ej2-inputs/styles/tailwind3.css';
+@import '@syncfusion/ej2-lists/styles/tailwind3.css';
+@import '@syncfusion/ej2-navigations/styles/tailwind3.css';
+@import '@syncfusion/ej2-popups/styles/tailwind3.css';
+@import '@syncfusion/ej2-dropdowns/styles/tailwind3.css';
+@import '@syncfusion/ej2-richtexteditor/styles/tailwind3.css';
+
 :host {
     display: block;
 }
@@ -211,6 +222,46 @@ textarea.form-control {
     min-height: 140px;
     resize: vertical;
     line-height: 1.55;
+}
+
+.description-editor {
+    overflow: hidden;
+    border: 1px solid rgba(232, 220, 190, 0.14);
+    border-radius: 8px;
+    background: #28252A;
+}
+
+:host ::ng-deep .description-editor .e-richtexteditor,
+:host ::ng-deep .description-editor .e-rte-container {
+    width: 100% !important;
+    border: 0 !important;
+    border-radius: 8px;
+}
+
+:host ::ng-deep .description-editor .e-toolbar-wrapper,
+:host ::ng-deep .description-editor .e-toolbar,
+:host ::ng-deep .description-editor .e-toolbar-items,
+:host ::ng-deep .description-editor .e-rte-content,
+:host ::ng-deep .description-editor .e-source-content {
+    background: #28252A;
+    color: #fff;
+}
+
+:host ::ng-deep .description-editor .e-toolbar-wrapper {
+    border-bottom-color: rgba(232, 220, 190, 0.14);
+}
+
+:host ::ng-deep .description-editor .e-rte-content .e-content,
+:host ::ng-deep .description-editor .e-source-content .e-content {
+    min-height: 160px;
+    padding: 14px;
+    color: #fff;
+    font-family: inherit;
+    line-height: 1.55;
+}
+
+:host ::ng-deep .description-editor .e-rte-placeholder {
+    color: rgba(250, 250, 250, 0.55);
 }
 
 .form-control:focus,

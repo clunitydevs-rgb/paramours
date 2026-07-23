@@ -13,6 +13,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Identitycheck } from "../identitycheck/identitycheck";
 import { AnalyticsService } from '../service/analytics.service';
 import { forkJoin } from 'rxjs';
+import {
+  EmojiPickerService,
+  HtmlEditorService,
+  LinkService,
+  RichTextEditorModule,
+  ToolbarService,
+  ToolbarSettingsModel
+} from '@syncfusion/ej2-angular-richtexteditor';
 
 interface Item {
   iId: number,
@@ -28,9 +36,10 @@ interface Files {
 
 @Component({
   selector: 'app-settingaccount',
-  imports: [ReactiveFormsModule, CommonModule, GalleryLightbox, Identitycheck],
+  imports: [ReactiveFormsModule, CommonModule, GalleryLightbox, Identitycheck, RichTextEditorModule],
   templateUrl: './settingaccount.html',
-  styleUrl: './settingaccount.css'
+  styleUrl: './settingaccount.css',
+  providers: [ToolbarService, LinkService, HtmlEditorService, EmojiPickerService]
 })
 export class Settingaccount {
 
@@ -55,6 +64,18 @@ export class Settingaccount {
   public isProfileActive: boolean = false;
   public isProfileBlocked: boolean = false;
   public bHiddenProfileValided: boolean = true;
+  public isAdministrator: boolean = false;
+  public isEditingManagedProfile: boolean = false;
+  public descriptionToolbar: ToolbarSettingsModel = {
+    items: [
+      'Undo', 'Redo', '|',
+      'Bold', 'Italic', 'Underline', '|',
+      'FontSize', 'FontColor', '|',
+      'Alignments', '|',
+      'OrderedList', 'UnorderedList', '|',
+      'CreateLink', 'EmojiPicker'
+    ]
+  };
 
   ActiveProfileFrm: ActiveProfile = {
     Uid: '',
@@ -134,6 +155,7 @@ export class Settingaccount {
   });
 
   ngOnInit(): void {
+    this.isAdministrator = this.methodservice.getItemLocalStorage('cl.paramours.typeuser') === '0';
     this.LoadProfile();
 
     this.methodservice.tInProcess.subscribe((data: string) => {
@@ -173,7 +195,14 @@ export class Settingaccount {
   }
 
   LoadProfile() {
-    var sUid = this.methodservice.getItemLocalStorage("cl.paramours.sUid");
+    const sessionUid = this.methodservice.getItemLocalStorage("cl.paramours.sUid");
+    const requestedUid = Number(this.route.snapshot.queryParamMap.get('uid'));
+    this.isEditingManagedProfile = this.isAdministrator && Number.isInteger(requestedUid) && requestedUid > 0;
+    this.uIdUser.sUid = this.isEditingManagedProfile ? requestedUid : Number(sessionUid);
+
+    const clienteRequest = this.isEditingManagedProfile
+      ? this.api.getClientById(this.uIdUser)
+      : this.api.getClientByToken();
 
     this.api.getNaciones().subscribe(data => {
       this.oNacionalidades = data;
@@ -199,14 +228,18 @@ export class Settingaccount {
       ciudades: this.api.getCiudades(),
       comunas: this.api.getComunas(),
       metros: this.api.getMetros(),
-      cliente: this.api.getClientByToken()
+      cliente: clienteRequest
     }).subscribe({
       next: ({ ciudades, comunas, metros, cliente: data }) => {
         this.oCiudades = ciudades;
         this.oComunasCatalog = comunas;
         this.oMetrosCatalog = metros;
 
-        if ((data.ncoderror == '0') && (sUid === data.oClient.iD_USUARIO.toString())) {
+        const canLoadClient = this.isEditingManagedProfile
+          ? requestedUid === data.oClient.iD_USUARIO
+          : sessionUid === data.oClient.iD_USUARIO.toString();
+
+        if ((data.ncoderror == '0') && canLoadClient) {
           this.oCliente = data.oClient;
           this.frmAccount.controls.email.setValue(this.oCliente.correo);
           this.frmAccount.controls.celular.setValue(this.oCliente.celular);

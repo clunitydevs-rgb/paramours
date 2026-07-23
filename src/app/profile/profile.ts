@@ -334,6 +334,10 @@ export class Profile implements OnInit {
     return this.profileViewState === 'inactive';
   }
 
+  get canEditProfile(): boolean {
+    return !this.isOwner || this.isAdministrator;
+  }
+
   Reviews() {
     this.api.GetCountReviewByUser(this.uIdUser).subscribe({
       next: (data: number) => {
@@ -438,7 +442,14 @@ export class Profile implements OnInit {
   }
 
   editProfile() {
-    this.router.navigate(['/settingaccount'])
+    if (this.isAdministrator) {
+      this.router.navigate(['/settingaccount'], {
+        queryParams: { uid: this.oCliente.iD_USUARIO }
+      });
+      return;
+    }
+
+    this.router.navigate(['/settingaccount']);
   }
 
   private buildProfileUrl(): string {

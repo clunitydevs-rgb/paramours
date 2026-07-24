@@ -41,8 +41,20 @@
         <img src="https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/logo.png" width="150">
       </a>
 
-      <!-- BOTÓN MOBILE -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+      <!-- ACCIONES MOBILE PARA VISITANTES -->
+      <div *ngIf="!bShowLoginAndRegister" class="mobile-guest-actions d-flex d-lg-none">
+        <a class="mobile-access-button" routerLink="/login">
+          Acceder
+        </a>
+        <a class="mobile-publish-button" routerLink="/account/client">
+          Publ&iacute;cate
+        </a>
+      </div>
+
+      <!-- MENÚ MOBILE: SOLO USUARIOS CON SESIÓN -->
+      <button *ngIf="bShowLoginAndRegister" class="navbar-toggler d-lg-none" type="button"
+        data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu"
+        aria-label="Abrir men&uacute; de navegaci&oacute;n">
         <span class="navbar-toggler-icon"></span>
       </button>
 
@@ -143,26 +155,6 @@
   </div>
 
   <div class="offcanvas-body">
-
-    <!-- NO LOGUEADO -->
-    <ng-container *ngIf="!bShowLoginAndRegister">
-      <nav class="menu-actions" aria-label="Navegación">
-        <a routerLink="/login" (click)="closeOffcanvas('mobileMenu')" class="menu-action">
-          <i class="bi bi-box-arrow-in-right"></i>
-          <span>Acceder</span>
-        </a>
-
-        <a routerLink="/account/user" (click)="closeOffcanvas('mobileMenu')" class="menu-action">
-          <i class="bi bi-person-add"></i>
-          <span>Registrarse</span>
-        </a>
-
-        <a routerLink="/account/client" (click)="closeOffcanvas('mobileMenu')" class="menu-action menu-action-primary">
-          <i class="bi bi-stars"></i>
-          <span>Publicarse gratis</span>
-        </a>
-      </nav>
-    </ng-container>
 
     <!-- LOGUEADO -->
     <ng-container *ngIf="bShowLoginAndRegister">

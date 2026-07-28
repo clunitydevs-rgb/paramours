@@ -199,7 +199,7 @@ export class Home implements OnInit {
   }
 
   private scheduleStoriesLoad(): void {
-    const scheduleRequest = () => window.setTimeout(() => this.getStories(), 8000);
+    const scheduleRequest = () => window.setTimeout(() => this.getStories(), 250);
 
     if (document.readyState === 'complete') {
       scheduleRequest();

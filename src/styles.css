@@ -1,12 +1,4 @@
 
-/* Sobrescribe la fuente de iconos para que nunca bloquee el texto visible. */
-@font-face {
-  font-family: "bootstrap-icons";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/assets/fonts/bootstrap-icons.woff2") format("woff2");
-}
 :root {
     --black: #121212;
     --dark: #1e1e1e;

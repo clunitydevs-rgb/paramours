@@ -1,3 +1,5 @@
+import { registerSyncfusion } from '../../syncfusion-license';
+
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, ElementRef, EventEmitter, HostListener, Inject, Output, PLATFORM_ID, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -8,6 +10,8 @@ import { ApiServices } from '../api/api.service';
 import { MethodService } from '../method/method.service';
 import { ToastService } from '../service/toast.service';
 import { AnalyticsService } from '../service/analytics.service';
+
+registerSyncfusion();
 
 @Component({
   selector: 'app-profile-post-editor',

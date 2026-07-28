@@ -1,4 +1,5 @@
-﻿import { Component } from '@angular/core';
+import { registerSyncfusion } from '../../syncfusion-license';
+import { Component } from '@angular/core';
 import { ActiveProfile, Cliente, ImageProfile, UidUser } from '../models/models.interface';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,6 +14,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Identitycheck } from "../identitycheck/identitycheck";
 import { AnalyticsService } from '../service/analytics.service';
 import { forkJoin } from 'rxjs';
+
 import {
   EmojiPickerService,
   EmojiSettingsModel,
@@ -35,6 +37,8 @@ interface Item {
 interface Files {
   mFile: File
 }
+
+registerSyncfusion();
 
 @Component({
   selector: 'app-settingaccount',

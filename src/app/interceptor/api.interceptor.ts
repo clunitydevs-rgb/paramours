@@ -11,7 +11,8 @@ export class ApiInterceptor implements HttpInterceptor{
 
     intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
         const skipLoader = req.url.includes('/Client/GetClients')
-            || req.url.includes('/Stories/GetAllActiveStoriesUser');
+            || req.url.includes('/Stories/GetAllActiveStoriesUser')
+            || req.url.includes('/assets/data/');
 
         if (skipLoader) {
             return next.handle(req);

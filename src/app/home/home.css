@@ -532,7 +532,6 @@
 }
 .home-locations nav {
     display: flex;
-    min-height: 76px;
     flex-wrap: wrap;
     gap: 9px;
 }

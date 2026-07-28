@@ -89,7 +89,18 @@ export class EscortDirectory implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.slug = this.route.snapshot.paramMap.get('slug') ?? '';
+    this.route.paramMap.subscribe(params => {
+      this.slug = params.get('slug') ?? '';
+      this.loadLocation();
+    });
+  }
+
+  private loadLocation(): void {
+    this.loading = true;
+    this.loadError = false;
+    this.profiles = [];
+    this.locationName = '';
+    this.content = null;
 
     forkJoin({
       clients: this.api.getClients().pipe(timeout(6000), catchError(() => of(null))),

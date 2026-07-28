@@ -19,7 +19,7 @@ body {
   background: #060606;
   font-size: 1rem;
   /*font-family: "Fira Sans Extra Condensed"*/
-  font-family: "Raleway", "Segoe UI Emoji", "Noto Color Emoji", "Apple Color Emoji", "Playfair Display", "Inter", serif, sans-serif;
+  font-family: "Raleway", system-ui, -apple-system, "Segoe UI", sans-serif;
   /*font-family: Lato;*/
   font-weight: 300;
   font-style: normal;

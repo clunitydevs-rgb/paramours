@@ -7,8 +7,8 @@ import { Cliente } from '../models/models.interface';
 export class SeoService {
   private readonly siteName = 'Paramours';
   private readonly siteUrl = 'https://paramours.cl';
-  private readonly defaultTitle = 'Paramours | Escorts en Chile';
-  private readonly defaultDescription = 'Paramours, Portal de chicas y mujeres escorts, escorts VIP en Chile, Santiago, Providencia y Las Condes. Chilenas escorts amateur reales. Private club premium para experiencias exclusivas y perfiles selectos';
+  private readonly defaultTitle = 'Escorts en Chile y acompañantes VIP | Paramours';
+  private readonly defaultDescription = 'Encuentra escorts, acompañantes VIP y cariñosas en Chile. Perfiles verificados, fotografías reales y contacto directo en Santiago y sus principales comunas.';
   private readonly defaultImage = 'https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/avatar_anunciante.png';
 
   constructor(
@@ -19,6 +19,7 @@ export class SeoService {
 
   setHomeSeo(): void {
     this.title.setTitle(this.defaultTitle);
+    this.meta.updateTag({ name: 'robots', content: 'index, follow, max-image-preview:large' });
     this.setDescription(this.defaultDescription);
     this.setCanonical(this.siteUrl);
 
@@ -56,6 +57,7 @@ export class SeoService {
     const title = `Escort ${profileName} | Paramours`;
 
     this.title.setTitle(title);
+    this.meta.updateTag({ name: 'robots', content: 'index, follow, max-image-preview:large' });
     this.setDescription(description);
     this.setCanonical(profileUrl);
 
@@ -93,6 +95,7 @@ export class SeoService {
     const description = 'Este perfil de Paramours no se encuentra activo actualmente.';
 
     this.title.setTitle(title);
+    this.meta.updateTag({ name: 'robots', content: 'noindex, follow' });
     this.setDescription(description);
     this.setCanonical(profileUrl);
 

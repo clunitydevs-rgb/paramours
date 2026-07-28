@@ -6,20 +6,23 @@
             <div class="profiles-intro">
                 <div>
                     <span class="section-kicker">Paramours Chile</span>
-                    <h1 id="profiles-title">Escorts VIP en Santiago</h1>
+                    <h1 id="profiles-title">Escorts VIP y acompañantes en Chile</h1>
                 </div>
                 <span *ngIf="nTotalClienteCount > 0" class="profiles-count">{{ nTotalClienteCount }} perfiles</span>
-                <p>El cat&aacute;logo m&aacute;s exclusivo de Escorts independientes y damas de compa&ntilde;&iacute;a, masajes er&#243;ticos, sensitivos y servicios VIP en Chile, en sector oriente y Santiago Centro.</p>
+                <p>Directorio de escorts independientes, acompa&ntilde;antes VIP y cari&ntilde;osas en Chile, con perfiles verificados, fotograf&iacute;as reales y contacto directo. Revisa la disponibilidad actual en Santiago y sus comunas.</p>
             </div>
 
             <div *ngIf="arrItems.length > 0" class="profiles-grid">
-                <article *ngFor="let i of arrItems" class="profile-card-wrap">
+                <article *ngFor="let i of arrItems; let index = index; trackBy: trackClient" class="profile-card-wrap">
                     <a class="profile-card" [href]="getProfileUrl(i)" target="_blank" rel="noopener noreferrer"
                         [attr.aria-label]="'Ver perfil de ' + i.nombrE_USUARIO">
                         <img class="image-show"
                             [attr.alt]="'Escort-VIP-' + (getProfileLocation(i) || 'Santiago')"
                             [src]="i.fotO_PERFIL != null && i.fotO_PERFIL != '' ? sUrlRps + i.fotO_PERFIL : proFileImg"
-                            loading="lazy">
+                            width="600" height="800"
+                            decoding="async"
+                            [attr.loading]="index === 0 ? 'eager' : 'lazy'"
+                            [attr.fetchpriority]="index === 0 ? 'high' : 'auto'">
                         <span class="verified-badge"><i class="bi bi-shield-fill-check"></i> Verificado</span>
 
                         <div class="profile-overlay">
@@ -36,7 +39,21 @@
         </div>
     </section>
 
-    <section class="escort-access" aria-label="Acceso para anunciantes">
+
+    <section class="home-locations" aria-labelledby="home-locations-title">
+        <div class="container">
+            <h2 id="home-locations-title">Escorts por ubicación en Santiago</h2>
+            <nav aria-label="Directorios de escorts por comuna">
+                <a routerLink="/escorts-santiago">Santiago</a>
+                <a routerLink="/escorts-santiago-las-condes">Las Condes</a>
+                <a routerLink="/escorts-santiago-providencia">Providencia</a>
+                <a routerLink="/escorts-santiago-centro">Santiago Centro</a>
+                <a routerLink="/escorts-santiago-la-reina">La Reina</a>
+                <a routerLink="/escorts-santiago-san-miguel">San Miguel</a>
+                <a routerLink="/escorts-santiago-lo-prado">Lo Prado</a>
+            </nav>
+        </div>
+    </section>    <section class="escort-access" aria-label="Acceso para anunciantes">
         <div class="container">
             <p>Si eres chica escort, <a routerLink="/account/client"><i class="bi bi-person-fill-add"></i> publicate aqu&iacute;</a>.</p>
             <p>Si tienes dudas para publicar, <a class="whatsapp-link"
@@ -49,7 +66,7 @@
     </section>
     <section class="seo-content">
         <div class="container">
-            <p>Bienvenido a Paramours, el directorio exclusivo de Escorts VIP y damas de compa&ntilde;&iacute;a en Chile. Aqu&iacute; encontrar&aacute;s una selecci&oacute;n rigurosa de escorts VIP independientes con fotos 100% reales y verificadas. Nuestro portal te conecta de forma directa y confidencial con acompa&ntilde;antes que ofrecen servicios de masajes sensitivos, atenci&oacute;n en departamento privado y domicilios en las principales comunas del sector oriente y Santiago de Chile.</p>
+            <p>Bienvenido a Paramours, un directorio de escorts VIP y damas de compa&ntilde;&iacute;a en Chile. Aqu&iacute; encontrar&aacute;s perfiles independientes con fotos reales y verificadas. Nuestro portal conecta de forma directa y confidencial a quienes buscan acompa&ntilde;antes o amantes en Chile, incluyendo alternativas de masajes sensitivos y atenci&oacute;n en las principales comunas de Santiago.</p>
             <p>Explora perfiles detallados, historias exclusivas y conecta de manera segura con las mejores alternativas de entretenimiento para adultos en Santiago.</p>
         </div>
     </section>

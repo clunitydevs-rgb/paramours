@@ -2,6 +2,14 @@ import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 
+export interface LocationSeoData {
+  locationName: string;
+  slug: string;
+  description: string;
+  profileCount: number;
+  faqs: Array<{ question: string; answer: string }>;
+}
+
 @Injectable({ providedIn: 'root' })
 export class LocationSeoService {
   private readonly siteUrl = 'https://paramours.cl';
@@ -9,25 +17,29 @@ export class LocationSeoService {
 
   constructor(private title: Title, private meta: Meta, @Inject(DOCUMENT) private document: Document) { }
 
-  setLocationSeo(locationName: string, slug: string): void {
-    const title = `Escorts en ${locationName} | Paramours`;
-    const description = `Encuentra Escorts en ${locationName}. Perfiles verificados, fotografías reales y contacto directo en Paramours.`;
-    const url = `${this.siteUrl}/escorts-${slug}`;
+  setLocationSeo(data: LocationSeoData): void {
+    const title = data.slug === 'santiago'
+      ? 'Escorts en Santiago | Acompañantes VIP y masajes | Paramours'
+      : `Escorts en ${data.locationName} | Perfiles verificados | Paramours`;
+    const url = `${this.siteUrl}/escorts-${data.slug}`;
+    const canIndex = data.profileCount > 0;
+
     this.title.setTitle(title);
-    this.meta.updateTag({ name: 'description', content: description });
+    this.meta.updateTag({ name: 'description', content: data.description });
+    this.meta.updateTag({ name: 'robots', content: canIndex ? 'index, follow, max-image-preview:large' : 'noindex, follow' });
     this.meta.updateTag({ property: 'og:site_name', content: 'Paramours' });
     this.meta.updateTag({ property: 'og:locale', content: 'es_CL' });
     this.meta.updateTag({ property: 'og:title', content: title });
-    this.meta.updateTag({ property: 'og:description', content: description });
+    this.meta.updateTag({ property: 'og:description', content: data.description });
     this.meta.updateTag({ property: 'og:image', content: this.defaultImage });
     this.meta.updateTag({ property: 'og:url', content: url });
     this.meta.updateTag({ property: 'og:type', content: 'website' });
     this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
     this.meta.updateTag({ name: 'twitter:title', content: title });
-    this.meta.updateTag({ name: 'twitter:description', content: description });
+    this.meta.updateTag({ name: 'twitter:description', content: data.description });
     this.meta.updateTag({ name: 'twitter:image', content: this.defaultImage });
     this.setCanonical(url);
-    this.setJsonLd({ '@context': 'https://schema.org', '@type': 'CollectionPage', name: title, description, url, about: { '@type': 'Place', name: locationName } });
+    this.setJsonLd(data, title, url);
   }
 
   private setCanonical(url: string): void {
@@ -40,8 +52,38 @@ export class LocationSeoService {
     link.href = url;
   }
 
-  private setJsonLd(schema: object): void {
+  private setJsonLd(data: LocationSeoData, title: string, url: string): void {
     this.document.getElementById('location-schema')?.remove();
+    const schema = {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'CollectionPage',
+          '@id': `${url}#collection`,
+          name: title,
+          description: data.description,
+          url,
+          about: { '@type': 'Place', name: data.locationName },
+          numberOfItems: data.profileCount,
+          isPartOf: { '@type': 'WebSite', name: 'Paramours', url: this.siteUrl }
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Inicio', item: this.siteUrl },
+            { '@type': 'ListItem', position: 2, name: `Escorts en ${data.locationName}`, item: url }
+          ]
+        },
+        {
+          '@type': 'FAQPage',
+          mainEntity: data.faqs.map(faq => ({
+            '@type': 'Question',
+            name: faq.question,
+            acceptedAnswer: { '@type': 'Answer', text: faq.answer }
+          }))
+        }
+      ]
+    };
     const script = this.document.createElement('script');
     script.id = 'location-schema';
     script.type = 'application/ld+json';

@@ -86,6 +86,10 @@ export class Home implements OnInit {
     return `/profile/${item.iD_USUARIO}/${(item as any).slug ?? ''}`;
   }
 
+  trackClient(_index: number, item: Cliente): unknown {
+    return item.iD_USUARIO;
+  }
+
   getProfileLocation(item: Cliente): string {
     const ciudadId = this.getLocationId((item as any).ciudad);
     const ciudadName = ciudadId !== null

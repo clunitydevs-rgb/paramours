@@ -1,23 +1,30 @@
 <main class="home-shell">
   <section class="profiles-section profiles-section-first" aria-labelledby="profiles-title">
     <div class="container">
+      <nav class="seo-breadcrumb" aria-label="Migas de pan">
+        <a routerLink="/">Inicio</a><span aria-hidden="true">/</span><span>{{ locationName }}</span>
+      </nav>
+
       <div class="profiles-intro">
         <div>
           <span class="section-kicker">Paramours Chile</span>
           <h1 id="profiles-title">Escorts en {{ locationName }}</h1>
         </div>
         <span *ngIf="!loading && profiles.length > 0" class="profiles-count">{{ profiles.length }} perfiles</span>
-        <p *ngIf="locationName">Explora perfiles verificados de escorts disponibles en {{ locationName }}, con fotograf&iacute;as reales y contacto directo.</p>
+        <p *ngIf="content">{{ content.intro }}</p>
       </div>
 
-      <p *ngIf="loading">Cargando perfiles...</p>
+      <p *ngIf="loading" aria-live="polite">Cargando perfiles...</p>
 
       <div *ngIf="!loading && profiles.length > 0" class="profiles-grid">
-        <article *ngFor="let profile of profiles" class="profile-card-wrap">
+        <article *ngFor="let profile of profiles; let index = index; trackBy: trackProfile" class="profile-card-wrap">
           <a class="profile-card" [href]="getProfileUrl(profile)" target="_blank" rel="noopener noreferrer"
             [attr.aria-label]="'Ver perfil de ' + profile.nombrE_USUARIO">
-            <img class="image-show" [attr.alt]="'Escort en ' + locationName"
-              [src]="profile.fotO_PERFIL ? sUrlRps + profile.fotO_PERFIL : proFileImg" loading="lazy">
+            <img class="image-show" [attr.alt]="profile.nombrE_USUARIO + ', escort en ' + locationName"
+              [src]="profile.fotO_PERFIL ? sUrlRps + profile.fotO_PERFIL : proFileImg"
+              width="600" height="800" decoding="async"
+              [attr.loading]="index === 0 ? 'eager' : 'lazy'"
+              [attr.fetchpriority]="index === 0 ? 'high' : 'auto'">
             <span class="verified-badge"><i class="bi bi-shield-fill-check"></i> Verificado</span>
             <div class="profile-overlay">
               <h2>{{ profile.nombrE_USUARIO }}</h2>
@@ -30,21 +37,46 @@
         </article>
       </div>
 
-      <div *ngIf="!loading && !loadError && profiles.length === 0" class="profiles-intro">
+      <div *ngIf="!loading && !loadError && profiles.length === 0" class="empty-location" aria-live="polite">
         <h2>No hay perfiles disponibles actualmente</h2>
-        <p>En este momento no encontramos escorts activas en {{ locationName }}.</p>
+        <p>Esta página se activará para buscadores cuando existan escorts disponibles en {{ locationName }}.</p>
+        <a routerLink="/escorts-santiago">Ver escorts disponibles en Santiago</a>
       </div>
-      <div *ngIf="loadError" class="profiles-intro">
+      <div *ngIf="loadError" class="empty-location">
         <h2>No pudimos cargar los perfiles</h2>
         <p>Por favor, intenta nuevamente en unos minutos.</p>
       </div>
     </div>
   </section>
 
-  <section class="escort-access" aria-label="Acceso para anunciantes">
-    <div class="container"><p>Si eres chica escort, <a routerLink="/account/client">publ&iacute;cate aqu&iacute;</a>.</p></div>
+  <section *ngIf="content" class="local-seo-section" aria-labelledby="local-information-title">
+    <div class="container local-seo-layout">
+      <article>
+        <h2 id="local-information-title">{{ content.heading }}</h2>
+        <p *ngFor="let paragraph of content.paragraphs">{{ paragraph }}</p>
+      </article>
+      <aside class="related-locations" aria-labelledby="related-title">
+        <h2 id="related-title">Explora otras ubicaciones</h2>
+        <nav aria-label="Directorios relacionados">
+          <a *ngFor="let location of visibleRelatedLocations" [routerLink]="location.url">Escorts en {{ location.label }}</a>
+        </nav>
+      </aside>
+    </div>
   </section>
-  <section *ngIf="locationName" class="seo-content">
-    <div class="container"><p>Paramours reúne perfiles de escorts en {{ locationName }} para consultar informaci&oacute;n actualizada y contactar directamente con cada anunciante.</p></div>
+
+  <section *ngIf="content && content.faqs.length" class="local-faq" aria-labelledby="faq-title">
+    <div class="container">
+      <h2 id="faq-title">Preguntas frecuentes sobre escorts en {{ locationName }}</h2>
+      <details *ngFor="let faq of content.faqs">
+        <summary>{{ faq.question }}</summary>
+        <p>{{ faq.answer }}</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="escort-access" aria-label="Acceso para anunciantes">
+    <div class="container">
+      <p>¿Publicas en {{ locationName }}? <a routerLink="/account/client">Crea tu perfil gratis</a>.</p>
+    </div>
   </section>
 </main>

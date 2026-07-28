@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { escortLocationMatcher } from './routing/escort-location.matcher';
 
 export const routes: Routes = [
-    {path:'', redirectTo:'/home', pathMatch:'full'},
+    {path:'', loadComponent: () => import('./home/home').then(m => m.Home), pathMatch:'full'},
     {
         matcher: escortLocationMatcher,
         loadComponent: () => import('./escort-directory/escort-directory').then(m => m.EscortDirectory)

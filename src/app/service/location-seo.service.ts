@@ -11,7 +11,7 @@ export class LocationSeoService {
 
   setLocationSeo(locationName: string, slug: string): void {
     const title = `Escorts en ${locationName} | Paramours`;
-    const description = `Encuentra escorts en ${locationName}. Perfiles verificados, fotografías reales y contacto directo en Paramours.`;
+    const description = `Encuentra Escorts en ${locationName}. Perfiles verificados, fotografías reales y contacto directo en Paramours.`;
     const url = `${this.siteUrl}/escorts-${slug}`;
     this.title.setTitle(title);
     this.meta.updateTag({ name: 'description', content: description });

@@ -8,7 +8,7 @@ export class SeoService {
   private readonly siteName = 'Paramours';
   private readonly siteUrl = 'https://paramours.cl';
   private readonly defaultTitle = 'Paramours | Escorts en Chile';
-  private readonly defaultDescription = 'Paramours, Portal de chicas y mujeres escort, escorts VIP en Chile, Santiago, Providencia y Las Condes. Chilenas escorts amateur reales. Private club premium para experiencias exclusivas y perfiles selectos';
+  private readonly defaultDescription = 'Paramours, Portal de chicas y mujeres escorts, escorts VIP en Chile, Santiago, Providencia y Las Condes. Chilenas escorts amateur reales. Private club premium para experiencias exclusivas y perfiles selectos';
   private readonly defaultImage = 'https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/avatar_anunciante.png';
 
   constructor(

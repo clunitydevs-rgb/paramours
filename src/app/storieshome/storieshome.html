@@ -1,4 +1,4 @@
-<div [hidden]="bShowFx" class="container mt-4">
+<section class="stories-home container" [class.stories-loading]="bShowFx" [attr.aria-busy]="bShowFx">
     <div class="row">
         <div class="col-md-12">Historias</div>
     </div>
@@ -14,7 +14,7 @@
             </div>
         </div>
     </div>
-</div>
+</section>
 
 <!-- VIEWER -->
 <div class="lightbox" *ngIf="isViewerOpen">

@@ -27,6 +27,7 @@ export class Home implements OnInit {
   oCiudades: Array<any> = [];
   oComunas: Array<any> = [];
   oMetros: Array<any> = [];
+  locationLinks: Array<{ label: string; url: string }> = [];
 
   constructor(
     private api: ApiServices,
@@ -67,6 +68,7 @@ export class Home implements OnInit {
         const clientes = Array.isArray(responseClients) ? responseClients as Cliente[] : [];
         this.oData = clientes;
         this.arrItems = [...clientes];
+        this.locationLinks = this.buildLocationLinks(clientes);
         this.nTotalClienteCount = this.arrItems.length;
 
         if (this.arrItems.length > 0) {
@@ -79,9 +81,16 @@ export class Home implements OnInit {
       }
     });
 
-    this.getStories();
+    this.scheduleStoriesLoad();
   }
 
+  private buildLocationLinks(clients: Cliente[]): Array<{ label: string; url: string }> {
+    const activeCommuneIds = new Set(clients.map(client => client.comuna?.toString()).filter(Boolean));
+    return this.oComunas
+      .filter(comuna => comuna.slug && activeCommuneIds.has(comuna.id?.toString()))
+      .map(comuna => ({ label: comuna.nombre, url: `/escort-${comuna.slug}` }))
+      .sort((left, right) => left.label.localeCompare(right.label, 'es'));
+  }
   getProfileUrl(item: Cliente): string {
     return `/profile/${item.iD_USUARIO}/${(item as any).slug ?? ''}`;
   }
@@ -182,6 +191,25 @@ export class Home implements OnInit {
     return value?.toString().trim().toLowerCase() === 'sin estaciones';
   }
 
+  private scheduleStoriesLoad(): void {
+    const requestStories = () => {
+      const browserWindow = window as Window & {
+        requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+      };
+
+      if (browserWindow.requestIdleCallback) {
+        browserWindow.requestIdleCallback(() => this.getStories(), { timeout: 4000 });
+      } else {
+        window.setTimeout(() => this.getStories(), 1500);
+      }
+    };
+
+    if (document.readyState === 'complete') {
+      requestStories();
+    } else {
+      window.addEventListener('load', requestStories, { once: true });
+    }
+  }
   getStories() {
     this.api.GetAllActiveStoriesUser().pipe(
       timeout(6000),

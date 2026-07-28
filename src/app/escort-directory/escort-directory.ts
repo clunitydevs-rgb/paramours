@@ -24,14 +24,6 @@ interface LocalContent {
   faqs: Array<{ question: string; answer: string }>;
 }
 
-const LOCATION_ALIASES: Record<string, string> = {
-  'santiago-providencia': 'providencia',
-  'santiago-las-condes': 'las-condes',
-  'santiago-la-reina': 'la-reina',
-  'santiago-las-reina': 'la-reina',
-  'santiago-san-miguel': 'san-miguel',
-  'santiago-lo-prado': 'lo-prado'
-};
 
 const LOCAL_CONTENT: Record<string, LocalContent> = {
   santiago: {
@@ -61,7 +53,7 @@ const LOCAL_CONTENT: Record<string, LocalContent> = {
     paragraphs: ['Paramours organiza los perfiles por ubicación para facilitar la búsqueda de acompañantes en Antofagasta.'],
     faqs: [{ question: '¿Cómo revisar la disponibilidad en Antofagasta?', answer: 'Los perfiles visibles en esta página corresponden a anunciantes activas asociadas a Antofagasta.' }]
   },
-  'santiago-las-condes-manquehue': {
+  manquehue: {
     intro: 'Explora acompañantes y servicios de masajes cerca de Manquehue, en Las Condes.',
     heading: 'Escorts y masajes en Manquehue',
     paragraphs: ['Consulta perfiles activos próximos al sector de Metro Manquehue y contacta directamente para confirmar ubicación y servicios.'],
@@ -78,15 +70,7 @@ const LOCAL_CONTENT: Record<string, LocalContent> = {
 export class EscortDirectory implements OnInit {
   readonly sUrlRps = 'https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/';
   readonly proFileImg = `${this.sUrlRps}avatar_anunciante.png`;
-  readonly relatedLocations = [
-    { label: 'Santiago', url: '/escorts-santiago' },
-    { label: 'Las Condes', url: '/escorts-santiago-las-condes' },
-    { label: 'Providencia', url: '/escorts-santiago-providencia' },
-    { label: 'Santiago Centro', url: '/escorts-santiago-centro' },
-    { label: 'La Reina', url: '/escorts-santiago-la-reina' },
-    { label: 'San Miguel', url: '/escorts-santiago-san-miguel' },
-    { label: 'Lo Prado', url: '/escorts-santiago-lo-prado' }
-  ];
+  relatedLocations: Array<{ label: string; url: string }> = [];
 
   slug = '';
   locationName = '';
@@ -114,10 +98,9 @@ export class EscortDirectory implements OnInit {
       metros: this.api.getMetros()
     }).subscribe({
       next: ({ clients, ciudades, comunas, metros }) => {
-        const resolvedSlug = LOCATION_ALIASES[this.slug] ?? this.slug;
-        const city = (ciudades as LocationItem[]).find(item => item.slug === resolvedSlug);
-        const commune = (comunas as LocationItem[]).find(item => item.slug === resolvedSlug);
-        const metro = this.slug === 'santiago-las-condes-manquehue'
+        const city = (ciudades as LocationItem[]).find(item => item.slug === this.slug);
+        const commune = (comunas as LocationItem[]).find(item => item.slug === this.slug);
+        const metro = this.slug === 'manquehue'
           ? (metros as LocationItem[]).find(item => item.NombreMetro?.toLowerCase() === 'manquehue')
           : undefined;
         const location = metro ?? commune ?? city;
@@ -142,6 +125,7 @@ export class EscortDirectory implements OnInit {
         const responseClients = clients.oClient as unknown;
         const allProfiles = Array.isArray(responseClients) ? responseClients as Cliente[] : [];
         this.profiles = allProfiles.filter(profile => this.matchesLocation(profile));
+        this.relatedLocations = this.buildRelatedLocations(comunas as LocationItem[], allProfiles);
         this.loading = false;
         this.updateSeo();
       },
@@ -154,7 +138,7 @@ export class EscortDirectory implements OnInit {
   }
 
   get visibleRelatedLocations() {
-    const currentUrl = `/escorts-${this.slug}`;
+    const currentUrl = `/escort-${this.slug}`;
     return this.relatedLocations.filter(location => location.url !== currentUrl);
   }
 
@@ -166,6 +150,15 @@ export class EscortDirectory implements OnInit {
     return profile.iD_USUARIO;
   }
 
+  private buildRelatedLocations(communes: LocationItem[], profiles: Cliente[]): Array<{ label: string; url: string }> {
+    const activeCommuneIds = new Set(profiles.map(profile => profile.comuna?.toString()).filter(Boolean));
+    const communeLinks = communes
+      .filter(commune => commune.slug && activeCommuneIds.has(commune.id.toString()))
+      .map(commune => ({ label: commune.nombre, url: `/escort-${commune.slug}` }))
+      .sort((left, right) => left.label.localeCompare(right.label, 'es'));
+
+    return [{ label: 'Santiago', url: '/escort-santiago' }, ...communeLinks];
+  }
   private matchesLocation(profile: Cliente): boolean {
     if (this.locationId === null) return false;
     const value = this.locationType === 'metro'

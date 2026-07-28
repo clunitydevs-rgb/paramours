@@ -25,6 +25,20 @@ const angularApp = new AngularNodeAppEngine();
  * ```
  */
 
+const legacyLocationRoutes = new Map<string, string>([
+  ['/escorts-santiago', '/escort-santiago'],
+  ['/escorts-santiago-centro', '/escort-santiago-centro'],
+  ['/escorts-santiago-providencia', '/escort-providencia'],
+  ['/escorts-santiago-las-condes', '/escort-las-condes'],
+  ['/escorts-santiago-la-reina', '/escort-la-reina'],
+  ['/escorts-santiago-las-reina', '/escort-la-reina'],
+  ['/escorts-santiago-san-miguel', '/escort-san-miguel'],
+  ['/escorts-santiago-lo-prado', '/escort-lo-prado'],
+]);
+
+app.get([...legacyLocationRoutes.keys()], (req, res) => {
+  res.redirect(301, legacyLocationRoutes.get(req.path)!);
+});
 /**
  * Serve static files from /browser
  */
@@ -33,6 +47,11 @@ app.use(
     maxAge: '1y',
     index: false,
     redirect: false,
+    setHeaders: (res, filePath) => {
+      if (/[\\/](llms\.txt|robots\.txt|sitemap\.xml)$/i.test(filePath)) {
+        res.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate');
+      }
+    },
   }),
 );
 

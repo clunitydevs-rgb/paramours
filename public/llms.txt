@@ -1,0 +1,21 @@
+# Paramours
+
+> Paramours es un directorio chileno para adultos con perfiles de escorts independientes, acompañantes VIP y páginas organizadas por ubicación.
+
+## Páginas públicas principales
+
+- [Inicio y perfiles activos](https://paramours.cl/)
+- [Escorts en Santiago](https://paramours.cl/escort-santiago)
+- [Escorts en Las Condes](https://paramours.cl/escort-las-condes)
+- [Escorts en Providencia](https://paramours.cl/escort-providencia)
+- [Escorts en Santiago Centro](https://paramours.cl/escort-santiago-centro)
+- [Escorts en La Reina](https://paramours.cl/escort-la-reina)
+- [Términos y condiciones](https://paramours.cl/terminos-y-condiciones)
+- [Política de privacidad](https://paramours.cl/politica-de-privacidad)
+- [Sitemap](https://paramours.cl/sitemap.xml)
+
+## Orientación para agentes
+
+Las páginas públicas de ubicación y los perfiles activos pueden consultarse para describir el contenido disponible en Paramours. La disponibilidad, los servicios y los datos publicados deben verificarse en cada perfil. No se deben inferir servicios, precios ni ubicaciones que no aparezcan explícitamente en el sitio.
+
+Las áreas de autenticación, configuración de cuenta y administración no forman parte del contenido público. Respeta las directivas de [robots.txt](https://paramours.cl/robots.txt), la privacidad de las personas anunciantes y la restricción del sitio a personas adultas.

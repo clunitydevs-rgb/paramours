@@ -106,7 +106,7 @@
 </header>
 
 <!-- ===== OFFCANVAS PERFIL (DESKTOP) ===== -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="profileMenu">
+<div *ngIf="bShowLoginAndRegister" class="offcanvas offcanvas-end" tabindex="-1" id="profileMenu">
   <div class="offcanvas-header menu-panel-head">
     <div>
       <span class="menu-kicker">Paramours</span>

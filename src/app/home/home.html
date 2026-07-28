@@ -40,20 +40,17 @@
     </section>
 
 
-    <section class="home-locations" aria-labelledby="home-locations-title">
+    <section *ngIf="arrItems.length > 0" class="home-locations" aria-labelledby="home-locations-title">
         <div class="container">
             <h2 id="home-locations-title">Escorts por ubicación en Santiago</h2>
             <nav aria-label="Directorios de escorts por comuna">
-                <a routerLink="/escorts-santiago">Santiago</a>
-                <a routerLink="/escorts-santiago-las-condes">Las Condes</a>
-                <a routerLink="/escorts-santiago-providencia">Providencia</a>
-                <a routerLink="/escorts-santiago-centro">Santiago Centro</a>
-                <a routerLink="/escorts-santiago-la-reina">La Reina</a>
-                <a routerLink="/escorts-santiago-san-miguel">San Miguel</a>
-                <a routerLink="/escorts-santiago-lo-prado">Lo Prado</a>
+                <a routerLink="/escort-santiago">Santiago</a>
+                <a *ngFor="let location of locationLinks" [routerLink]="location.url">{{ location.label }}</a>
             </nav>
         </div>
-    </section>    <section class="escort-access" aria-label="Acceso para anunciantes">
+    </section>
+
+    <section class="escort-access" aria-label="Acceso para anunciantes">
         <div class="container">
             <p>Si eres chica escort, <a routerLink="/account/client"><i class="bi bi-person-fill-add"></i> publicate aqu&iacute;</a>.</p>
             <p>Si tienes dudas para publicar, <a class="whatsapp-link"

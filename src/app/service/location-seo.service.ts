@@ -21,7 +21,7 @@ export class LocationSeoService {
     const title = data.slug === 'santiago'
       ? 'Escorts en Santiago | Acompañantes VIP y masajes | Paramours'
       : `Escorts en ${data.locationName} | Perfiles verificados | Paramours`;
-    const url = `${this.siteUrl}/escorts-${data.slug}`;
+    const url = `${this.siteUrl}/escort-${data.slug}`;
     const canIndex = data.profileCount > 0;
 
     this.title.setTitle(title);

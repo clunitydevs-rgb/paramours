@@ -254,3 +254,23 @@ video.media {
     background: #000;
   }
 }
+
+/* Reserva el espacio del carrusel antes de recibir las historias para evitar CLS. */
+.stories-home {
+  min-height: 118px;
+  margin-top: 1.5rem;
+}
+
+.stories-home .stories-scroll {
+  min-height: 70px;
+}
+
+.stories-home.stories-loading .stories-scroll::before {
+  content: "";
+  display: block;
+  width: 70px;
+  height: 70px;
+  border: 1px solid rgba(232, 220, 190, 0.12);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.025);
+}

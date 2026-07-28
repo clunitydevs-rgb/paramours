@@ -40,48 +40,55 @@ export class Home implements OnInit {
   ngOnInit(): void {
     this.seoService.setHomeSeo();
 
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
+    const isBrowser = isPlatformBrowser(this.platformId);
+
+    this.api.getClients().pipe(
+      timeout(6000),
+      catchError(() => of(null))
+    ).subscribe(clients => {
+      if (!clients) {
+        this.arrItems = [];
+        this.nTotalClienteCount = 0;
+        return;
+      }
+
+      const responseClients = clients.oClient as unknown;
+      const clientes = Array.isArray(responseClients) ? responseClients as Cliente[] : [];
+      this.oData = clientes;
+      this.arrItems = [...clientes];
+      this.nTotalClienteCount = this.arrItems.length;
+      this.updateLocationLinks();
+
+      if (isBrowser && this.arrItems.length > 0) {
+        this.methodservice.delItenLocalStorage("cl.paramours.arrItems");
+        this.methodservice.setItemLocalStorage("cl.paramours.arrItems", JSON.stringify(this.arrItems));
+      }
+    });
+
+    if (!isBrowser) return;
 
     forkJoin({
-      clients: this.api.getClients().pipe(
-        timeout(6000),
-        catchError(() => of(null))
-      ),
       ciudades: this.api.getCiudades(),
       comunas: this.api.getComunas(),
       metros: this.api.getMetros()
     }).subscribe({
-      next: ({ clients, ciudades, comunas, metros }) => {
+      next: ({ ciudades, comunas, metros }) => {
         this.oCiudades = ciudades;
         this.oComunas = comunas;
         this.oMetros = metros;
-
-        if (!clients) {
-          this.arrItems = [];
-          this.nTotalClienteCount = 0;
-          return;
-        }
-
-        const responseClients = clients.oClient as unknown;
-        const clientes = Array.isArray(responseClients) ? responseClients as Cliente[] : [];
-        this.oData = clientes;
-        this.arrItems = [...clientes];
-        this.locationLinks = this.buildLocationLinks(clientes);
-        this.nTotalClienteCount = this.arrItems.length;
-
-        if (this.arrItems.length > 0) {
-          this.methodservice.delItenLocalStorage("cl.paramours.arrItems");
-          this.methodservice.setItemLocalStorage("cl.paramours.arrItems", JSON.stringify(this.arrItems));
-        }
+        this.updateLocationLinks();
       },
-      error: err => {
-        this.toastService.error('Estamos presentando problemas, por favor recarga de nuevo la pagina!');
+      error: () => {
+        this.toastService.error('No fue posible cargar las ubicaciones.');
       }
     });
 
     this.scheduleStoriesLoad();
+  }
+
+  private updateLocationLinks(): void {
+    if (this.oComunas.length === 0 || this.oData.length === 0) return;
+    this.locationLinks = this.buildLocationLinks(this.oData);
   }
 
   private buildLocationLinks(clients: Cliente[]): Array<{ label: string; url: string }> {
@@ -192,24 +199,15 @@ export class Home implements OnInit {
   }
 
   private scheduleStoriesLoad(): void {
-    const requestStories = () => {
-      const browserWindow = window as Window & {
-        requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
-      };
-
-      if (browserWindow.requestIdleCallback) {
-        browserWindow.requestIdleCallback(() => this.getStories(), { timeout: 4000 });
-      } else {
-        window.setTimeout(() => this.getStories(), 1500);
-      }
-    };
+    const scheduleRequest = () => window.setTimeout(() => this.getStories(), 8000);
 
     if (document.readyState === 'complete') {
-      requestStories();
+      scheduleRequest();
     } else {
-      window.addEventListener('load', requestStories, { once: true });
+      window.addEventListener('load', scheduleRequest, { once: true });
     }
   }
+
   getStories() {
     this.api.GetAllActiveStoriesUser().pipe(
       timeout(6000),

@@ -10,6 +10,7 @@
   <link rel="canonical" href="https://paramours.cl" />
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="preconnect" href="https://paramoursfilesblobazure.blob.core.windows.net" crossorigin>
+  <link rel="preconnect" href="https://cl.api.client.paramours.cl" crossorigin>
 
   <!-- Google tag (gtag.js) -->
   <script>
@@ -30,12 +31,12 @@
       document.head.appendChild(script);
     }
 
+    ['pointerdown', 'keydown', 'touchstart'].forEach(function (eventName) {
+      window.addEventListener(eventName, loadGoogleAnalytics, { once: true, passive: true });
+    });
+
     window.addEventListener('load', function () {
-      if ('requestIdleCallback' in window) {
-        window.requestIdleCallback(loadGoogleAnalytics, { timeout: 3000 });
-      } else {
-        window.setTimeout(loadGoogleAnalytics, 1500);
-      }
+      window.setTimeout(loadGoogleAnalytics, 15000);
     }, { once: true });
   </script>
   <script id="website-schema" type="application/ld+json">

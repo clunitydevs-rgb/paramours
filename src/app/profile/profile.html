@@ -115,9 +115,12 @@
                         class="bi bi-calendar4 asset-color-silver"></i></span> {{ hAtencion != null &&
                 hAtencion.toString() !== '' ? hAtencion : '' }}
             </div>
-            <nav *ngIf="locationDirectoryUrl" class="ps-2 mb-2" aria-label="Directorio de ubicación">
-                <a [routerLink]="locationDirectoryUrl">Ver escorts en {{ locationDirectoryName }}</a>
-            </nav>
+            <aside *ngIf="locationDirectoryUrl" class="profile-location-invite"
+                aria-label="Más perfiles en esta ubicación">
+                <p>¿Buscas otras alternativas en la zona?
+                    <a [routerLink]="locationDirectoryUrl">Explora escorts en {{ locationDirectoryName }}</a>.
+                </p>
+            </aside>
             <div class="data-description-profile justify">
 
                 <div *ngIf="oCliente.celular != null && oCliente.celular.toString() !== '' && !isProfileUser"

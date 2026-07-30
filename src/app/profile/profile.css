@@ -700,6 +700,32 @@
         font-size: 0.78rem;
     }
 }
+.profile-location-invite {
+    margin: 8px 8px 14px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(232, 220, 190, 0.1);
+}
+
+.profile-location-invite p {
+    margin: 0;
+    color: rgba(250, 250, 250, 0.58);
+    font-size: 0.8rem;
+    line-height: 1.6;
+}
+
+.profile-location-invite a {
+    color: var(--champagne-gold, #c6a75e);
+    font-weight: 700;
+    text-decoration-color: rgba(198, 167, 94, 0.45);
+    text-underline-offset: 3px;
+    transition: color 180ms ease, text-decoration-color 180ms ease;
+}
+
+.profile-location-invite a:hover,
+.profile-location-invite a:focus-visible {
+    color: #f2dfad;
+    text-decoration-color: currentColor;
+}
 .profile-status-shell {
     display: grid;
     min-height: clamp(360px, 48vh, 560px);

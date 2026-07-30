@@ -32,7 +32,9 @@ const LOCAL_CONTENT: Record<string, LocalContent> = {
     paragraphs: [
       'Paramours reúne anuncios de acompañantes independientes en Santiago para comparar perfiles, comunas y servicios antes de contactar directamente. La disponibilidad se actualiza según los anuncios activos.',
       'Si buscas sexo en Santiago, acompañantes VIP o masajes sensitivos en Santiago, revisa la descripción de cada perfil y confirma directamente servicios, horarios, ubicación y condiciones.',
-      'Puedes explorar cariñosas en Santiago Centro, Providencia, Las Condes, La Reina, San Miguel y otras comunas con perfiles disponibles.'
+      'Puedes explorar cariñosas en Santiago Centro, Providencia, Las Condes, La Reina, San Miguel y otras comunas con perfiles disponibles.',
+      'El directorio permite revisar fotografías, datos generales y referencias de ubicación antes de elegir. Cada anunciante administra su información y establece de manera independiente sus horarios, tarifas y formas de atención.',
+      'Para una búsqueda más precisa, utiliza los enlaces por comuna y revisa únicamente perfiles publicados. Antes de coordinar, confirma directamente la disponibilidad, el sector exacto y las condiciones del encuentro. Paramours está dirigido exclusivamente a personas adultas y facilita el contacto sin intervenir en los acuerdos entre usuarios y anunciantes.'
     ],
     faqs: [
       { question: '¿Dónde encontrar acompañantes VIP en Santiago?', answer: 'Consulta los perfiles activos, compara sus ubicaciones y utiliza únicamente los datos de contacto publicados por cada anunciante.' },
@@ -192,8 +194,12 @@ export class EscortDirectory implements OnInit {
   private buildDefaultContent(locationName: string): LocalContent {
     return {
       intro: `Explora perfiles verificados de escorts en ${locationName}, con fotografías reales y contacto directo.`,
-      heading: `Acompañantes disponibles en ${locationName}`,
-      paragraphs: [`Paramours reúne perfiles de escorts en ${locationName} para consultar información actualizada y contactar directamente con cada anunciante.`],
+      heading: `Escorts y acompañantes disponibles en ${locationName}`,
+      paragraphs: [
+        `En Paramours puedes explorar perfiles de escorts en ${locationName} y revisar alternativas de acompañantes independientes disponibles en esta comuna de Santiago. El directorio reúne anuncios con fotografías, información general y medios de contacto publicados por cada anunciante, para que puedas comparar opciones de manera simple antes de comunicarte.`,
+        `La disponibilidad de escorts en ${locationName} cambia de acuerdo con los perfiles activos. Revisa cada anuncio para conocer horarios, tarifas, características y servicios informados. Si necesitas confirmar el sector exacto, la cercanía con el metro o las condiciones de atención, consulta directamente con la persona elegida antes de coordinar cualquier encuentro.`,
+        `Esta página organiza los perfiles asociados a ${locationName} y también ofrece enlaces hacia otras comunas de Santiago. Los anuncios identificados como verificados han completado el proceso de validación de Paramours. El sitio está dirigido exclusivamente a personas adultas y funciona como un espacio de publicación y contacto; cada anunciante gestiona de forma independiente su agenda, ubicación, servicios y condiciones. Utiliza siempre los datos publicados en el perfil y mantén una comunicación respetuosa y privada.`
+      ],
       faqs: [{ question: `¿Cómo contactar escorts en ${locationName}?`, answer: 'Selecciona un perfil activo y utiliza los datos de contacto publicados por la anunciante.' }]
     };
   }

@@ -65,8 +65,6 @@ export class Home implements OnInit {
       }
     });
 
-    if (!isBrowser) return;
-
     forkJoin({
       ciudades: this.api.getCiudades(),
       comunas: this.api.getComunas(),
@@ -83,18 +81,19 @@ export class Home implements OnInit {
       }
     });
 
-    this.scheduleStoriesLoad();
+    if (isBrowser) {
+      this.scheduleStoriesLoad();
+    }
   }
 
   private updateLocationLinks(): void {
-    if (this.oComunas.length === 0 || this.oData.length === 0) return;
-    this.locationLinks = this.buildLocationLinks(this.oData);
+    if (this.oComunas.length === 0) return;
+    this.locationLinks = this.buildLocationLinks();
   }
 
-  private buildLocationLinks(clients: Cliente[]): Array<{ label: string; url: string }> {
-    const activeCommuneIds = new Set(clients.map(client => client.comuna?.toString()).filter(Boolean));
+  private buildLocationLinks(): Array<{ label: string; url: string }> {
     return this.oComunas
-      .filter(comuna => comuna.slug && activeCommuneIds.has(comuna.id?.toString()))
+      .filter(comuna => comuna.slug)
       .map(comuna => ({ label: comuna.nombre, url: `/escort-${comuna.slug}` }))
       .sort((left, right) => left.label.localeCompare(right.label, 'es'));
   }

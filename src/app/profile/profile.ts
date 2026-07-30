@@ -1,7 +1,7 @@
 import { AnalyticsService } from './../service/analytics.service';
 import { ActiveProfile, Cliente, ImageProfile, UidUser, Valoracion } from './../models/models.interface';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiServices } from '../api/api.service';
 import { ResponseClient, ResponseMediaFiles, rValoracion } from '../models/response.interface';
 import { MethodService } from '../method/method.service';
@@ -24,7 +24,7 @@ type ProfileViewState = 'loading' | 'ready' | 'inactive' | 'error';
 //ProfileTimeline
 @Component({
   selector: 'app-profile',
-  imports: [CommonModule, GalleryLightbox, Stories, Review, Identitycheck, ProfileTimeline, StoryManager],
+  imports: [CommonModule, RouterLink, GalleryLightbox, Stories, Review, Identitycheck, ProfileTimeline, StoryManager],
   templateUrl: './profile.html',
   styleUrl: './profile.css'
 })
@@ -42,6 +42,8 @@ export class Profile implements OnInit {
   public isProfileLoaded: boolean = false;
   public isAdministrator: boolean = false;
   public profileViewState: ProfileViewState = 'loading';
+  public locationDirectoryUrl = '';
+  public locationDirectoryName = '';
   // dssfs
   nCount = 0;
 
@@ -182,21 +184,18 @@ export class Profile implements OnInit {
     this.profileViewState = 'loading';
 
     this.api.getCiudades().subscribe(data => {
-      for (let items of data) {
-        this.oCiudades.push(items);
-      }
+      this.oCiudades = data;
+      this.updateLocationDetailsAndSeo();
     });
 
     this.api.getComunas().subscribe(data => {
-      for (let items of data) {
-        this.oComunas.push(items);
-      }
+      this.oComunas = data;
+      this.updateLocationDetailsAndSeo();
     });
 
     this.api.getMetros().subscribe(data => {
-      for (let items of data) {
-        this.oMetros.push(items);
-      }
+      this.oMetros = data;
+      this.updateLocationDetailsAndSeo();
     });
 
     this.api.getNaciones().subscribe(data => {
@@ -305,10 +304,12 @@ export class Profile implements OnInit {
           }
 
           this.profileViewState = 'ready';
+          this.updateLocationDetailsAndSeo();
           this.seoService.setProfileSeo(
             this.oCliente,
             this.buildProfileUrl(),
-            this.proFileImg
+            this.proFileImg,
+            this.locationDirectoryName
           );
 
           this.Reviews();
@@ -450,6 +451,34 @@ export class Profile implements OnInit {
     }
 
     this.router.navigate(['/settingaccount']);
+  }
+
+  private updateLocationDetailsAndSeo(): void {
+    if (!this.oCliente?.iD_USUARIO) return;
+
+    const city = this.oCiudades.find(item => item.id?.toString() === this.oCliente.ciudad?.toString());
+    const commune = this.oComunas.find(item => item.id?.toString() === this.oCliente.comuna?.toString());
+    const metro = this.oMetros.find(item =>
+      item.idComuna?.toString() === this.oCliente.comuna?.toString()
+      && item.idMetro?.toString() === this.oCliente.metro?.toString()
+    );
+
+    this.ciudad = city ? [city.nombre] : [];
+    this.comuna = this.oCliente.ciudad?.toString() === '0' && commune ? [commune.nombre] : [];
+    this.metro = metro ? [metro.NombreMetro] : [];
+
+    const location = this.oCliente.ciudad?.toString() === '0' && commune ? commune : city;
+    this.locationDirectoryName = location?.nombre ?? '';
+    this.locationDirectoryUrl = location?.slug ? `/escort-${location.slug}` : '';
+
+    if (this.profileViewState === 'ready') {
+      this.seoService.setProfileSeo(
+        this.oCliente,
+        this.buildProfileUrl(),
+        this.proFileImg || '',
+        this.locationDirectoryName
+      );
+    }
   }
 
   private buildProfileUrl(): string {

@@ -115,6 +115,9 @@
                         class="bi bi-calendar4 asset-color-silver"></i></span> {{ hAtencion != null &&
                 hAtencion.toString() !== '' ? hAtencion : '' }}
             </div>
+            <nav *ngIf="locationDirectoryUrl" class="ps-2 mb-2" aria-label="Directorio de ubicación">
+                <a [routerLink]="locationDirectoryUrl">Ver escorts en {{ locationDirectoryName }}</a>
+            </nav>
             <div class="data-description-profile justify">
 
                 <div *ngIf="oCliente.celular != null && oCliente.celular.toString() !== '' && !isProfileUser"

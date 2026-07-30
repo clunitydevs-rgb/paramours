@@ -51,10 +51,13 @@ export class SeoService {
     });
   }
 
-  setProfileSeo(profile: Cliente, profileUrl: string, imageUrl: string): void {
+  setProfileSeo(profile: Cliente, profileUrl: string, imageUrl: string, locationName = ''): void {
     const profileName = this.cleanText(profile.nombrE_USUARIO) || 'Perfil Paramours';
     const description = this.buildProfileDescription(profile, profileName);
-    const title = `Escort ${profileName} | Paramours`;
+    const location = this.cleanText(locationName);
+    const title = location
+      ? `${profileName} en ${location} - Escort VIP | Paramours`
+      : `Escort ${profileName} | Paramours`;
 
     this.title.setTitle(title);
     this.meta.updateTag({ name: 'robots', content: 'index, follow, max-image-preview:large' });

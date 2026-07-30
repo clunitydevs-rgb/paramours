@@ -701,7 +701,8 @@
     }
 }
 .profile-location-invite {
-    margin: 8px 8px 14px;
+    margin-top: clamp(24px, 4vw, 40px);
+    margin-bottom: 14px;
     padding-top: 10px;
     border-top: 1px solid rgba(232, 220, 190, 0.1);
 }

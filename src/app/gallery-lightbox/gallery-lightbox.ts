@@ -17,6 +17,7 @@ import { Subscription } from 'rxjs';
 export class GalleryLightbox implements OnDestroy {
   @ViewChild('htmlContent', { static: true }) contenedor!: ElementRef;
   @Input() showDelete: boolean | null = null;
+  @Input() imageAlt = 'Escort-VIP-Santiago';
 
   //sUrlRps: string = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
   sUrlRps: string = "https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/";
@@ -167,7 +168,7 @@ export class GalleryLightbox implements OnDestroy {
     if (oType.indexOf('video') === -1) {
       const img = this.renderer.createElement('img');
       this.renderer.setAttribute(img, 'src', oFile);
-      //this.renderer.setAttribute(img, 'alt', 'Imagen dinámica');
+      this.renderer.setAttribute(img, 'alt', this.imageAlt);
       this.renderer.addClass(img, 'h-100');
       this.renderer.appendChild(this.contenedor.nativeElement, img);
     }

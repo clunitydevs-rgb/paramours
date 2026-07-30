@@ -68,7 +68,7 @@
 
             <div class="ps-2 mb-1">
                 <div class="lbl-litle"><b>{{genero}}</b></div>
-                <div class="lbl_tile">{{oCliente.nombrE_USUARIO}}</div>
+                <h1 class="lbl_tile">{{oCliente.nombrE_USUARIO}}</h1>
                 <div class="lead">
                     {{nacionalidad != null ? nacionalidad + ' · ' : ''}}
                     {{oCliente.edad != null ? oCliente.edad + ' años ·' : ''}}
@@ -238,7 +238,8 @@
 @defer (when !isOwner) {
     <app-story-manager (storiesChanged)="refreshStories()"></app-story-manager>
 }
-<app-gallery-lightbox [showDelete]="isOwner"></app-gallery-lightbox>
+<app-gallery-lightbox [showDelete]="isOwner"
+    [imageAlt]="'Escort-VIP-' + (locationDirectoryName || 'Santiago')"></app-gallery-lightbox>
 <app-review [iUser]="this.uIdUser.sUid" [bNoOwner]="isOwner" [abrir]="mostrarModal"
     (cerrar)="cerrarModal()"></app-review>
 @defer (on viewport) {

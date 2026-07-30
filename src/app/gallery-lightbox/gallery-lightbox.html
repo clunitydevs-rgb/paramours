@@ -12,10 +12,10 @@
             <div class="image-container">
                 <img *ngIf="img.mediA_TYPE.indexOf('video') === -1" [src]="sUrlRps + img.noM_MEDIA"
                     (click)="onPreviewImg(i)" data-bs-toggle="modal" data-bs-target="#myModal"
-                    class="image-show" loading="lazy" alt="Imagen de galeria">
+                    class="image-show" loading="lazy" [attr.alt]="imageAlt">
                 <img *ngIf="img.mediA_TYPE.indexOf('video') !== -1 && img.thumbnail != ''"
                     [src]="sUrlRps + img.thumbnail" (click)="onPreviewImg(i)" data-bs-toggle="modal"
-                    data-bs-target="#myModal" class="image-show" loading="lazy" alt="Video de galeria">
+                    data-bs-target="#myModal" class="image-show" loading="lazy" [attr.alt]="imageAlt">
                 <div [hidden]="showDelete" class="btnDeleteImag">
                     <button type="button" class="cBtnDel" (click)="onDeleteImage(i)" aria-label="Eliminar archivo">
                         <i class="bi bi-trash"></i>

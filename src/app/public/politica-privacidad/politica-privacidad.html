@@ -1,6 +1,10 @@
 <main class="legal-document">
   <article class="legal-document__container">
-    <h1>POLÍTICA DE PRIVACIDAD DEL PORTAL</h1>
+    @if (embedded) {
+      <h2 class="legal-document__title">POLÍTICA DE PRIVACIDAD DEL PORTAL</h2>
+    } @else {
+      <h1 class="legal-document__title">POLÍTICA DE PRIVACIDAD DEL PORTAL</h1>
+    }
     <div class="legal-document__content">
       <h2>1. Responsable del Tratamiento</h2>
       <p>La Administración del Portal será responsable del tratamiento de los datos personales que los Anunciantes y Usuarios proporcionen en el uso de la plataforma.</p>

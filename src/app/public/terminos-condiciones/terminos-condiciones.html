@@ -1,6 +1,10 @@
 <main class="legal-document">
   <article class="legal-document__container">
-    <h1>TÉRMINOS Y CONDICIONES DE USO DEL PORTAL</h1>
+    @if (embedded) {
+      <h2 class="legal-document__title">TÉRMINOS Y CONDICIONES DE USO DEL PORTAL</h2>
+    } @else {
+      <h1 class="legal-document__title">TÉRMINOS Y CONDICIONES DE USO DEL PORTAL</h1>
+    }
     <div class="legal-document__content">
       <h2>1. Definiciones</h2>
       <ul>

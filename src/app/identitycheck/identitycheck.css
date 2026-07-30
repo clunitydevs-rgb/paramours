@@ -78,7 +78,7 @@
     text-transform: uppercase;
 }
 
-.identity-copy h1 {
+.identity-copy h2 {
     margin: 0;
     color: #d6c6a5;
     font-family: 'Cormorant Garamond', serif;
@@ -343,7 +343,7 @@
         gap: 12px;
     }
 
-    .identity-copy h1 {
+    .identity-copy h2 {
         font-size: 38px;
     }
 

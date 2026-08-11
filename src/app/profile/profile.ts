@@ -1,6 +1,6 @@
 import { AnalyticsService } from './../service/analytics.service';
 import { ActiveProfile, Cliente, ImageProfile, UidUser, Valoracion } from './../models/models.interface';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, REQUEST_CONTEXT, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiServices } from '../api/api.service';
 import { ResponseClient, ResponseMediaFiles, rValoracion } from '../models/response.interface';
@@ -17,6 +17,8 @@ import { StoryManager } from '../story-manager/story-manager';
 import { SeoService } from '../service/seo.service';
 import { SsrResponseService } from '../service/ssr-response.service';
 import { Pagenotfound } from '../pagenotfound/pagenotfound';
+import { getProfileResponseFromRequestContext } from '../models/profile-request-context';
+import { of } from 'rxjs';
 
 interface Files {
   mFile: File
@@ -135,7 +137,8 @@ export class Profile implements OnInit {
     private toastService: ToastService,
     private analyticsService: AnalyticsService,
     private seoService: SeoService,
-    private ssrResponse: SsrResponseService
+    private ssrResponse: SsrResponseService,
+    @Inject(REQUEST_CONTEXT) private requestContext: unknown
   ) { }
 
   ngOnInit(): void {
@@ -231,7 +234,15 @@ export class Profile implements OnInit {
       }
     });
 
-    this.api.getClientById(this.uIdUser).subscribe({
+    const requestProfile = getProfileResponseFromRequestContext(
+      this.requestContext,
+      this.uIdUser.sUid
+    );
+    const profileResponse = requestProfile
+      ? of(requestProfile)
+      : this.api.getClientById(this.uIdUser);
+
+    profileResponse.subscribe({
       next: (data: ResponseClient) => {
         if (data.ncoderror == '0') {
           this.oCliente = data.oClient;

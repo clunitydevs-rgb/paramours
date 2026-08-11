@@ -10,11 +10,15 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { buildSitemapXml } from './sitemap';
 import type { SitemapLocation, SitemapProfile } from './sitemap';
+import type { ProfileRequestContext } from './app/models/profile-request-context';
+import type { ResponseClient } from './app/models/response.interface';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
+const profileApiUrl = process.env['PARAMOURS_PROFILE_API_URL']
+  || 'https://cl.api.client.paramours.cl/api/v1/Client/ClientById';
 
 interface ProfileCanonicalPayload {
   ncoderror?: string | number;
@@ -58,7 +62,7 @@ app.use(async (req, res, next) => {
   }
 
   try {
-    const profileResponse = await fetch('https://cl.api.client.paramours.cl/api/v1/Client/ClientById', {
+    const profileResponse = await fetch(profileApiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sUid: Number(requestedId) }),
@@ -71,6 +75,12 @@ app.use(async (req, res, next) => {
     }
 
     const payload = await profileResponse.json() as ProfileCanonicalPayload;
+    res.locals['profileRequestContext'] = {
+      profileLookup: {
+        requestedId: Number(requestedId),
+        response: payload as ResponseClient,
+      },
+    } satisfies ProfileRequestContext;
     const profile = String(payload.ncoderror) === '0' ? payload.oClient : undefined;
     const officialPath = profile ? buildOfficialProfilePath(profile) : null;
     if (!officialPath) {
@@ -190,8 +200,9 @@ app.use(
  * Handle all other requests by rendering the Angular application.
  */
 app.use((req, res, next) => {
+  const requestContext = res.locals['profileRequestContext'] as ProfileRequestContext | undefined;
   angularApp
-    .handle(req)
+    .handle(req, requestContext)
     .then((response) =>
       response ? writeResponseToNodeResponse(response, res) : next(),
     )

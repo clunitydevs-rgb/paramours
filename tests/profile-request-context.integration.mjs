@@ -8,7 +8,7 @@ const appPort = 4327;
 const origin = `http://127.0.0.1:${appPort}`;
 const callsById = new Map();
 
-function profile(id, name, slug) {
+function profile(id, name, slug, photo = '', city = 999, commune = 999) {
   return {
     iD_USUARIO: id,
     nombrE_USUARIO: name,
@@ -16,15 +16,15 @@ function profile(id, name, slug) {
     estado: 'V',
     tipo: '2',
     descripcion: '',
-    fotO_PERFIL: '',
-    ciudad: 0,
-    comuna: 0,
+    fotO_PERFIL: photo,
+    ciudad: city,
+    comuna: commune,
     metro: 0
   };
 }
 
 const profiles = new Map([
-  [15, profile(15, 'Elida Morat', 'Escort-Elida-Morat')],
+  [15, profile(15, 'Elida Morat', 'Escort-Elida-Morat', 'elida-profile.jpg', 0, 1)],
   [16, profile(16, 'Perfil Dos', 'Escort-Perfil-Dos')]
 ]);
 
@@ -91,6 +91,31 @@ test('official profile renders with one ClientById call', async () => {
   const response = await request('/profile/15/Escort-Elida-Morat');
   assert.equal(response.status, 200);
   assert.equal(callsById.get(15), 1);
+});
+
+test('profile main photo is an eager high-priority SSR image', async () => {
+  const response = await request('/profile/15/Escort-Elida-Morat');
+  const html = await response.text();
+  const image = html.match(/<img[^>]+class="profile-main-image"[^>]*>/i)?.[0] ?? '';
+
+  assert.equal(response.status, 200);
+  assert.match(image, /src="https:\/\/paramoursfilesblobazure\.blob\.core\.windows\.net\/rpsfilescontainer\/elida-profile\.jpg"/i);
+  assert.match(image, /alt="Elida Morat en Providencia"/i);
+  assert.match(image, /width="300"/i);
+  assert.match(image, /height="300"/i);
+  assert.match(image, /loading="eager"/i);
+  assert.match(image, /fetchpriority="high"/i);
+});
+
+test('profile without a photo renders the existing advertiser fallback', async () => {
+  const response = await request('/profile/16/Escort-Perfil-Dos');
+  const html = await response.text();
+  const image = html.match(/<img[^>]+class="profile-main-image"[^>]*>/i)?.[0] ?? '';
+
+  assert.equal(response.status, 200);
+  assert.match(image, /src="https:\/\/paramoursfilesblobazure\.blob\.core\.windows\.net\/rpsfilescontainer\/avatar_anunciante\.png"/i);
+  assert.match(image, /alt="Perfil Dos en Santiago"/i);
+  assert.doesNotMatch(image, /(?:src=""|src="null"|src="undefined")/i);
 });
 
 test('incorrect slug redirects with one ClientById call', async () => {

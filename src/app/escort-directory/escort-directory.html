@@ -1,4 +1,6 @@
-<main class="home-shell">
+<app-pagenotfound *ngIf="notFound"></app-pagenotfound>
+
+<main *ngIf="!notFound" class="home-shell">
   <section class="profiles-section profiles-section-first" aria-labelledby="profiles-title">
     <div class="container">
       <nav class="seo-breadcrumb" aria-label="Migas de pan">

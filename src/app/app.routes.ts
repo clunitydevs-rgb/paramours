@@ -18,5 +18,5 @@ export const routes: Routes = [
     {path:'settingaccount', loadComponent: () => import('./settingaccount/settingaccount').then(m => m.Settingaccount)},
     {path:'manage-profile', loadComponent: () => import('./manage-profile/manage-profile').then(m => m.ManageProfile)},
     {path:'404', loadComponent: () => import('./pagenotfound/pagenotfound').then(m => m.Pagenotfound)},
-    {path:'**', redirectTo:'/404'}
+    {path:'**', loadComponent: () => import('./pagenotfound/pagenotfound').then(m => m.Pagenotfound)}
 ];

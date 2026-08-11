@@ -1,10 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { catchError, forkJoin, of, timeout } from 'rxjs';
 import { ApiServices } from '../api/api.service';
 import { Cliente } from '../models/models.interface';
 import { LocationSeoService } from '../service/location-seo.service';
+import { SeoService } from '../service/seo.service';
+import { SsrResponseService } from '../service/ssr-response.service';
+import { Pagenotfound } from '../pagenotfound/pagenotfound';
 
 interface LocationItem {
   id: string | number;
@@ -65,7 +68,7 @@ const LOCAL_CONTENT: Record<string, LocalContent> = {
 
 @Component({
   selector: 'app-escort-directory',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, Pagenotfound],
   templateUrl: './escort-directory.html',
   styleUrls: ['../home/home.css', './escort-directory.css']
 })
@@ -81,13 +84,15 @@ export class EscortDirectory implements OnInit {
   profiles: Cliente[] = [];
   loading = true;
   loadError = false;
+  notFound = false;
   content: LocalContent | null = null;
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private api: ApiServices,
-    private seoService: LocationSeoService
+    private seoService: LocationSeoService,
+    private globalSeoService: SeoService,
+    private ssrResponse: SsrResponseService
   ) { }
 
   ngOnInit(): void {
@@ -100,6 +105,7 @@ export class EscortDirectory implements OnInit {
   private loadLocation(): void {
     this.loading = true;
     this.loadError = false;
+    this.notFound = false;
     this.profiles = [];
     this.locationName = '';
     this.content = null;
@@ -119,7 +125,10 @@ export class EscortDirectory implements OnInit {
         const location = metro ?? commune ?? city;
 
         if (!location) {
-          void this.router.navigateByUrl('/404', { replaceUrl: true });
+          this.loading = false;
+          this.notFound = true;
+          this.ssrResponse.setNotFound();
+          this.globalSeoService.applyStaticRouteSeo('/404');
           return;
         }
 

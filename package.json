@@ -7,6 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "test:ssr-404": "node --test tests/ssr-404.integration.mjs",
     "serve:ssr:cl.app.paramours": "node dist/cl.app.paramours/server/server.mjs"
   },
   "prettier": {

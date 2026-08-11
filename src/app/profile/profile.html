@@ -1,4 +1,6 @@
-@if (profileViewState === 'loading') {
+@if (profileViewState === 'not-found') {
+    <app-pagenotfound></app-pagenotfound>
+} @else if (profileViewState === 'loading') {
     <div class="container mt-3 profile-status-shell">
         <section class="profile-status-message profile-status-message-loading" aria-live="polite">
             <span class="profile-status-kicker">Paramours</span>

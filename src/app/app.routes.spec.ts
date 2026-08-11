@@ -20,4 +20,12 @@ describe('Home routes', () => {
     }));
     expect(legacyHomeRoute?.loadComponent).toBeUndefined();
   });
+
+  it('renders the 404 component directly for unknown URLs without redirecting', () => {
+    const wildcardRoute = routes.find(route => route.path === '**');
+
+    expect(wildcardRoute).toBeDefined();
+    expect(wildcardRoute?.loadComponent).toBeDefined();
+    expect(wildcardRoute?.redirectTo).toBeUndefined();
+  });
 });

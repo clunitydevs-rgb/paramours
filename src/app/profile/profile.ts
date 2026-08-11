@@ -15,16 +15,18 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Identitycheck } from "../identitycheck/identitycheck";
 import { StoryManager } from '../story-manager/story-manager';
 import { SeoService } from '../service/seo.service';
+import { SsrResponseService } from '../service/ssr-response.service';
+import { Pagenotfound } from '../pagenotfound/pagenotfound';
 
 interface Files {
   mFile: File
 }
 
-type ProfileViewState = 'loading' | 'ready' | 'inactive' | 'error';
+type ProfileViewState = 'loading' | 'ready' | 'inactive' | 'error' | 'not-found';
 //ProfileTimeline
 @Component({
   selector: 'app-profile',
-  imports: [CommonModule, RouterLink, GalleryLightbox, Stories, Review, Identitycheck, ProfileTimeline, StoryManager],
+  imports: [CommonModule, RouterLink, GalleryLightbox, Stories, Review, Identitycheck, ProfileTimeline, StoryManager, Pagenotfound],
   templateUrl: './profile.html',
   styleUrl: './profile.css'
 })
@@ -132,7 +134,8 @@ export class Profile implements OnInit {
     private methodservice: MethodService,
     private toastService: ToastService,
     private analyticsService: AnalyticsService,
-    private seoService: SeoService
+    private seoService: SeoService,
+    private ssrResponse: SsrResponseService
   ) { }
 
   ngOnInit(): void {
@@ -316,19 +319,29 @@ export class Profile implements OnInit {
           this.getMediaFiles();
 
         } else {
-          this.isProfileLoaded = true;
-          this.profileViewState = 'error';
+          this.markProfileNotFound();
           this.toastService.error('Perfil no encontrado!');
         }
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         this.isProfileLoaded = true;
+        if (err.status === 404) {
+          this.markProfileNotFound();
+          return;
+        }
         this.profileViewState = 'error';
         this.toastService.error('Error en cargar el perfil!');
       }
 
     });
 
+  }
+
+  private markProfileNotFound(): void {
+    this.isProfileLoaded = true;
+    this.profileViewState = 'not-found';
+    this.ssrResponse.setNotFound();
+    this.seoService.applyStaticRouteSeo('/404');
   }
 
   get showInactiveProfileMessage(): boolean {

@@ -1,14 +1,9 @@
 User-agent: *
 Allow: /
-
-# Bloquear rutas internas técnicas
 Disallow: /api
-Disallow: /login
-Disallow: /account
-Disallow: /settingaccount
-Disallow: /manage-profile
-Disallow: /authkeys
-Disallow: /politica-de-privacidad
-Disallow: /terminos-y-condiciones
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /api
 
 Sitemap: https://paramours.cl/sitemap.xml

@@ -61,7 +61,7 @@ export class Authkeys {
     this.api.ChangePasswordProfile(this.ChangePassword).subscribe({
       next: (data: ResponseClient) => {
         this.toastService.success('Cambio de clave exitoso!');
-        this.router.navigate(['/home']);
+        this.router.navigate(['/']);
       },
       error: err => {
         this.toastService.error('Problemas con los servicios para cambiar clave!');

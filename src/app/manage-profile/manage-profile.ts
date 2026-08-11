@@ -42,7 +42,7 @@ export class ManageProfile implements OnInit {
 
     if (this.MethodService.getItemLocalStorage("cl.paramours.typeuser") != '0') {
       this.toastService.error('Usted no tiene privilegios de administración');
-      this.router.navigate(['/home']);
+      this.router.navigate(['/']);
     } else
       this.getProfiles();
 

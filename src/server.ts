@@ -20,7 +20,8 @@ app.use((req, res, next) => {
   const host = rawHost.split(',')[0].trim().split(':')[0].toLowerCase();
 
   if (host === 'www.paramours.cl') {
-    res.redirect(301, `https://paramours.cl${req.originalUrl}`);
+    const targetUrl = req.path === '/home' ? 'https://paramours.cl/' : `https://paramours.cl${req.originalUrl}`;
+    res.redirect(301, targetUrl);
     return;
   }
 
@@ -56,6 +57,10 @@ app.get([...legacyLocationRoutes.keys()], (req, res) => {
 
 app.get('/escorts-:slug', (req, res) => {
   res.redirect(301, `/escort-${req.params.slug}`);
+});
+
+app.get('/home', (_req, res) => {
+  res.redirect(301, 'https://paramours.cl/');
 });
 
 app.get('/sitemap.xml', async (_req, res) => {

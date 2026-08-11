@@ -49,7 +49,7 @@ export class Headermenu implements OnInit {
   goLogout() {
     this.methodservice.delUserLocalStorage();
     this.refreshAvatar();
-    this.router.navigate(['/home']);
+    this.router.navigate(['/']);
     this.toastService.success('Sesión cerrada exitosamente!');
   }
 

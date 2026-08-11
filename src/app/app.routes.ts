@@ -7,7 +7,7 @@ export const routes: Routes = [
         matcher: escortLocationMatcher,
         loadComponent: () => import('./escort-directory/escort-directory').then(m => m.EscortDirectory)
     },
-    {path:'home', loadComponent: () => import('./home/home').then(m => m.Home)},
+    {path:'home', redirectTo:'', pathMatch:'full'},
     {path:'terminos-y-condiciones', loadComponent: () => import('./public/terminos-condiciones/terminos-condiciones').then(m => m.TerminosCondiciones)},
     {path:'politica-de-privacidad', loadComponent: () => import('./public/politica-privacidad/politica-privacidad').then(m => m.PoliticaPrivacidad)},
     {path:'login', loadComponent: () => import('./login/login').then(m => m.Login)},

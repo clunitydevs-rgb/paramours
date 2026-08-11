@@ -47,7 +47,7 @@ export const jtwInterceptor: HttpInterceptorFn = (req, next) => {
                             console.log('Err status  jtwInterceptor : ' + err.status);
                             methodservice.delUserLocalStorage();
                             //methodservice.tShowMenu.emit(false);
-                            router.navigate(['/home']);
+                            router.navigate(['/']);
                             return throwError(() => err);
                         })
                     );

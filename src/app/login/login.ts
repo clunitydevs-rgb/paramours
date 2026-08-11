@@ -96,7 +96,7 @@ export class Login {
             if (data.typeU == "2")
               this.router.navigate(['/profile/' + + data.sUid + "/" + data.sLug]);
             else
-              this.router.navigate(['/home']);
+              this.router.navigate(['/']);
 
           }
         },

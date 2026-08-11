@@ -357,7 +357,7 @@ export class Settingaccount {
             view_profile: this.oCliente.iD_USUARIO
           });
         } else {
-          this.router.navigate(['/home']);
+          this.router.navigate(['/']);
         }
       },
       error: (err: HttpErrorResponse) => {

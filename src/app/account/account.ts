@@ -216,7 +216,7 @@ export class Account implements OnInit {
               this.analyticsService.trackEvent('account', {
                 nueva_cuenta_visitante: data.sUid
               });
-              this.router.navigate(['/home']);
+              this.router.navigate(['/']);
             }
 
           }

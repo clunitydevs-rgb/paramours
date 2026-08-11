@@ -6,13 +6,15 @@
             <div class="profiles-intro">
                 <div>
                     <span class="section-kicker">Paramours Chile</span>
-                    <h1 id="profiles-title">Escorts VIP y acompañantes en Chile</h1>
+                    <h1 id="profiles-title">Escorts en Santiago</h1>
                 </div>
                 <span *ngIf="nTotalClienteCount > 0" class="profiles-count">{{ nTotalClienteCount }} perfiles</span>
-                <p>Directorio de escorts independientes, acompa&ntilde;antes VIP y cari&ntilde;osas en Chile, con perfiles verificados, fotograf&iacute;as reales y contacto directo. Revisa la disponibilidad actual en Santiago y sus comunas.</p>
+                <p>Paramours es un directorio de perfiles de acompa&ntilde;antes adultas independientes y escorts en Santiago. Puedes revisar la informaci&oacute;n publicada por cada anunciante, explorar perfiles por comuna y acceder directamente a sus medios de contacto. La disponibilidad cambia seg&uacute;n los perfiles activos en sectores como Providencia, Las Condes, Santiago Centro y otras comunas de la capital.</p>
             </div>
 
-            <div *ngIf="arrItems.length > 0" class="profiles-grid">
+            <h2 id="available-profiles-title">Escorts disponibles en Santiago</h2>
+
+            <div *ngIf="arrItems.length > 0" class="profiles-grid" aria-labelledby="available-profiles-title">
                 <article *ngFor="let i of arrItems; let index = index; trackBy: trackClient" class="profile-card-wrap">
                     <a class="profile-card" [href]="getProfileUrl(i)" target="_blank" rel="noopener noreferrer"
                         [attr.aria-label]="'Ver perfil de ' + i.nombrE_USUARIO">
@@ -26,7 +28,7 @@
                         <span class="verified-badge"><i class="bi bi-shield-fill-check"></i> Verificado</span>
 
                         <div class="profile-overlay">
-                            <h2>{{ i.nombrE_USUARIO }}</h2>
+                            <h3>{{ i.nombrE_USUARIO }}</h3>
                             <div class="profile-data">
                                 <span *ngIf="i.edad">{{ i.edad }} a&ntilde;os</span>
                                 <span *ngIf="getProfileLocation(i)">{{ getProfileLocation(i) }}</span>

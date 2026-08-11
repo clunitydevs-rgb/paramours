@@ -36,6 +36,30 @@ function anchors(html) {
 test.before(async () => waitForServer());
 test.after(() => server.kill());
 
+test('Home SSR exposes the requested on-page SEO', async () => {
+  const html = await request('/').then(response => response.text());
+  const title = html.match(/<title>([^<]+)<\/title>/i)?.[1];
+  const description = html.match(/<meta name="description" content="([^"]+)"/i)?.[1];
+  const canonical = html.match(/<link rel="canonical" href="([^"]+)"/i)?.[1];
+  const robots = html.match(/<meta name="robots" content="([^"]+)"/i)?.[1];
+  const h1s = Array.from(html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi), match => match[1].replace(/<[^>]+>/g, '').trim());
+  const h2s = Array.from(html.matchAll(/<h2\b[^>]*>([\s\S]*?)<\/h2>/gi), match => match[1].replace(/<[^>]+>/g, '').trim());
+  const websiteSchema = JSON.parse(html.match(/<script id="website-schema" type="application\/ld\+json">([\s\S]*?)<\/script>/i)?.[1] ?? '{}');
+
+  assert.equal(title, 'Escorts en Santiago, Chile | Paramours');
+  assert.equal(description, 'Explora escorts en Santiago en Paramours: perfiles de acompañantes adultas independientes y opciones organizadas por comuna para facilitar tu búsqueda.');
+  assert.equal(canonical, 'https://paramours.cl');
+  assert.equal(robots, 'index, follow, max-image-preview:large');
+  assert.deepEqual(h1s, ['Escorts en Santiago']);
+  assert.ok(h2s.includes('Escorts disponibles en Santiago'));
+  assert.ok(h2s.includes('Escorts por ubicación en Santiago'));
+  assert.match(html, /Paramours es un directorio de perfiles de acompa(?:ñ|&ntilde;)antes adultas independientes y escorts en Santiago/i);
+  assert.equal(websiteSchema.description, description);
+  assert.match(html, /<meta property="og:title" content="Escorts en Santiago, Chile \| Paramours"/i);
+  assert.match(html, new RegExp(`<meta property="og:description" content="${description}"`, 'i'));
+  assert.match(html, /<meta name="twitter:title" content="Escorts en Santiago, Chile \| Paramours"/i);
+  assert.match(html, new RegExp(`<meta name="twitter:description" content="${description}"`, 'i'));
+});
 test('Home SSR links only active communes with descriptive anchor text', async () => {
   const [homeHtml, sitemapXml, communesJson] = await Promise.all([
     request('/').then(response => response.text()),

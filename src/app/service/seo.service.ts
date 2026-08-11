@@ -7,8 +7,8 @@ import { Cliente } from '../models/models.interface';
 export class SeoService {
   private readonly siteName = 'Paramours';
   private readonly siteUrl = 'https://paramours.cl';
-  private readonly defaultTitle = 'Escorts en Chile y acompañantes VIP | Paramours';
-  private readonly defaultDescription = 'Encuentra escorts, acompañantes VIP y cariñosas en Chile. Perfiles verificados, fotografías reales y contacto directo en Santiago y sus principales comunas.';
+  private readonly defaultTitle = 'Escorts en Santiago, Chile | Paramours';
+  private readonly defaultDescription = 'Explora escorts en Santiago en Paramours: perfiles de acompañantes adultas independientes y opciones organizadas por comuna para facilitar tu búsqueda.';
   private readonly defaultImage = 'https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/avatar_anunciante.png';
 
   constructor(

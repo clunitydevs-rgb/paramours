@@ -24,6 +24,8 @@
 
     gtag('config', 'G-BT2BN7FP87');
 
+    var analyticsLoadScheduled = false;
+
     function loadGoogleAnalytics() {
       if (document.querySelector('script[data-google-analytics]')) return;
       var script = document.createElement('script');
@@ -33,8 +35,24 @@
       document.head.appendChild(script);
     }
 
+    function scheduleGoogleAnalytics() {
+      if (analyticsLoadScheduled || document.querySelector('script[data-google-analytics]')) return;
+      analyticsLoadScheduled = true;
+
+      var loadWhenIdle = function () {
+        analyticsLoadScheduled = false;
+        loadGoogleAnalytics();
+      };
+
+      if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(loadWhenIdle, { timeout: 2000 });
+      } else {
+        window.setTimeout(loadWhenIdle, 0);
+      }
+    }
+
     ['pointerdown', 'keydown', 'touchstart'].forEach(function (eventName) {
-      window.addEventListener(eventName, loadGoogleAnalytics, { once: true, passive: true });
+      window.addEventListener(eventName, scheduleGoogleAnalytics, { once: true, passive: true });
     });
 
     window.addEventListener('load', function () {

@@ -10,6 +10,8 @@ import { MethodService } from '../method/method.service';
 import { Cliente } from '../models/models.interface';
 import { EMPTY, catchError, forkJoin, of, timeout } from 'rxjs';
 import { SeoService } from '../service/seo.service';
+import { getActiveProfileLocationIds } from '../../sitemap';
+import type { SitemapProfile } from '../../sitemap';
 
 @Component({
   selector: 'app-home',
@@ -92,8 +94,13 @@ export class Home implements OnInit {
   }
 
   private buildLocationLinks(): Array<{ label: string; url: string }> {
+    const activeCommuneIds = getActiveProfileLocationIds(
+      this.arrItems as unknown as SitemapProfile[],
+      'comuna'
+    );
+
     return this.oComunas
-      .filter(comuna => comuna.slug)
+      .filter(comuna => comuna.slug && activeCommuneIds.has(comuna.id?.toString()))
       .map(comuna => ({ label: comuna.nombre, url: `/escort-${comuna.slug}` }))
       .sort((left, right) => left.label.localeCompare(right.label, 'es'));
   }

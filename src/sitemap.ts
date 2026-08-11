@@ -27,8 +27,8 @@ export function buildSitemapXml(
   cities: SitemapLocation[]
 ): string {
   const activeProfiles = profiles.filter(isPublicActiveProfile);
-  const activeCommuneIds = new Set(activeProfiles.map(profile => normalizeId(profile.comuna)).filter(Boolean));
-  const activeCityIds = new Set(activeProfiles.map(profile => normalizeId(profile.ciudad)).filter(Boolean));
+  const activeCommuneIds = getActiveProfileLocationIds(activeProfiles, 'comuna');
+  const activeCityIds = getActiveProfileLocationIds(activeProfiles, 'ciudad');
   const entries = new Map<string, SitemapEntry>();
 
   addEntry(entries, `${SITE_URL}/`, '1.0');
@@ -65,6 +65,17 @@ ${xmlEntries}
 `;
 }
 
+export function getActiveProfileLocationIds(
+  profiles: SitemapProfile[],
+  locationField: 'ciudad' | 'comuna'
+): Set<string> {
+  return new Set(
+    profiles
+      .filter(isPublicActiveProfile)
+      .map(profile => normalizeId(profile[locationField]))
+      .filter(Boolean)
+  );
+}
 export function isPublicActiveProfile(profile: SitemapProfile): boolean {
   const state = profile.estado;
   return state === undefined || state === null || state === '' || state.toUpperCase() === 'V';

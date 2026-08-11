@@ -54,7 +54,13 @@ test('Home SSR exposes the requested on-page SEO', async () => {
   assert.ok(h2s.includes('Escorts disponibles en Santiago'));
   assert.ok(h2s.includes('Escorts por ubicación en Santiago'));
   assert.match(html, /Paramours es un directorio de perfiles de acompa(?:ñ|&ntilde;)antes adultas independientes y escorts en Santiago/i);
+  assert.equal((html.match(/<script[^>]+type="application\/ld\+json"/gi) ?? []).length, 1);
+  assert.equal(websiteSchema['@context'], 'https://schema.org');
+  assert.equal(websiteSchema['@type'], 'WebSite');
+  assert.equal(websiteSchema.name, 'Paramours');
+  assert.equal(websiteSchema.url, 'https://paramours.cl/');
   assert.equal(websiteSchema.description, description);
+  assert.equal(websiteSchema.potentialAction, undefined);
   assert.match(html, /<meta property="og:title" content="Escorts en Santiago, Chile \| Paramours"/i);
   assert.match(html, new RegExp(`<meta property="og:description" content="${description}"`, 'i'));
   assert.match(html, /<meta name="twitter:title" content="Escorts en Santiago, Chile \| Paramours"/i);
@@ -105,6 +111,9 @@ test('an active commune exposes complete on-page SEO and crawlable profile ancho
   const h2s = Array.from(directoryHtml.matchAll(/<h2\b[^>]*>([\s\S]*?)<\/h2>/gi), match => match[1].replace(/<[^>]+>/g, '').trim());
   const schema = JSON.parse(directoryHtml.match(/<script id="location-schema" type="application\/ld\+json">([\s\S]*?)<\/script>/i)?.[1] ?? '{}');
   const collectionPage = schema['@graph']?.find(item => item['@type'] === 'CollectionPage');
+  const breadcrumb = schema['@graph']?.find(item => item['@type'] === 'BreadcrumbList');
+  const faqPage = schema['@graph']?.find(item => item['@type'] === 'FAQPage');
+  const visibleQuestions = Array.from(directoryHtml.matchAll(/<summary[^>]*>([\s\S]*?)<\/summary>/gi), match => match[1].replace(/<[^>]+>/g, '').trim());
   const expectedDescription = `Explora escorts en ${communeName} en Paramours. Revisa perfiles de acompañantes adultas independientes, información publicada y medios de contacto.`;
 
   assert.equal(response.status, 200);
@@ -118,6 +127,16 @@ test('an active commune exposes complete on-page SEO and crawlable profile ancho
   assert.equal(collectionPage.name, title);
   assert.equal(collectionPage.description, description);
   assert.equal(collectionPage.url, canonical);
+  assert.deepEqual(breadcrumb.itemListElement, [
+    { '@type': 'ListItem', position: 1, name: 'Paramours', item: 'https://paramours.cl/' },
+    { '@type': 'ListItem', position: 2, name: `Escorts en ${communeName}`, item: canonical }
+  ]);
+  assert.ok(visibleQuestions.length > 0);
+  assert.deepEqual(faqPage.mainEntity.map(item => item.name), visibleQuestions);
+  for (const entity of faqPage.mainEntity) {
+    assert.match(directoryHtml, new RegExp(entity.acceptedAnswer.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  }
+  assert.equal((directoryHtml.match(/<script[^>]+type="application\/ld\+json"/gi) ?? []).length, 1);
   assert.match(directoryHtml, new RegExp(`<meta property="og:title" content="${title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`, 'i'));
   assert.match(directoryHtml, new RegExp(`<meta name="twitter:description" content="${description.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`, 'i'));
 
@@ -175,6 +194,13 @@ test('an active public profile exposes complete on-page SEO and its commune link
   assert.equal(schema.mainEntity['@type'], 'Person');
   assert.equal(schema.mainEntity.name, profileName);
   assert.equal(schema.mainEntity.description, description);
+  assert.equal(schema.breadcrumb['@type'], 'BreadcrumbList');
+  assert.deepEqual(schema.breadcrumb.itemListElement, [
+    { '@type': 'ListItem', position: 1, name: 'Paramours', item: 'https://paramours.cl/' },
+    { '@type': 'ListItem', position: 2, name: `Escorts en ${communeName}`, item: `https://paramours.cl${communeAnchor.href}` },
+    { '@type': 'ListItem', position: 3, name: profileName, item: canonical }
+  ]);
+  assert.equal((html.match(/<script[^>]+type="application\/ld\+json"/gi) ?? []).length, 1);
   assert.match(html, new RegExp(`<meta property="og:url" content="${canonical.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`, 'i'));
   assert.match(html, new RegExp(`<meta name="twitter:title" content="${title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`, 'i'));
 });

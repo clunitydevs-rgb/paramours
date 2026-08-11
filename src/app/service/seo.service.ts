@@ -95,7 +95,7 @@ export class SeoService {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
       name: this.siteName,
-      url: this.siteUrl,
+      url: `${this.siteUrl}/`,
       description: this.defaultDescription,
       publisher: {
         '@type': 'Organization',
@@ -104,7 +104,7 @@ export class SeoService {
     });
   }
 
-  setProfileSeo(profile: Cliente, profileUrl: string, imageUrl: string, locationName = ''): void {
+  setProfileSeo(profile: Cliente, profileUrl: string, imageUrl: string, locationName = '', locationDirectoryUrl = ''): void {
     this.clearRouteSeo();
     const profileName = this.cleanText(profile.nombrE_USUARIO) || 'Perfil Paramours';
     const description = this.buildProfileDescription(profile, profileName, locationName);
@@ -132,6 +132,24 @@ export class SeoService {
       image: imageUrl || this.defaultImage
     });
 
+    const breadcrumbItems = [
+      { '@type': 'ListItem', position: 1, name: this.siteName, item: `${this.siteUrl}/` },
+      ...(location && locationDirectoryUrl
+        ? [{
+          '@type': 'ListItem',
+          position: 2,
+          name: `Escorts en ${location}`,
+          item: new URL(locationDirectoryUrl, `${this.siteUrl}/`).toString()
+        }]
+        : []),
+      {
+        '@type': 'ListItem',
+        position: location && locationDirectoryUrl ? 3 : 2,
+        name: profileName,
+        item: profileUrl
+      }
+    ];
+
     this.setJsonLd('profile-schema', {
       '@context': 'https://schema.org',
       '@type': 'ProfilePage',
@@ -144,6 +162,10 @@ export class SeoService {
         name: profileName,
         image: imageUrl || this.defaultImage,
         description
+      },
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: breadcrumbItems
       }
     });
   }

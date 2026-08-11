@@ -80,18 +80,20 @@ export class LocationSeoService {
         {
           '@type': 'BreadcrumbList',
           itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Inicio', item: this.siteUrl },
+            { '@type': 'ListItem', position: 1, name: 'Paramours', item: `${this.siteUrl}/` },
             { '@type': 'ListItem', position: 2, name: `Escorts en ${data.locationName}`, item: url }
           ]
         },
-        {
-          '@type': 'FAQPage',
-          mainEntity: data.faqs.map(faq => ({
-            '@type': 'Question',
-            name: faq.question,
-            acceptedAnswer: { '@type': 'Answer', text: faq.answer }
-          }))
-        }
+        ...(data.faqs.length > 0
+          ? [{
+            '@type': 'FAQPage',
+            mainEntity: data.faqs.map(faq => ({
+              '@type': 'Question',
+              name: faq.question,
+              acceptedAnswer: { '@type': 'Answer', text: faq.answer }
+            }))
+          }]
+          : [])
       ]
     };
     const script = this.document.createElement('script');

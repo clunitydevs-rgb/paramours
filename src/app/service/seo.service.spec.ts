@@ -59,7 +59,13 @@ describe('Global SEO route policy', () => {
     expect(meta.getTag("name='robots'")?.content).toBe('index, follow, max-image-preview:large');
     expect(canonical()).toBe('https://paramours.cl/');
     const schema = JSON.parse(document.getElementById('website-schema')?.textContent ?? '{}');
+    expect(schemas().length).toBe(1);
+    expect(schema['@context']).toBe('https://schema.org');
+    expect(schema['@type']).toBe('WebSite');
+    expect(schema.name).toBe('Paramours');
+    expect(schema.url).toBe('https://paramours.cl/');
     expect(schema.description).toBe(meta.getTag("name='description'")?.content);
+    expect(schema.potentialAction).toBeUndefined();
   });
 
   it('sets /login as noindex without inherited canonical, social tags or schemas', () => {
@@ -107,7 +113,11 @@ describe('Global SEO route policy', () => {
     const description = meta.getTag("name='description'")?.content;
     const schema = JSON.parse(document.getElementById('location-schema')?.textContent ?? '{}');
     const collectionPage = schema['@graph']?.find((item: { '@type': string }) => item['@type'] === 'CollectionPage');
+    const breadcrumb = schema['@graph']?.find((item: { '@type': string }) => item['@type'] === 'BreadcrumbList');
+    const faqPage = schema['@graph']?.find((item: { '@type': string }) => item['@type'] === 'FAQPage');
 
+    expect(schemas().length).toBe(1);
+    expect(schema['@context']).toBe('https://schema.org');
     expect(title.getTitle()).toBe('Escorts en Providencia, Santiago | Paramours');
     expect(description).toBe('Explora escorts en Providencia en Paramours. Revisa perfiles de acompañantes adultas independientes, información publicada y medios de contacto.');
     expect(meta.getTag("name='robots'")?.content).toBe('index, follow, max-image-preview:large');
@@ -120,6 +130,21 @@ describe('Global SEO route policy', () => {
     expect(collectionPage.name).toBe(title.getTitle());
     expect(collectionPage.description).toBe(description);
     expect(collectionPage.url).toBe('https://paramours.cl/escort-providencia');
+    expect(breadcrumb.itemListElement).toEqual([
+      { '@type': 'ListItem', position: 1, name: 'Paramours', item: 'https://paramours.cl/' },
+      { '@type': 'ListItem', position: 2, name: 'Escorts en Providencia', item: 'https://paramours.cl/escort-providencia' }
+    ]);
+    expect(faqPage.mainEntity).toEqual([{
+      '@type': 'Question',
+      name: 'Pregunta',
+      acceptedAnswer: { '@type': 'Answer', text: 'Respuesta' }
+    }]);
+  });
+
+  it('does not emit FAQPage when a directory has no visible FAQs', () => {
+    locationSeo.setLocationSeo({ ...location, faqs: [] });
+    const schema = JSON.parse(document.getElementById('location-schema')?.textContent ?? '{}');
+    expect(schema['@graph'].some((item: { '@type': string }) => item['@type'] === 'FAQPage')).toBeFalse();
   });
 
   it('keeps a location without profiles as noindex', () => {
@@ -130,7 +155,7 @@ describe('Global SEO route policy', () => {
   it('sets coherent SEO and schemas for an active public profile', () => {
     const profileUrl = 'https://paramours.cl/profile/42/Perfil-de-prueba';
     const description = 'Conoce el perfil de Perfil de prueba, escort en Providencia, Santiago. Revisa la información publicada, disponibilidad y medios de contacto en Paramours.';
-    seo.setProfileSeo(profile, profileUrl, 'profile.jpg', 'Providencia');
+    seo.setProfileSeo(profile, profileUrl, 'profile.jpg', 'Providencia', '/escort-providencia');
 
     const schema = JSON.parse(document.getElementById('profile-schema')?.textContent ?? '{}');
     expect(title.getTitle()).toBe('Perfil de prueba - Escort en Providencia, Santiago | Paramours');
@@ -149,11 +174,31 @@ describe('Global SEO route policy', () => {
     expect(schema.mainEntity['@type']).toBe('Person');
     expect(schema.mainEntity.name).toBe('Perfil de prueba');
     expect(schema.mainEntity.description).toBe(description);
+    expect(schema.mainEntity.jobTitle).toBeUndefined();
+    expect(schema.mainEntity.address).toBeUndefined();
+    expect(schema.mainEntity.aggregateRating).toBeUndefined();
+    expect(schema.breadcrumb['@type']).toBe('BreadcrumbList');
+    expect(schema.breadcrumb.itemListElement).toEqual([
+      { '@type': 'ListItem', position: 1, name: 'Paramours', item: 'https://paramours.cl/' },
+      { '@type': 'ListItem', position: 2, name: 'Escorts en Providencia', item: 'https://paramours.cl/escort-providencia' },
+      { '@type': 'ListItem', position: 3, name: 'Perfil de prueba', item: profileUrl }
+    ]);
   });
 
-  it('keeps an inactive profile noindex', () => {
+  it('uses a two-level profile breadcrumb when no valid commune exists', () => {
+    const profileUrl = 'https://paramours.cl/profile/42/Perfil-de-prueba';
+    seo.setProfileSeo(profile, profileUrl, 'profile.jpg');
+    const schema = JSON.parse(document.getElementById('profile-schema')?.textContent ?? '{}');
+    expect(schema.breadcrumb.itemListElement).toEqual([
+      { '@type': 'ListItem', position: 1, name: 'Paramours', item: 'https://paramours.cl/' },
+      { '@type': 'ListItem', position: 2, name: 'Perfil de prueba', item: profileUrl }
+    ]);
+  });
+
+  it('keeps an inactive profile noindex without schemas', () => {
     seo.setInactiveProfileSeo('https://paramours.cl/profile/42/Perfil-de-prueba');
     expect(meta.getTag("name='robots'")?.content).toBe('noindex, follow');
+    expect(schemas().length).toBe(0);
   });
 
   it('cleans Home and Profile metadata when navigating to Login', () => {

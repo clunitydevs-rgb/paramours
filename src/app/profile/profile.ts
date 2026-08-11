@@ -312,7 +312,8 @@ export class Profile implements OnInit {
             this.oCliente,
             this.buildProfileUrl(),
             this.proFileImg,
-            this.locationDirectoryName
+            this.locationDirectoryName,
+        this.locationDirectoryUrl
           );
 
           this.Reviews();
@@ -499,7 +500,8 @@ export class Profile implements OnInit {
         this.oCliente,
         this.buildProfileUrl(),
         this.proFileImg || '',
-        this.locationDirectoryName
+        this.locationDirectoryName,
+        this.locationDirectoryUrl
       );
     }
   }

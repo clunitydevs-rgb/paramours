@@ -128,11 +128,15 @@ test('Home SSR prioritizes only its first profile image', async () => {
   assert.doesNotMatch(logo, /fetchpriority="high"/i);
 });
 
-test('directory SSR prioritizes only its first profile image', async () => {
-  const response = await request('/escort-santiago');
+test('Providencia directory SSR prioritizes only its first profile image', async () => {
+  const response = await request('/escort-providencia');
   const html = await response.text();
   assert.equal(response.status, 200);
   expectProfileImagePriorities(html);
+
+  const profileAnchors = anchors(html).filter(anchor => anchor.href.startsWith('/profile/'));
+  assert.ok(profileAnchors.length > 0);
+  assert.ok(profileAnchors.every(anchor => /^\/profile\/\d+\/[^/]+$/.test(anchor.href)));
 });
 
 test('an active commune exposes complete on-page SEO and crawlable profile anchors in SSR', async () => {

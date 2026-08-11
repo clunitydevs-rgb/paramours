@@ -33,6 +33,24 @@ function anchors(html) {
   }));
 }
 
+function profileImages(html) {
+  return Array.from(html.matchAll(/<img\b[^>]*>/gi), match => match[0])
+    .filter(image => /class="[^"]*\bimage-show\b[^"]*"/i.test(image));
+}
+
+function expectProfileImagePriorities(html) {
+  const images = profileImages(html);
+  assert.ok(images.length > 1);
+  assert.equal(images.filter(image => /loading="eager"/i.test(image)).length, 1);
+  assert.equal(images.filter(image => /fetchpriority="high"/i.test(image)).length, 1);
+  assert.equal(images.filter(image => /loading="lazy"/i.test(image)).length, images.length - 1);
+  assert.ok(images.every(image => /width="600"/i.test(image)));
+  assert.ok(images.every(image => /height="800"/i.test(image)));
+  assert.match(images[0], /loading="eager"/i);
+  assert.match(images[0], /fetchpriority="high"/i);
+  assert.ok(images.slice(1).every(image => !/fetchpriority="high"/i.test(image)));
+}
+
 test.before(async () => waitForServer());
 test.after(() => server.kill());
 
@@ -99,6 +117,22 @@ test('Home SSR exposes crawlable profile anchors', async () => {
   const profileAnchors = anchors(html).filter(anchor => anchor.href.startsWith('/profile/'));
   assert.ok(profileAnchors.length > 0);
   assert.ok(profileAnchors.every(anchor => /^\/profile\/\d+\/[^/]+$/.test(anchor.href)));
+});
+
+test('Home SSR prioritizes only its first profile image', async () => {
+  const html = await request('/').then(response => response.text());
+  expectProfileImagePriorities(html);
+
+  const logo = html.match(/<img\b[^>]*src="\/assets\/images\/logo\.png"[^>]*>/i)?.[0] ?? '';
+  assert.ok(logo);
+  assert.doesNotMatch(logo, /fetchpriority="high"/i);
+});
+
+test('directory SSR prioritizes only its first profile image', async () => {
+  const response = await request('/escort-santiago');
+  const html = await response.text();
+  assert.equal(response.status, 200);
+  expectProfileImagePriorities(html);
 });
 
 test('an active commune exposes complete on-page SEO and crawlable profile anchors in SSR', async () => {

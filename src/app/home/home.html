@@ -23,8 +23,8 @@
                             [src]="i.fotO_PERFIL != null && i.fotO_PERFIL != '' ? sUrlRps + i.fotO_PERFIL : proFileImg"
                             width="600" height="800"
                             decoding="async"
-                            [attr.loading]="index < 4 ? 'eager' : 'lazy'"
-                            [attr.fetchpriority]="index === 0 ? 'high' : 'auto'">
+                            [attr.loading]="index === 0 ? 'eager' : 'lazy'"
+                            [attr.fetchpriority]="index === 0 ? 'high' : null">
                         <span class="verified-badge"><i class="bi bi-shield-fill-check"></i> Verificado</span>
 
                         <div class="profile-overlay">

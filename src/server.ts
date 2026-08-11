@@ -12,6 +12,7 @@ import { buildSitemapXml } from './sitemap';
 import type { SitemapLocation, SitemapProfile } from './sitemap';
 import type { ProfileRequestContext } from './app/models/profile-request-context';
 import type { ResponseClient } from './app/models/response.interface';
+import { PUBLIC_CLIENTS_URL, publicClientsCache } from './public-clients-cache';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
@@ -157,16 +158,18 @@ app.get('/home', (_req, res) => {
 app.get('/sitemap.xml', async (_req, res) => {
   try {
     const [clientsResponse, communesJson, citiesJson] = await Promise.all([
-      fetch('https://cl.api.client.paramours.cl/api/v1/Client/GetClients', {
-        signal: AbortSignal.timeout(6000),
+      publicClientsCache.get(async () => {
+        const clientsResponse = await fetch(PUBLIC_CLIENTS_URL, {
+          signal: AbortSignal.timeout(6000),
+        });
+        if (!clientsResponse.ok) throw new Error(`Clients API returned ${clientsResponse.status}`);
+        return clientsResponse.json() as Promise<ResponseClient>;
       }),
       readFile(join(browserDistFolder, 'assets/data/comunas.json'), 'utf8'),
       readFile(join(browserDistFolder, 'assets/data/ciudades.json'), 'utf8'),
     ]);
 
-    if (!clientsResponse.ok) throw new Error(`Clients API returned ${clientsResponse.status}`);
-
-    const payload = await clientsResponse.json() as { oClient?: SitemapProfile[] };
+    const payload = clientsResponse as unknown as { oClient?: SitemapProfile[] };
     const profiles = Array.isArray(payload.oClient) ? payload.oClient : [];
     const communes = JSON.parse(communesJson) as SitemapLocation[];
     const cities = JSON.parse(citiesJson) as SitemapLocation[];

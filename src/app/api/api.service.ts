@@ -3,6 +3,7 @@ import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { Cliente, LoginI, objId, PublicationForm, Publications, UidUser, UsuarioI, ActiveProfile, Reviews, rRefreshToken, IDHISTORIA, ContactMail, WelcomeMail, ClaveMail, Story, ChangePassword, idUsersReview } from "../models/models.interface";
 import { ResponseClient, ResponseI, ResponseMediaFiles, ResponseMsg, rPublications, rReview, rStories, rStoriesHome, rStory, rValLastReview, rValoracion } from "../models/response.interface";
+import { PUBLIC_CLIENTS_URL } from '../../public-clients-cache';
 
 @Injectable({providedIn: 'root'})
 export class ApiServices{
@@ -18,7 +19,7 @@ export class ApiServices{
 
     getClients():Observable<ResponseClient>{
         //let cUrl = this.sSiteUrl + "/cl.api.paramours.client/api/v1/Client/GetClients";
-        let cUrl = "https://cl.api.client.paramours.cl/api/v1/Client/GetClients";
+        let cUrl = PUBLIC_CLIENTS_URL;
         return this._http.get<ResponseClient>(cUrl);
     }
 

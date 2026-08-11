@@ -9,6 +9,7 @@ export interface LocationSeoData {
   description: string;
   profileCount: number;
   faqs: Array<{ question: string; answer: string }>;
+  locationType?: 'city' | 'commune' | 'metro';
 }
 
 @Injectable({ providedIn: 'root' })
@@ -25,9 +26,11 @@ export class LocationSeoService {
 
   setLocationSeo(data: LocationSeoData): void {
     this.seoService.clearRouteSeo();
-    const title = data.slug === 'santiago'
-      ? 'Escorts en Santiago | Acompañantes VIP y masajes | Paramours'
-      : `Escorts en ${data.locationName} | Perfiles verificados | Paramours`;
+    const title = data.locationType === 'commune'
+      ? `Escorts en ${data.locationName}, Santiago | Paramours`
+      : data.slug === 'santiago'
+        ? 'Escorts en Santiago | Acompañantes VIP y masajes | Paramours'
+        : `Escorts en ${data.locationName} | Perfiles verificados | Paramours`;
     const url = `${this.siteUrl}/escort-${data.slug}`;
     const canIndex = data.profileCount > 0;
 

@@ -13,12 +13,14 @@
           <h1 id="profiles-title">Escorts en {{ locationName }}</h1>
         </div>
         <span *ngIf="!loading && profiles.length > 0" class="profiles-count">{{ profiles.length }} perfiles</span>
-        <p *ngIf="content">{{ content.intro }}</p>
+        <p *ngIf="content">{{ directoryIntro }}</p>
       </div>
 
       <p *ngIf="loading" aria-live="polite">Cargando perfiles...</p>
 
-      <div *ngIf="!loading && profiles.length > 0" class="profiles-grid">
+      <h2 *ngIf="!loading && profiles.length > 0" id="available-profiles-title">Perfiles disponibles en {{ locationName }}</h2>
+
+      <div *ngIf="!loading && profiles.length > 0" class="profiles-grid" aria-labelledby="available-profiles-title">
         <article *ngFor="let profile of profiles; let index = index; trackBy: trackProfile" class="profile-card-wrap">
           <a class="profile-card" [href]="getProfileUrl(profile)" target="_blank" rel="noopener noreferrer"
             [attr.aria-label]="'Ver perfil de ' + profile.nombrE_USUARIO">
@@ -29,7 +31,7 @@
               [attr.fetchpriority]="index === 0 ? 'high' : 'auto'">
             <span class="verified-badge"><i class="bi bi-shield-fill-check"></i> Verificado</span>
             <div class="profile-overlay">
-              <h2>{{ profile.nombrE_USUARIO }}</h2>
+              <h3>{{ profile.nombrE_USUARIO }}</h3>
               <div class="profile-data">
                 <span *ngIf="profile.edad">{{ profile.edad }} a&ntilde;os</span>
                 <span>{{ locationName }}</span>

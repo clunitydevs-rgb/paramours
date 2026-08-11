@@ -24,7 +24,8 @@ describe('Global SEO route policy', () => {
     slug: 'providencia',
     description: 'Descripción de ubicación de prueba',
     profileCount: 2,
-    faqs: [{ question: 'Pregunta', answer: 'Respuesta' }]
+    faqs: [{ question: 'Pregunta', answer: 'Respuesta' }],
+    locationType: 'commune' as const
   };
 
   beforeEach(() => {
@@ -95,6 +96,30 @@ describe('Global SEO route policy', () => {
     expect(meta.getTag("name='robots'")?.content).toBe('noindex, follow');
     expect(canonical()).toBeNull();
     expectNoSocialOrSchemas();
+  });
+
+  it('sets reusable on-page SEO for an active commune', () => {
+    locationSeo.setLocationSeo({
+      ...location,
+      description: 'Explora escorts en Providencia en Paramours. Revisa perfiles de acompañantes adultas independientes, información publicada y medios de contacto.'
+    });
+
+    const description = meta.getTag("name='description'")?.content;
+    const schema = JSON.parse(document.getElementById('location-schema')?.textContent ?? '{}');
+    const collectionPage = schema['@graph']?.find((item: { '@type': string }) => item['@type'] === 'CollectionPage');
+
+    expect(title.getTitle()).toBe('Escorts en Providencia, Santiago | Paramours');
+    expect(description).toBe('Explora escorts en Providencia en Paramours. Revisa perfiles de acompañantes adultas independientes, información publicada y medios de contacto.');
+    expect(meta.getTag("name='robots'")?.content).toBe('index, follow, max-image-preview:large');
+    expect(meta.getTag("property='og:title'")?.content).toBe(title.getTitle());
+    expect(meta.getTag("property='og:description'")?.content).toBe(description);
+    expect(meta.getTag("property='og:url'")?.content).toBe('https://paramours.cl/escort-providencia');
+    expect(meta.getTag("name='twitter:title'")?.content).toBe(title.getTitle());
+    expect(meta.getTag("name='twitter:description'")?.content).toBe(description);
+    expect(canonical()).toBe('https://paramours.cl/escort-providencia');
+    expect(collectionPage.name).toBe(title.getTitle());
+    expect(collectionPage.description).toBe(description);
+    expect(collectionPage.url).toBe('https://paramours.cl/escort-providencia');
   });
 
   it('keeps a location without profiles as noindex', () => {

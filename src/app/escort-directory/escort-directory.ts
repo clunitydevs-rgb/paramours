@@ -159,6 +159,14 @@ export class EscortDirectory implements OnInit {
     });
   }
 
+  get directoryIntro(): string {
+    if (this.locationType === 'commune') {
+      return `Encuentra perfiles de escorts y acompañantes adultas independientes en ${this.locationName}, Santiago. Revisa la información publicada por cada anunciante y accede a sus perfiles para conocer más detalles.`;
+    }
+
+    return this.content?.intro ?? '';
+  }
+
   get visibleRelatedLocations() {
     const currentUrl = `/escort-${this.slug}`;
     return this.relatedLocations.filter(location => location.url !== currentUrl);
@@ -194,9 +202,12 @@ export class EscortDirectory implements OnInit {
     this.seoService.setLocationSeo({
       locationName: this.locationName,
       slug: this.slug,
-      description: this.content.intro,
+      description: this.locationType === 'commune'
+        ? `Explora escorts en ${this.locationName} en Paramours. Revisa perfiles de acompañantes adultas independientes, información publicada y medios de contacto.`
+        : this.content.intro,
       profileCount: this.profiles.length,
-      faqs: this.content.faqs
+      faqs: this.content.faqs,
+      locationType: this.locationType
     });
   }
 

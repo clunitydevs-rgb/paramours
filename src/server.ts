@@ -8,6 +8,8 @@ import {
 import express from 'express';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { buildSitemapXml } from './sitemap';
+import type { SitemapLocation, SitemapProfile } from './sitemap';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
@@ -75,44 +77,14 @@ app.get('/sitemap.xml', async (_req, res) => {
 
     if (!clientsResponse.ok) throw new Error(`Clients API returned ${clientsResponse.status}`);
 
-    const payload = await clientsResponse.json() as { oClient?: Array<Record<string, unknown>> };
+    const payload = await clientsResponse.json() as { oClient?: SitemapProfile[] };
     const profiles = Array.isArray(payload.oClient) ? payload.oClient : [];
-    const communes = JSON.parse(communesJson) as Array<{ id: string | number; slug: string }>;
-    const cities = JSON.parse(citiesJson) as Array<{ id: string | number; slug: string }>;
-    const activeCommuneIds = new Set(profiles.map(profile => String(profile['comuna'] ?? '')));
-    const activeCityIds = new Set(profiles.map(profile => String(profile['ciudad'] ?? '')));
-    const today = new Date().toISOString().slice(0, 10);
-    const urls = new Set<string>(['https://paramours.cl/']);
-
-    for (const city of cities) {
-      if (city.slug && activeCityIds.has(String(city.id))) urls.add(`https://paramours.cl/escort-${city.slug}`);
-    }
-    for (const commune of communes) {
-      if (commune.slug && activeCommuneIds.has(String(commune.id))) urls.add(`https://paramours.cl/escort-${commune.slug}`);
-    }
-    for (const profile of profiles) {
-      const id = profile['iD_USUARIO'];
-      const slug = String(profile['slug'] || `Escort-${profile['nombrE_USUARIO'] || ''}`)
-        .trim()
-        .replaceAll(String.fromCharCode(13), '')
-        .replaceAll(String.fromCharCode(10), '');
-      if (id && slug) urls.add(`https://paramours.cl/profile/${id}/${encodeURIComponent(slug).replace(/%2F/gi, '-')}`);
-    }
-
-    const entries = [...urls].map((url, index) => `  <url>
-    <loc>${url.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>${index === 0 ? '1.0' : '0.9'}</priority>
-  </url>`).join(String.fromCharCode(10, 10));
+    const communes = JSON.parse(communesJson) as SitemapLocation[];
+    const cities = JSON.parse(citiesJson) as SitemapLocation[];
 
     res.type('application/xml');
     res.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate');
-    res.send(`<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
-${entries}
-</urlset>
-`);
+    res.send(buildSitemapXml(profiles, communes, cities));
   } catch (error) {
     console.error('Failed to generate dynamic sitemap.', error);
     res.sendFile(join(browserDistFolder, 'sitemap.xml'));

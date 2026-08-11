@@ -1,6 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
+import { SeoService } from './seo.service';
 
 export interface LocationSeoData {
   locationName: string;
@@ -15,9 +16,15 @@ export class LocationSeoService {
   private readonly siteUrl = 'https://paramours.cl';
   private readonly defaultImage = 'https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/avatar_anunciante.png';
 
-  constructor(private title: Title, private meta: Meta, @Inject(DOCUMENT) private document: Document) { }
+  constructor(
+    private title: Title,
+    private meta: Meta,
+    private seoService: SeoService,
+    @Inject(DOCUMENT) private document: Document
+  ) { }
 
   setLocationSeo(data: LocationSeoData): void {
+    this.seoService.clearRouteSeo();
     const title = data.slug === 'santiago'
       ? 'Escorts en Santiago | Acompañantes VIP y masajes | Paramours'
       : `Escorts en ${data.locationName} | Perfiles verificados | Paramours`;

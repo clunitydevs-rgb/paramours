@@ -1,5 +1,5 @@
 import { Component, signal, OnInit } from '@angular/core';
-import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
+import { Router, NavigationEnd, NavigationStart, RouterOutlet } from '@angular/router';
 import { Headermenu } from './headermenu/headermenu';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { CommonModule } from '@angular/common';
@@ -10,6 +10,7 @@ import { filter } from 'rxjs/operators';
 import { AnalyticsService } from './service/analytics.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LegalModals } from './public/legal-modals/legal-modals';
+import { SeoService } from './service/seo.service';
 
 @Component({
   selector: 'app-root',
@@ -24,14 +25,23 @@ export class App implements OnInit {
   constructor(
     private methodservice: MethodService,
     private router: Router,
-    private analyticsService: AnalyticsService
+    private analyticsService: AnalyticsService,
+    private seoService: SeoService
   ) {
+    this.router.events
+      .pipe(
+        filter((event): event is NavigationStart => event instanceof NavigationStart),
+        takeUntilDestroyed()
+      )
+      .subscribe(() => this.seoService.clearRouteSeo());
+
     this.router.events
       .pipe(
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
         takeUntilDestroyed()
       )
       .subscribe((event) => {
+        this.seoService.applyStaticRouteSeo(event.urlAfterRedirects);
         this.analyticsService.trackPage(event.urlAfterRedirects);
       });
   }

@@ -17,7 +17,61 @@ export class SeoService {
     @Inject(DOCUMENT) private document: Document
   ) { }
 
+  clearRouteSeo(): void {
+    this.title.setTitle(this.siteName);
+    this.document.querySelectorAll('meta[name="description"], meta[name="robots"]').forEach(tag => tag.remove());
+    this.document.querySelectorAll('meta[property^="og:"]').forEach(tag => tag.remove());
+    this.document.querySelectorAll('meta[name^="twitter:"]').forEach(tag => tag.remove());
+    this.document.querySelectorAll('link[rel="canonical"]').forEach(link => link.remove());
+    this.document.querySelectorAll('script[type="application/ld+json"]').forEach(script => script.remove());
+  }
+
+  applyStaticRouteSeo(url: string): void {
+    const path = this.normalizePath(url);
+    const functionalTitles: Record<string, string> = {
+      '/login': 'Iniciar sesión | Paramours',
+      '/authkeys': 'Cambiar clave | Paramours',
+      '/settingaccount': 'Editar perfil | Paramours',
+      '/manage-profile': 'Administrar perfiles | Paramours',
+      '/profile': 'Mi perfil | Paramours'
+    };
+
+    if (path === '/terminos-y-condiciones') {
+      this.setLegalSeo(
+        'Términos y condiciones | Paramours',
+        'Consulta los términos y condiciones de uso de Paramours.cl.',
+        `${this.siteUrl}/terminos-y-condiciones`
+      );
+      return;
+    }
+
+    if (path === '/politica-de-privacidad') {
+      this.setLegalSeo(
+        'Política de privacidad | Paramours',
+        'Consulta la política de privacidad y tratamiento de datos de Paramours.cl.',
+        `${this.siteUrl}/politica-de-privacidad`
+      );
+      return;
+    }
+
+    if (path === '/404') {
+      this.setFunctionalSeo('Página no encontrada | Paramours');
+      return;
+    }
+
+    if (path.startsWith('/account/')) {
+      this.setFunctionalSeo('Crear cuenta | Paramours');
+      return;
+    }
+
+    const functionalTitle = functionalTitles[path];
+    if (functionalTitle) {
+      this.setFunctionalSeo(functionalTitle);
+    }
+  }
+
   setHomeSeo(): void {
+    this.clearRouteSeo();
     this.title.setTitle(this.defaultTitle);
     this.meta.updateTag({ name: 'robots', content: 'index, follow, max-image-preview:large' });
     this.setDescription(this.defaultDescription);
@@ -37,13 +91,12 @@ export class SeoService {
       image: this.defaultImage
     });
 
-    this.removeJsonLd('profile-schema');
     this.setJsonLd('website-schema', {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
       name: this.siteName,
       url: this.siteUrl,
-      description: this.defaultTitle,
+      description: this.defaultDescription,
       publisher: {
         '@type': 'Organization',
         name: this.siteName
@@ -52,6 +105,7 @@ export class SeoService {
   }
 
   setProfileSeo(profile: Cliente, profileUrl: string, imageUrl: string, locationName = ''): void {
+    this.clearRouteSeo();
     const profileName = this.cleanText(profile.nombrE_USUARIO) || 'Perfil Paramours';
     const description = this.buildProfileDescription(profile, profileName);
     const location = this.cleanText(locationName);
@@ -94,6 +148,7 @@ export class SeoService {
   }
 
   setInactiveProfileSeo(profileUrl: string): void {
+    this.clearRouteSeo();
     const title = 'Perfil no activo | Paramours';
     const description = 'Este perfil de Paramours no se encuentra activo actualmente.';
 
@@ -115,8 +170,25 @@ export class SeoService {
       description,
       image: this.defaultImage
     });
+  }
 
-    this.removeJsonLd('profile-schema');
+  private setFunctionalSeo(title: string): void {
+    this.clearRouteSeo();
+    this.title.setTitle(title);
+    this.meta.updateTag({ name: 'robots', content: 'noindex, follow' });
+  }
+
+  private setLegalSeo(title: string, description: string, canonicalUrl: string): void {
+    this.clearRouteSeo();
+    this.title.setTitle(title);
+    this.setDescription(description);
+    this.meta.updateTag({ name: 'robots', content: 'index, follow' });
+    this.setCanonical(canonicalUrl);
+  }
+
+  private normalizePath(url: string): string {
+    const path = url.split('?')[0].split('#')[0] || '/';
+    return path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path;
   }
 
   private buildProfileDescription(profile: Cliente, profileName: string): string {
@@ -157,29 +229,18 @@ export class SeoService {
   }
 
   private setCanonical(url: string): void {
-    let link = this.document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
-
-    if (!link) {
-      link = this.document.createElement('link');
-      link.setAttribute('rel', 'canonical');
-      this.document.head.appendChild(link);
-    }
-
+    const link = this.document.createElement('link');
+    link.setAttribute('rel', 'canonical');
     link.setAttribute('href', url);
+    this.document.head.appendChild(link);
   }
 
   private setJsonLd(id: string, schema: object): void {
-    this.removeJsonLd(id);
-
     const script = this.document.createElement('script');
     script.id = id;
     script.type = 'application/ld+json';
     script.textContent = JSON.stringify(schema);
     this.document.head.appendChild(script);
-  }
-
-  private removeJsonLd(id: string): void {
-    this.document.getElementById(id)?.remove();
   }
 
   private cleanText(value: string | null | undefined): string {

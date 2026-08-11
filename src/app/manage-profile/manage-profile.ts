@@ -1,6 +1,6 @@
 import { MethodService } from './../method/method.service';
-import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, ElementRef, Inject, OnInit, PLATFORM_ID, Renderer2, ViewChild } from '@angular/core';
 import { ApiServices } from '../api/api.service';
 import { ToastService } from '../service/toast.service';
 import { ResponseClient } from '../models/response.interface';
@@ -35,14 +35,17 @@ export class ManageProfile implements OnInit {
     private router: Router,
     private renderer: Renderer2,
     private MethodService: MethodService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    @Inject(PLATFORM_ID) private platformId: object
   ) { }
 
   ngOnInit(): void {
 
     if (this.MethodService.getItemLocalStorage("cl.paramours.typeuser") != '0') {
       this.toastService.error('Usted no tiene privilegios de administración');
-      this.router.navigate(['/']);
+      if (isPlatformBrowser(this.platformId)) {
+        this.router.navigate(['/']);
+      }
     } else
       this.getProfiles();
 

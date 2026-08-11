@@ -15,7 +15,7 @@ export interface LocationSeoData {
 @Injectable({ providedIn: 'root' })
 export class LocationSeoService {
   private readonly siteUrl = 'https://paramours.cl';
-  private readonly defaultImage = 'https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/avatar_anunciante.png';
+  private readonly socialFallbackImage = 'https://paramours.cl/assets/images/logo-footer.png';
 
   constructor(
     private title: Title,
@@ -41,13 +41,15 @@ export class LocationSeoService {
     this.meta.updateTag({ property: 'og:locale', content: 'es_CL' });
     this.meta.updateTag({ property: 'og:title', content: title });
     this.meta.updateTag({ property: 'og:description', content: data.description });
-    this.meta.updateTag({ property: 'og:image', content: this.defaultImage });
+    this.meta.updateTag({ property: 'og:image', content: this.socialFallbackImage });
+    this.meta.updateTag({ property: 'og:image:alt', content: `Escorts en ${data.locationName} - Paramours` });
     this.meta.updateTag({ property: 'og:url', content: url });
     this.meta.updateTag({ property: 'og:type', content: 'website' });
     this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
     this.meta.updateTag({ name: 'twitter:title', content: title });
     this.meta.updateTag({ name: 'twitter:description', content: data.description });
-    this.meta.updateTag({ name: 'twitter:image', content: this.defaultImage });
+    this.meta.updateTag({ name: 'twitter:image', content: this.socialFallbackImage });
+    this.meta.updateTag({ name: 'twitter:image:alt', content: `Escorts en ${data.locationName} - Paramours` });
     this.setCanonical(url);
     this.setJsonLd(data, title, url);
   }

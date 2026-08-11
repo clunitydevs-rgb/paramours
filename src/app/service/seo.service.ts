@@ -9,7 +9,8 @@ export class SeoService {
   private readonly siteUrl = 'https://paramours.cl';
   private readonly defaultTitle = 'Escorts en Santiago, Chile | Paramours';
   private readonly defaultDescription = 'Explora escorts en Santiago en Paramours: perfiles de acompañantes adultas independientes y opciones organizadas por comuna para facilitar tu búsqueda.';
-  private readonly defaultImage = 'https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/avatar_anunciante.png';
+  private readonly socialFallbackImage = 'https://paramours.cl/assets/images/logo-footer.png';
+  private readonly profileSchemaFallbackImage = 'https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/avatar_anunciante.png';
 
   constructor(
     private title: Title,
@@ -80,7 +81,8 @@ export class SeoService {
     this.setOpenGraph({
       title: this.defaultTitle,
       description: this.defaultDescription,
-      image: this.defaultImage,
+      image: this.socialFallbackImage,
+      imageAlt: 'Paramours - Escorts en Santiago',
       url: this.siteUrl,
       type: 'website'
     });
@@ -88,7 +90,8 @@ export class SeoService {
     this.setTwitter({
       title: this.defaultTitle,
       description: this.defaultDescription,
-      image: this.defaultImage
+      image: this.socialFallbackImage,
+      imageAlt: 'Paramours - Escorts en Santiago'
     });
 
     this.setJsonLd('website-schema', {
@@ -118,10 +121,14 @@ export class SeoService {
     this.setDescription(description);
     this.setCanonical(profileUrl);
 
+    const socialImage = this.resolveSocialImage(imageUrl);
+    const socialImageAlt = `${profileName} en ${location || 'Santiago'}`;
+
     this.setOpenGraph({
       title,
       description,
-      image: imageUrl || this.defaultImage,
+      image: socialImage,
+      imageAlt: socialImageAlt,
       url: profileUrl,
       type: 'profile'
     });
@@ -129,7 +136,8 @@ export class SeoService {
     this.setTwitter({
       title,
       description,
-      image: imageUrl || this.defaultImage
+      image: socialImage,
+      imageAlt: socialImageAlt
     });
 
     const breadcrumbItems = [
@@ -156,11 +164,11 @@ export class SeoService {
       name: title,
       description,
       url: profileUrl,
-      primaryImageOfPage: imageUrl || this.defaultImage,
+      primaryImageOfPage: imageUrl || this.profileSchemaFallbackImage,
       mainEntity: {
         '@type': 'Person',
         name: profileName,
-        image: imageUrl || this.defaultImage,
+        image: imageUrl || this.profileSchemaFallbackImage,
         description
       },
       breadcrumb: {
@@ -183,7 +191,8 @@ export class SeoService {
     this.setOpenGraph({
       title,
       description,
-      image: this.defaultImage,
+      image: this.socialFallbackImage,
+      imageAlt: 'Paramours - Escorts en Santiago',
       url: profileUrl,
       type: 'website'
     });
@@ -191,7 +200,8 @@ export class SeoService {
     this.setTwitter({
       title,
       description,
-      image: this.defaultImage
+      image: this.socialFallbackImage,
+      imageAlt: 'Paramours - Escorts en Santiago'
     });
   }
 
@@ -223,25 +233,36 @@ export class SeoService {
     );
   }
 
+  private resolveSocialImage(imageUrl: string): string {
+    try {
+      const url = new URL(imageUrl);
+      return url.protocol === 'https:' || url.protocol === 'http:' ? url.toString() : this.socialFallbackImage;
+    } catch {
+      return this.socialFallbackImage;
+    }
+  }
+
   private setDescription(description: string): void {
     this.meta.updateTag({ name: 'description', content: description });
   }
 
-  private setOpenGraph(data: { title: string; description: string; image: string; url: string; type: string }): void {
+  private setOpenGraph(data: { title: string; description: string; image: string; imageAlt: string; url: string; type: string }): void {
     this.meta.updateTag({ property: 'og:site_name', content: this.siteName });
     this.meta.updateTag({ property: 'og:locale', content: 'es_CL' });
     this.meta.updateTag({ property: 'og:title', content: data.title });
     this.meta.updateTag({ property: 'og:description', content: data.description });
     this.meta.updateTag({ property: 'og:image', content: data.image });
+    this.meta.updateTag({ property: 'og:image:alt', content: data.imageAlt });
     this.meta.updateTag({ property: 'og:url', content: data.url });
     this.meta.updateTag({ property: 'og:type', content: data.type });
   }
 
-  private setTwitter(data: { title: string; description: string; image: string }): void {
+  private setTwitter(data: { title: string; description: string; image: string; imageAlt: string }): void {
     this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
     this.meta.updateTag({ name: 'twitter:title', content: data.title });
     this.meta.updateTag({ name: 'twitter:description', content: data.description });
     this.meta.updateTag({ name: 'twitter:image', content: data.image });
+    this.meta.updateTag({ name: 'twitter:image:alt', content: data.imageAlt });
   }
 
   private setCanonical(url: string): void {

@@ -63,8 +63,14 @@ test('Home SSR exposes the requested on-page SEO', async () => {
   assert.equal(websiteSchema.potentialAction, undefined);
   assert.match(html, /<meta property="og:title" content="Escorts en Santiago, Chile \| Paramours"/i);
   assert.match(html, new RegExp(`<meta property="og:description" content="${description}"`, 'i'));
+  assert.match(html, /<meta property="og:image" content="https:\/\/paramours\.cl\/assets\/images\/logo-footer\.png"/i);
+  assert.match(html, /<meta property="og:image:alt" content="Paramours - Escorts en Santiago"/i);
+  assert.doesNotMatch(html, /<meta property="og:image:(?:width|height)"/i);
   assert.match(html, /<meta name="twitter:title" content="Escorts en Santiago, Chile \| Paramours"/i);
   assert.match(html, new RegExp(`<meta name="twitter:description" content="${description}"`, 'i'));
+  assert.match(html, /<meta name="twitter:card" content="summary_large_image"/i);
+  assert.match(html, /<meta name="twitter:image" content="https:\/\/paramours\.cl\/assets\/images\/logo-footer\.png"/i);
+  assert.match(html, /<meta name="twitter:image:alt" content="Paramours - Escorts en Santiago"/i);
 });
 test('Home SSR links only active communes with descriptive anchor text', async () => {
   const [homeHtml, sitemapXml, communesJson] = await Promise.all([
@@ -138,6 +144,11 @@ test('an active commune exposes complete on-page SEO and crawlable profile ancho
   }
   assert.equal((directoryHtml.match(/<script[^>]+type="application\/ld\+json"/gi) ?? []).length, 1);
   assert.match(directoryHtml, new RegExp(`<meta property="og:title" content="${title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`, 'i'));
+  assert.match(directoryHtml, /<meta property="og:image" content="https:\/\/paramours\.cl\/assets\/images\/logo-footer\.png"/i);
+  assert.match(directoryHtml, new RegExp(`<meta property="og:image:alt" content="Escorts en ${communeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} - Paramours"`, 'i'));
+  assert.match(directoryHtml, /<meta name="twitter:image" content="https:\/\/paramours\.cl\/assets\/images\/logo-footer\.png"/i);
+  assert.match(directoryHtml, new RegExp(`<meta name="twitter:image:alt" content="Escorts en ${communeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} - Paramours"`, 'i'));
+  assert.doesNotMatch(directoryHtml, /<meta property="og:image:(?:width|height)"/i);
   assert.match(directoryHtml, new RegExp(`<meta name="twitter:description" content="${description.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`, 'i'));
 
   const profileAnchors = anchors(directoryHtml).filter(anchor => anchor.href.startsWith('/profile/'));
@@ -201,6 +212,14 @@ test('an active public profile exposes complete on-page SEO and its commune link
     { '@type': 'ListItem', position: 3, name: profileName, item: canonical }
   ]);
   assert.equal((html.match(/<script[^>]+type="application\/ld\+json"/gi) ?? []).length, 1);
+  const hasPublicProfileImage = !schema.mainEntity.image.endsWith('/avatar_anunciante.png');
+  const expectedSocialImage = hasPublicProfileImage ? schema.mainEntity.image : 'https://paramours.cl/assets/images/logo-footer.png';
+  const escapedSocialImage = expectedSocialImage.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const escapedSocialAlt = `${profileName} en ${communeName}`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  assert.match(html, new RegExp(`<meta property="og:image" content="${escapedSocialImage}"`, 'i'));
+  assert.match(html, new RegExp(`<meta property="og:image:alt" content="${escapedSocialAlt}"`, 'i'));
+  assert.match(html, new RegExp(`<meta name="twitter:image" content="${escapedSocialImage}"`, 'i'));
+  assert.match(html, new RegExp(`<meta name="twitter:image:alt" content="${escapedSocialAlt}"`, 'i'));
   assert.match(html, new RegExp(`<meta property="og:url" content="${canonical.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`, 'i'));
   assert.match(html, new RegExp(`<meta name="twitter:title" content="${title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`, 'i'));
 });

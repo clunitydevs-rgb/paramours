@@ -311,7 +311,7 @@ export class Profile implements OnInit {
           this.seoService.setProfileSeo(
             this.oCliente,
             this.buildProfileUrl(),
-            this.proFileImg,
+            this.getPublicProfileImageUrl(),
             this.locationDirectoryName,
         this.locationDirectoryUrl
           );
@@ -499,11 +499,16 @@ export class Profile implements OnInit {
       this.seoService.setProfileSeo(
         this.oCliente,
         this.buildProfileUrl(),
-        this.proFileImg || '',
+        this.getPublicProfileImageUrl(),
         this.locationDirectoryName,
         this.locationDirectoryUrl
       );
     }
+  }
+
+  private getPublicProfileImageUrl(): string {
+    const fileName = this.oCliente.fotO_PERFIL?.trim();
+    return fileName ? `${this.sUrlRps}${fileName}` : '';
   }
 
   private buildProfileUrl(): string {

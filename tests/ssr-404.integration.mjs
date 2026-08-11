@@ -10,9 +10,9 @@ const server = spawn(process.execPath, ['dist/cl.app.paramours/server/server.mjs
   windowsHide: true
 });
 
-async function request(path) {
+async function request(path, host = 'paramours.cl') {
   return fetch(`${origin}${path}`, {
-    headers: { host: 'paramours.cl' },
+    headers: { host, 'x-forwarded-host': host },
     redirect: 'manual'
   });
 }
@@ -74,6 +74,42 @@ test('valid directory without profiles remains 200 and noindex', async () => {
   const html = await response.text();
   assert.equal(response.status, 200);
   assert.match(html, /<meta name="robots" content="noindex, follow"/i);
+});
+
+test('official profile slug is the only 200 URL', async () => {
+  const officialPath = '/profile/15/Escort-Elida-Morat';
+  const response = await request(officialPath);
+  const html = await response.text();
+  assert.equal(response.status, 200);
+  assert.match(html, /<link rel="canonical" href="https:\/\/paramours\.cl\/profile\/15\/Escort-Elida-Morat"/i);
+});
+
+test('incorrect, lowercase, empty and trailing profile slugs redirect once to the official URL', async () => {
+  const officialPath = '/profile/15/Escort-Elida-Morat';
+  const variants = [
+    '/profile/15/cualquier-texto',
+    '/profile/15/escort-elida-morat',
+    '/profile/15/slug-antiguo',
+    '/profile/15',
+    '/profile/15/',
+    '/profile/15/Escort-Elida-Morat/'
+  ];
+
+  for (const variant of variants) {
+    const response = await request(variant);
+    assert.equal(response.status, 301, variant);
+    assert.equal(response.headers.get('location'), officialPath, variant);
+  }
+
+  const finalResponse = await request(officialPath);
+  assert.equal(finalResponse.status, 200);
+  assert.equal(finalResponse.headers.get('location'), null);
+});
+
+test('www plus an incorrect profile slug reaches the canonical host and slug in one redirect', async () => {
+  const response = await request('/profile/15/cualquier-texto', 'www.paramours.cl');
+  assert.equal(response.status, 301);
+  assert.equal(response.headers.get('location'), 'https://paramours.cl/profile/15/Escort-Elida-Morat');
 });
 
 test('nonexistent profile returns 404', async () => {

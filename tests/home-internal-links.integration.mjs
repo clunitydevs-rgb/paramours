@@ -141,3 +141,52 @@ test('a valid empty commune stays 200/noindex and outside the sitemap', async ()
   assert.match(html, /<meta name="robots" content="noindex, follow"/i);
   assert.doesNotMatch(sitemapXml, new RegExp(`<loc>https://paramours\\.cl/escort-${emptyCommune.slug}</loc>`));
 });
+test('an active public profile exposes complete on-page SEO and its commune link in SSR', async () => {
+  const homeHtml = await request('/').then(response => response.text());
+  const communeAnchor = anchors(homeHtml).find(anchor => anchor.href.startsWith('/escort-') && anchor.href !== '/escort-santiago');
+  assert.ok(communeAnchor);
+  const communeName = communeAnchor.text.replace(/^Escorts en /, '');
+  const directoryHtml = await request(communeAnchor.href).then(response => response.text());
+  const profileHref = anchors(directoryHtml).find(anchor => anchor.href.startsWith('/profile/'))?.href;
+  assert.ok(profileHref);
+
+  const response = await request(profileHref);
+  const html = await response.text();
+  const title = html.match(/<title>([^<]+)<\/title>/i)?.[1];
+  const description = html.match(/<meta name="description" content="([^"]+)"/i)?.[1];
+  const canonical = html.match(/<link rel="canonical" href="([^"]+)"/i)?.[1];
+  const robots = html.match(/<meta name="robots" content="([^"]+)"/i)?.[1];
+  const h1s = Array.from(html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi), match => match[1].replace(/<[^>]+>/g, '').trim());
+  const schema = JSON.parse(html.match(/<script id="profile-schema" type="application\/ld\+json">([\s\S]*?)<\/script>/i)?.[1] ?? '{}');
+  const profileName = schema.mainEntity?.name;
+  const expectedTitle = `${profileName} - Escort en ${communeName}, Santiago | Paramours`;
+  const expectedDescription = `Conoce el perfil de ${profileName}, escort en ${communeName}, Santiago. Revisa la información publicada, disponibilidad y medios de contacto en Paramours.`;
+
+  assert.equal(response.status, 200);
+  assert.equal(robots, 'index, follow, max-image-preview:large');
+  assert.equal(title, expectedTitle);
+  assert.equal(description, expectedDescription.length <= 160 ? expectedDescription : `${expectedDescription.slice(0, 159).trim()}...`);
+  assert.equal(canonical, `https://paramours.cl${profileHref}`);
+  assert.deepEqual(h1s, [`${profileName}, Escort en ${communeName}`]);
+  assert.ok(anchors(html).some(anchor => anchor.href === communeAnchor.href && anchor.text === `Escorts en ${communeName}`));
+  assert.equal(schema['@type'], 'ProfilePage');
+  assert.equal(schema.name, title);
+  assert.equal(schema.url, canonical);
+  assert.equal(schema.mainEntity['@type'], 'Person');
+  assert.equal(schema.mainEntity.name, profileName);
+  assert.equal(schema.mainEntity.description, description);
+  assert.match(html, new RegExp(`<meta property="og:url" content="${canonical.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`, 'i'));
+  assert.match(html, new RegExp(`<meta name="twitter:title" content="${title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`, 'i'));
+});
+
+test('a valid profile with an incorrect slug redirects permanently to the official URL', async () => {
+  const homeHtml = await request('/').then(response => response.text());
+  const officialHref = anchors(homeHtml).find(anchor => anchor.href.startsWith('/profile/'))?.href;
+  assert.ok(officialHref);
+  const [, , id] = officialHref.split('/');
+  const incorrectHref = `/profile/${id}/slug-incorrecto-auditoria`;
+
+  const response = await request(incorrectHref);
+  assert.equal(response.status, 301);
+  assert.equal(response.headers.get('location'), officialHref);
+});

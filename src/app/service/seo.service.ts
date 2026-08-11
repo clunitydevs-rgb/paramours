@@ -107,11 +107,11 @@ export class SeoService {
   setProfileSeo(profile: Cliente, profileUrl: string, imageUrl: string, locationName = ''): void {
     this.clearRouteSeo();
     const profileName = this.cleanText(profile.nombrE_USUARIO) || 'Perfil Paramours';
-    const description = this.buildProfileDescription(profile, profileName);
+    const description = this.buildProfileDescription(profile, profileName, locationName);
     const location = this.cleanText(locationName);
     const title = location
-      ? `${profileName} en ${location} - Escort VIP | Paramours`
-      : `Escort ${profileName} | Paramours`;
+      ? `${profileName} - Escort en ${location}, Santiago | Paramours`
+      : `${profileName} - Escort en Santiago | Paramours`;
 
     this.title.setTitle(title);
     this.meta.updateTag({ name: 'robots', content: 'index, follow, max-image-preview:large' });
@@ -136,6 +136,7 @@ export class SeoService {
       '@context': 'https://schema.org',
       '@type': 'ProfilePage',
       name: title,
+      description,
       url: profileUrl,
       primaryImageOfPage: imageUrl || this.defaultImage,
       mainEntity: {
@@ -191,20 +192,13 @@ export class SeoService {
     return path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path;
   }
 
-  private buildProfileDescription(profile: Cliente, profileName: string): string {
-    const description = this.cleanText(profile.descripcion);
-
-    if (description) {
-      return this.truncate(description, 160);
-    }
-
-    const details = [
-      profile.edad ? `${profile.edad} anos` : '',
-      this.cleanText(profile.altura),
-      profile.valor ? `desde ${profile.valor}` : ''
-    ].filter(Boolean);
-
-    return this.truncate(`Conoce el perfil de ${profileName} en Paramours.cl${details.length ? ': ' + details.join(', ') : '.'}`, 160);
+  private buildProfileDescription(_profile: Cliente, profileName: string, locationName = ''): string {
+    const location = this.cleanText(locationName);
+    const geographicText = location ? `${location}, Santiago` : 'Santiago';
+    return this.truncate(
+      `Conoce el perfil de ${profileName}, escort en ${geographicText}. Revisa la información publicada, disponibilidad y medios de contacto en Paramours.`,
+      160
+    );
   }
 
   private setDescription(description: string): void {

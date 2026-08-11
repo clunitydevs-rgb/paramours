@@ -344,6 +344,16 @@ export class Profile implements OnInit {
     this.seoService.applyStaticRouteSeo('/404');
   }
 
+  get profileHeading(): string {
+    const profileName = this.oCliente.nombrE_USUARIO?.trim() || 'Perfil';
+    return `${profileName}, Escort en ${this.locationDirectoryName || 'Santiago'}`;
+  }
+
+  get profileImageAlt(): string {
+    const profileName = this.oCliente.nombrE_USUARIO?.trim() || 'Perfil';
+    return this.locationDirectoryName ? `${profileName} en ${this.locationDirectoryName}` : `${profileName} en Santiago`;
+  }
+
   get showInactiveProfileMessage(): boolean {
     return this.profileViewState === 'inactive';
   }
@@ -495,8 +505,11 @@ export class Profile implements OnInit {
   }
 
   private buildProfileUrl(): string {
-    const slug = this.activateroute.snapshot.paramMap.get('sLug') || this.oCliente.nombrE_USUARIO.replace(/\s+/g, '-');
-    return `https://paramours.cl/profile/${this.oCliente.iD_USUARIO}/${slug}`;
+    const officialSlug = String((this.oCliente as Cliente & { slug?: string }).slug || `Escort-${this.oCliente.nombrE_USUARIO || ''}`)
+      .replace(/[\r\n]/g, '')
+      .trim();
+    const encodedSlug = encodeURIComponent(officialSlug).replace(/%2F/gi, '-');
+    return `https://paramours.cl/profile/${encodeURIComponent(this.oCliente.iD_USUARIO.toString())}/${encodedSlug}`;
   }
 
   public mostrarModal = false;

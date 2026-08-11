@@ -70,7 +70,7 @@
 
             <div class="ps-2 mb-1">
                 <div class="lbl-litle"><b>{{genero}}</b></div>
-                <h1 class="lbl_tile">{{oCliente.nombrE_USUARIO}}</h1>
+                <h1 class="lbl_tile">{{ profileHeading }}</h1>
                 <div class="lead">
                     {{nacionalidad != null ? nacionalidad + ' · ' : ''}}
                     {{oCliente.edad != null ? oCliente.edad + ' años ·' : ''}}
@@ -241,7 +241,7 @@
     <app-story-manager (storiesChanged)="refreshStories()"></app-story-manager>
 }
 <app-gallery-lightbox [showDelete]="isOwner"
-    [imageAlt]="'Escort-VIP-' + (locationDirectoryName || 'Santiago')"></app-gallery-lightbox>
+    [imageAlt]="profileImageAlt"></app-gallery-lightbox>
 <app-review [iUser]="this.uIdUser.sUid" [bNoOwner]="isOwner" [abrir]="mostrarModal"
     (cerrar)="cerrarModal()"></app-review>
 @defer (on viewport) {
@@ -253,7 +253,7 @@
 <aside *ngIf="locationDirectoryUrl" class="container profile-location-invite"
     aria-label="Más perfiles en esta ubicación">
     <p>¿Buscas otras alternativas en la zona?
-        <a [routerLink]="locationDirectoryUrl">Explora escorts en {{ locationDirectoryName }}</a>.
+        <a [routerLink]="locationDirectoryUrl">Escorts en {{ locationDirectoryName }}</a>.
     </p>
 </aside>
 

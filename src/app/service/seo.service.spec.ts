@@ -127,6 +127,35 @@ describe('Global SEO route policy', () => {
     expect(meta.getTag("name='robots'")?.content).toBe('noindex, follow');
   });
 
+  it('sets coherent SEO and schemas for an active public profile', () => {
+    const profileUrl = 'https://paramours.cl/profile/42/Perfil-de-prueba';
+    const description = 'Conoce el perfil de Perfil de prueba, escort en Providencia, Santiago. Revisa la información publicada, disponibilidad y medios de contacto en Paramours.';
+    seo.setProfileSeo(profile, profileUrl, 'profile.jpg', 'Providencia');
+
+    const schema = JSON.parse(document.getElementById('profile-schema')?.textContent ?? '{}');
+    expect(title.getTitle()).toBe('Perfil de prueba - Escort en Providencia, Santiago | Paramours');
+    expect(meta.getTag("name='description'")?.content).toBe(description);
+    expect(meta.getTag("name='robots'")?.content).toBe('index, follow, max-image-preview:large');
+    expect(meta.getTag("property='og:title'")?.content).toBe(title.getTitle());
+    expect(meta.getTag("property='og:description'")?.content).toBe(description);
+    expect(meta.getTag("property='og:url'")?.content).toBe(profileUrl);
+    expect(meta.getTag("name='twitter:title'")?.content).toBe(title.getTitle());
+    expect(meta.getTag("name='twitter:description'")?.content).toBe(description);
+    expect(canonical()).toBe(profileUrl);
+    expect(schema['@type']).toBe('ProfilePage');
+    expect(schema.name).toBe(title.getTitle());
+    expect(schema.description).toBe(description);
+    expect(schema.url).toBe(profileUrl);
+    expect(schema.mainEntity['@type']).toBe('Person');
+    expect(schema.mainEntity.name).toBe('Perfil de prueba');
+    expect(schema.mainEntity.description).toBe(description);
+  });
+
+  it('keeps an inactive profile noindex', () => {
+    seo.setInactiveProfileSeo('https://paramours.cl/profile/42/Perfil-de-prueba');
+    expect(meta.getTag("name='robots'")?.content).toBe('noindex, follow');
+  });
+
   it('cleans Home and Profile metadata when navigating to Login', () => {
     seo.setHomeSeo();
     seo.setProfileSeo(profile, 'https://paramours.cl/profile/42/perfil-prueba', 'profile.jpg', 'Providencia');

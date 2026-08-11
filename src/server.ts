@@ -16,6 +16,85 @@ const browserDistFolder = join(import.meta.dirname, '../browser');
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
+interface ProfileCanonicalPayload {
+  ncoderror?: string | number;
+  oClient?: {
+    iD_USUARIO?: string | number;
+    nombrE_USUARIO?: string;
+    slug?: string;
+  };
+}
+
+function buildOfficialProfilePath(profile: NonNullable<ProfileCanonicalPayload['oClient']>): string | null {
+  const id = profile.iD_USUARIO?.toString().trim() ?? '';
+  const slug = String(profile.slug || `Escort-${profile.nombrE_USUARIO || ''}`)
+    .replace(/[\r\n]/g, '')
+    .trim();
+
+  if (!id || !slug) return null;
+  const encodedSlug = encodeURIComponent(slug).replace(/%2F/gi, '-');
+  return `/profile/${encodeURIComponent(id)}/${encodedSlug}`;
+}
+
+app.use(async (req, res, next) => {
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    next();
+    return;
+  }
+
+  const profileMatch = req.path.match(/^\/profile\/(\d+)(?:\/([^/]*))?\/?$/);
+  if (!profileMatch) {
+    next();
+    return;
+  }
+
+  const requestedId = profileMatch[1];
+  let requestedSlug: string;
+  try {
+    requestedSlug = decodeURIComponent(profileMatch[2] ?? '');
+  } catch {
+    next();
+    return;
+  }
+
+  try {
+    const profileResponse = await fetch('https://cl.api.client.paramours.cl/api/v1/Client/ClientById', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sUid: Number(requestedId) }),
+      signal: AbortSignal.timeout(6000),
+    });
+
+    if (!profileResponse.ok) {
+      next();
+      return;
+    }
+
+    const payload = await profileResponse.json() as ProfileCanonicalPayload;
+    const profile = String(payload.ncoderror) === '0' ? payload.oClient : undefined;
+    const officialPath = profile ? buildOfficialProfilePath(profile) : null;
+    if (!officialPath) {
+      next();
+      return;
+    }
+
+    const officialSlug = decodeURIComponent(officialPath.split('/').at(-1)!);
+    const hasTrailingSlash = req.path.endsWith('/');
+    if (requestedSlug === officialSlug && !hasTrailingSlash) {
+      next();
+      return;
+    }
+
+    const forwardedHost = req.headers['x-forwarded-host'];
+    const rawHost = (Array.isArray(forwardedHost) ? forwardedHost[0] : forwardedHost) || req.headers.host || '';
+    const host = rawHost.split(',')[0].trim().split(':')[0].toLowerCase();
+    res.redirect(301, host === 'www.paramours.cl' ? `https://paramours.cl${officialPath}` : officialPath);
+  } catch (error) {
+    console.error('Failed to resolve the canonical profile slug.', error);
+    next();
+  }
+});
+
 app.use((req, res, next) => {
   const forwardedHost = req.headers['x-forwarded-host'];
   const rawHost = (Array.isArray(forwardedHost) ? forwardedHost[0] : forwardedHost) || req.headers.host || '';

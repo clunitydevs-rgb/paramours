@@ -1,12 +1,12 @@
 import { AnalyticsService } from './../service/analytics.service';
 import { ActiveProfile, Cliente, ImageProfile, UidUser, Valoracion } from './../models/models.interface';
-import { Component, Inject, OnInit, REQUEST_CONTEXT, ViewChild } from '@angular/core';
+import { afterNextRender, Component, Inject, OnInit, PLATFORM_ID, REQUEST_CONTEXT, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiServices } from '../api/api.service';
 import { ResponseClient, ResponseMediaFiles, rValoracion } from '../models/response.interface';
 import { MethodService } from '../method/method.service';
 import { GalleryLightbox } from "../gallery-lightbox/gallery-lightbox";
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ProfileTimeline } from '../profile-timeline/profile-timeline';
 import { ToastService } from '../service/toast.service';
 import { Stories } from '../stories/stories';
@@ -79,6 +79,8 @@ export class Profile implements OnInit {
 
   public iReviewCount: number = 0;
   public dValReview: any;
+  private browserHydrated = false;
+  private initialGalleryProfileId: number | null = null;
 
   uIdUser: UidUser = {
     sUid: 0
@@ -138,8 +140,16 @@ export class Profile implements OnInit {
     private analyticsService: AnalyticsService,
     private seoService: SeoService,
     private ssrResponse: SsrResponseService,
+    @Inject(PLATFORM_ID) private platformId: object,
     @Inject(REQUEST_CONTEXT) private requestContext: unknown
-  ) { }
+  ) {
+    if (isPlatformBrowser(this.platformId)) {
+      afterNextRender(() => {
+        this.browserHydrated = true;
+        this.loadInitialGalleryAfterHydration();
+      });
+    }
+  }
 
   ngOnInit(): void {
 
@@ -328,7 +338,7 @@ export class Profile implements OnInit {
           );
 
           this.Reviews();
-          this.getMediaFiles();
+          this.loadInitialGalleryAfterHydration();
 
         } else {
           this.markProfileNotFound();
@@ -421,7 +431,20 @@ export class Profile implements OnInit {
     });
   }
 
+  private loadInitialGalleryAfterHydration(): void {
+    if (!this.browserHydrated || !this.isProfileLoaded || this.initialGalleryProfileId === this.uIdUser.sUid) {
+      return;
+    }
+
+    this.initialGalleryProfileId = this.uIdUser.sUid;
+    this.getMediaFiles();
+  }
+
   getMediaFiles() {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
     this.api.getMediaFiles(this.uIdUser).subscribe({
       next: (data: ResponseMediaFiles) => {
         this.methodservice.tMediaFiles.emit(data.oMediaFiles);

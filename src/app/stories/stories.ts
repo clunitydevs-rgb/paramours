@@ -1,9 +1,9 @@
-import { Component, ElementRef, HostListener, Input, OnChanges, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
+import { afterNextRender, Component, ElementRef, HostListener, Inject, Input, OnChanges, OnDestroy, PLATFORM_ID, SimpleChanges, ViewChild } from '@angular/core';
 import { ApiServices } from '../api/api.service';
 import { ToastService } from '../service/toast.service';
 import { UidUser } from '../models/models.interface';
 import { rStories } from '../models/response.interface';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-stories',
@@ -32,6 +32,7 @@ export class Stories implements OnChanges, OnDestroy {
   private loadedUserId: number | null = null;
   private ignoreNextClick = false;
   private lastPlayedVideoIndex: number | null = null;
+  private browserHydrated = false;
 
   uIdUser: UidUser = {
     sUid: 0
@@ -39,11 +40,19 @@ export class Stories implements OnChanges, OnDestroy {
 
   constructor(
     private api: ApiServices,
-    private toastService: ToastService
-  ) { }
+    private toastService: ToastService,
+    @Inject(PLATFORM_ID) private platformId: object
+  ) {
+    if (isPlatformBrowser(this.platformId)) {
+      afterNextRender(() => {
+        this.browserHydrated = true;
+        this.loadInitialStories();
+      });
+    }
+  }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['iUser']) {
+    if (changes['iUser'] && this.browserHydrated) {
       this.loadInitialStories();
     }
   }
@@ -81,7 +90,7 @@ export class Stories implements OnChanges, OnDestroy {
   }
 
   private loadInitialStories() {
-    if (typeof this.iUser !== 'number' || this.iUser <= 0 || this.loadedUserId === this.iUser) {
+    if (!this.browserHydrated || typeof this.iUser !== 'number' || this.iUser <= 0 || this.loadedUserId === this.iUser) {
       return;
     }
 

@@ -3,7 +3,7 @@ import { ActiveProfile, Cliente, ImageProfile, UidUser, Valoracion } from './../
 import { afterNextRender, Component, Inject, OnInit, PLATFORM_ID, REQUEST_CONTEXT, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiServices } from '../api/api.service';
-import { ResponseClient, ResponseMediaFiles, rValoracion } from '../models/response.interface';
+import { ResponseClient, ResponseMediaFiles } from '../models/response.interface';
 import { MethodService } from '../method/method.service';
 import { GalleryLightbox } from "../gallery-lightbox/gallery-lightbox";
 import { CommonModule, isPlatformBrowser } from '@angular/common';
@@ -83,6 +83,8 @@ export class Profile implements OnInit {
   private initialGalleryProfileId: number | null = null;
   private referenceCatalogsLoading = false;
   private referenceCatalogsLoaded = false;
+  private initialReviewSummaryProfileId: number | null = null;
+  private reviewSummaryLoadingProfileId: number | null = null;
 
   uIdUser: UidUser = {
     sUid: 0
@@ -150,6 +152,7 @@ export class Profile implements OnInit {
         this.browserHydrated = true;
         this.loadInitialGalleryAfterHydration();
         this.loadReferenceCatalogsAfterHydration();
+        this.loadInitialReviewSummaryAfterHydration();
       });
     }
   }
@@ -296,7 +299,7 @@ export class Profile implements OnInit {
         this.locationDirectoryUrl
           );
 
-          this.Reviews();
+          this.loadInitialReviewSummaryAfterHydration();
           this.loadInitialGalleryAfterHydration();
           this.loadReferenceCatalogsAfterHydration();
 
@@ -344,27 +347,61 @@ export class Profile implements OnInit {
     return !this.isOwner || this.isAdministrator;
   }
 
-  Reviews() {
-    this.api.GetCountReviewByUser(this.uIdUser).subscribe({
-      next: (data: number) => {
-        this.iReviewCount = data;
-      },
-      error: err => {
-        this.toastService.error('Error al cargar el conteo de las valoraciones!');
-      }
-    });
+  private loadInitialReviewSummaryAfterHydration(): void {
+    const profileId = this.uIdUser.sUid;
+    if (!this.browserHydrated || !this.isProfileLoaded || !profileId || this.initialReviewSummaryProfileId === profileId) {
+      return;
+    }
 
-    this.api.GetValReviewById(this.uIdUser).subscribe({
-      next: (data: rValoracion) => {
-        this.oValoracion = data.oValReview;
-        this.dValReview = Number.parseFloat(this.oValoracion.valoracion);
-      },
-      error: err => {
-        this.toastService.error('Error al cargar las valoraciones!');
-      }
-    });
+    this.initialReviewSummaryProfileId = profileId;
+    this.loadReviewSummary(profileId);
   }
 
+  Reviews(): void {
+    this.loadInitialReviewSummaryAfterHydration();
+  }
+
+  private loadReviewSummary(profileId: number): void {
+    if (this.reviewSummaryLoadingProfileId === profileId) {
+      return;
+    }
+
+    this.reviewSummaryLoadingProfileId = profileId;
+    const profileRequest = { sUid: profileId };
+
+    forkJoin({
+      count: this.api.GetCountReviewByUser(profileRequest).pipe(catchError(() => of(null))),
+      rating: this.api.GetValReviewById(profileRequest).pipe(catchError(() => of(null)))
+    }).subscribe({
+      next: ({ count, rating }) => {
+        if (this.uIdUser.sUid !== profileId) {
+          this.clearReviewSummaryLoading(profileId);
+          return;
+        }
+
+        if (count !== null) {
+          this.iReviewCount = count;
+        } else {
+          this.toastService.error('Error al cargar el conteo de las valoraciones!');
+        }
+
+        if (rating !== null) {
+          this.oValoracion = rating.oValReview;
+          this.dValReview = Number.parseFloat(this.oValoracion.valoracion);
+        } else {
+          this.toastService.error('Error en cargar las valoraciones!');
+        }
+
+        this.clearReviewSummaryLoading(profileId);
+      },
+      error: () => this.clearReviewSummaryLoading(profileId)
+    });
+  }
+  private clearReviewSummaryLoading(profileId: number): void {
+    if (this.reviewSummaryLoadingProfileId === profileId) {
+      this.reviewSummaryLoadingProfileId = null;
+    }
+  }
   toggleProfileStatus() {
     if (!this.isProfileActive) {
       this.ActiveProfileFrm.estado = 'V';

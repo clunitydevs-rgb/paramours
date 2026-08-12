@@ -7,8 +7,8 @@ import { Cliente } from '../models/models.interface';
 export class SeoService {
   private readonly siteName = 'Paramours';
   private readonly siteUrl = 'https://paramours.cl';
-  private readonly defaultTitle = 'Escorts en Santiago, Chile | Paramours';
-  private readonly defaultDescription = 'Explora escorts en Santiago en Paramours: perfiles de acompañantes adultas independientes y opciones organizadas por comuna para facilitar tu búsqueda.';
+  private readonly defaultTitle = 'Escort Chile | Escorts independientes | Paramours';
+  private readonly defaultDescription = 'Explora en Paramours perfiles de escorts independientes en Chile, revisa su información y encuentra opciones según las ubicaciones disponibles.';
   private readonly socialFallbackImage = 'https://paramours.cl/assets/images/logo-footer.png';
   private readonly profileSchemaFallbackImage = 'https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/avatar_anunciante.png';
 
@@ -82,7 +82,7 @@ export class SeoService {
       title: this.defaultTitle,
       description: this.defaultDescription,
       image: this.socialFallbackImage,
-      imageAlt: 'Paramours - Escorts en Santiago',
+      imageAlt: 'Paramours - Escorts independientes en Chile',
       url: this.siteUrl,
       type: 'website'
     });
@@ -91,7 +91,7 @@ export class SeoService {
       title: this.defaultTitle,
       description: this.defaultDescription,
       image: this.socialFallbackImage,
-      imageAlt: 'Paramours - Escorts en Santiago'
+      imageAlt: 'Paramours - Escorts independientes en Chile'
     });
 
     this.setJsonLd('website-schema', {

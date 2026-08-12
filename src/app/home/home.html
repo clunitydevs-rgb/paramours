@@ -6,13 +6,13 @@
             <div class="profiles-intro">
                 <div>
                     <span class="section-kicker">Paramours Chile</span>
-                    <h1 id="profiles-title">Escorts en Santiago</h1>
+                    <h1 id="profiles-title">Escorts independientes en Chile</h1>
                 </div>
                 <span *ngIf="nTotalClienteCount > 0" class="profiles-count">{{ nTotalClienteCount }} perfiles</span>
-                <p>Paramours es un directorio de perfiles de acompa&ntilde;antes adultas independientes y escorts en Santiago. Puedes revisar la informaci&oacute;n publicada por cada anunciante, explorar perfiles por comuna y acceder directamente a sus medios de contacto. La disponibilidad cambia seg&uacute;n los perfiles activos en sectores como Providencia, Las Condes, Santiago Centro y otras comunas de la capital.</p>
+                <p>Paramours es un directorio de escorts independientes en Chile donde puedes explorar perfiles publicados, revisar la informaci&oacute;n de cada anunciante y acceder a sus medios de contacto. Navega por las ubicaciones disponibles actualmente para encontrar opciones seg&uacute;n los perfiles activos.</p>
             </div>
 
-            <h2 id="available-profiles-title">Escorts disponibles en Santiago</h2>
+            <h2 id="available-profiles-title">Escorts disponibles</h2>
 
             <div *ngIf="arrItems.length > 0" class="profiles-grid" aria-labelledby="available-profiles-title">
                 <article *ngFor="let i of arrItems; let index = index; trackBy: trackClient" class="profile-card-wrap">
@@ -44,7 +44,7 @@
 
     <section class="home-locations" aria-labelledby="home-locations-title">
         <div class="container">
-            <h2 id="home-locations-title">Escorts por ubicación en Santiago</h2>
+            <h2 id="home-locations-title">Explora escorts por ubicación</h2>
             <nav aria-label="Directorios de escorts por comuna">
                 <a routerLink="/escort-santiago">Escorts en Santiago</a>
                 <a *ngFor="let location of locationLinks" [routerLink]="location.url">Escorts en {{ location.label }}</a>

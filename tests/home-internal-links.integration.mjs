@@ -64,14 +64,14 @@ test('Home SSR exposes the requested on-page SEO', async () => {
   const h2s = Array.from(html.matchAll(/<h2\b[^>]*>([\s\S]*?)<\/h2>/gi), match => match[1].replace(/<[^>]+>/g, '').trim());
   const websiteSchema = JSON.parse(html.match(/<script id="website-schema" type="application\/ld\+json">([\s\S]*?)<\/script>/i)?.[1] ?? '{}');
 
-  assert.equal(title, 'Escorts en Santiago, Chile | Paramours');
-  assert.equal(description, 'Explora escorts en Santiago en Paramours: perfiles de acompañantes adultas independientes y opciones organizadas por comuna para facilitar tu búsqueda.');
+  assert.equal(title, 'Escort Chile | Escorts independientes | Paramours');
+  assert.equal(description, 'Explora en Paramours perfiles de escorts independientes en Chile, revisa su información y encuentra opciones según las ubicaciones disponibles.');
   assert.equal(canonical, 'https://paramours.cl');
   assert.equal(robots, 'index, follow, max-image-preview:large');
-  assert.deepEqual(h1s, ['Escorts en Santiago']);
-  assert.ok(h2s.includes('Escorts disponibles en Santiago'));
-  assert.ok(h2s.includes('Escorts por ubicación en Santiago'));
-  assert.match(html, /Paramours es un directorio de perfiles de acompa(?:ñ|&ntilde;)antes adultas independientes y escorts en Santiago/i);
+  assert.deepEqual(h1s, ['Escorts independientes en Chile']);
+  assert.ok(h2s.includes('Escorts disponibles'));
+  assert.ok(h2s.includes('Explora escorts por ubicación'));
+  assert.match(html, /Paramours es un directorio de escorts independientes en Chile donde puedes explorar perfiles publicados/i);
   assert.equal((html.match(/<script[^>]+type="application\/ld\+json"/gi) ?? []).length, 1);
   assert.equal(websiteSchema['@context'], 'https://schema.org');
   assert.equal(websiteSchema['@type'], 'WebSite');
@@ -79,17 +79,41 @@ test('Home SSR exposes the requested on-page SEO', async () => {
   assert.equal(websiteSchema.url, 'https://paramours.cl/');
   assert.equal(websiteSchema.description, description);
   assert.equal(websiteSchema.potentialAction, undefined);
-  assert.match(html, /<meta property="og:title" content="Escorts en Santiago, Chile \| Paramours"/i);
+  assert.match(html, /<meta property="og:title" content="Escort Chile \| Escorts independientes \| Paramours"/i);
   assert.match(html, new RegExp(`<meta property="og:description" content="${description}"`, 'i'));
   assert.match(html, /<meta property="og:image" content="https:\/\/paramours\.cl\/assets\/images\/logo-footer\.png"/i);
-  assert.match(html, /<meta property="og:image:alt" content="Paramours - Escorts en Santiago"/i);
+  assert.match(html, /<meta property="og:image:alt" content="Paramours - Escorts independientes en Chile"/i);
   assert.doesNotMatch(html, /<meta property="og:image:(?:width|height)"/i);
-  assert.match(html, /<meta name="twitter:title" content="Escorts en Santiago, Chile \| Paramours"/i);
+  assert.match(html, /<meta name="twitter:title" content="Escort Chile \| Escorts independientes \| Paramours"/i);
   assert.match(html, new RegExp(`<meta name="twitter:description" content="${description}"`, 'i'));
   assert.match(html, /<meta name="twitter:card" content="summary_large_image"/i);
   assert.match(html, /<meta name="twitter:image" content="https:\/\/paramours\.cl\/assets\/images\/logo-footer\.png"/i);
-  assert.match(html, /<meta name="twitter:image:alt" content="Paramours - Escorts en Santiago"/i);
+  assert.match(html, /<meta name="twitter:image:alt" content="Paramours - Escorts independientes en Chile"/i);
 });
+
+test('Santiago directory retains its local SEO and crawlable profile content', async () => {
+  const response = await request('/escort-santiago');
+  const html = await response.text();
+  const title = html.match(/<title>([^<]+)<\/title>/i)?.[1];
+  const description = html.match(/<meta name="description" content="([^"]+)"/i)?.[1];
+  const canonical = html.match(/<link rel="canonical" href="([^"]+)"/i)?.[1];
+  const robots = html.match(/<meta name="robots" content="([^"]+)"/i)?.[1];
+  const h1s = Array.from(html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi), match => match[1].replace(/<[^>]+>/g, '').trim());
+  const schema = JSON.parse(html.match(/<script id="location-schema" type="application\/ld\+json">([\s\S]*?)<\/script>/i)?.[1] ?? '{}');
+
+  assert.equal(response.status, 200);
+  assert.equal(title, 'Escorts en Santiago | Acompañantes VIP y masajes | Paramours');
+  assert.equal(description, 'Encuentra escorts, acompañantes VIP y cariñosas en Santiago con perfiles verificados, fotografías reales y contacto directo.');
+  assert.equal(canonical, 'https://paramours.cl/escort-santiago');
+  assert.equal(robots, 'index, follow, max-image-preview:large');
+  assert.deepEqual(h1s, ['Escorts en Santiago']);
+  assert.ok(schema['@graph']?.some(item => item['@type'] === 'CollectionPage'));
+  assert.ok(schema['@graph']?.some(item => item['@type'] === 'BreadcrumbList'));
+  assert.ok(schema['@graph']?.some(item => item['@type'] === 'FAQPage'));
+  assert.ok(anchors(html).some(anchor => anchor.href === '/' && anchor.text === 'Inicio'));
+  assert.ok(anchors(html).some(anchor => anchor.href.startsWith('/profile/')));
+});
+
 test('Home SSR links only active communes with descriptive anchor text', async () => {
   const [homeHtml, sitemapXml, communesJson] = await Promise.all([
     request('/').then(response => response.text()),

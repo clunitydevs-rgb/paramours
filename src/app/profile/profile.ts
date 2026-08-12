@@ -18,7 +18,7 @@ import { SeoService } from '../service/seo.service';
 import { SsrResponseService } from '../service/ssr-response.service';
 import { Pagenotfound } from '../pagenotfound/pagenotfound';
 import { getProfileResponseFromRequestContext } from '../models/profile-request-context';
-import { of } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 
 interface Files {
   mFile: File
@@ -81,6 +81,8 @@ export class Profile implements OnInit {
   public dValReview: any;
   private browserHydrated = false;
   private initialGalleryProfileId: number | null = null;
+  private referenceCatalogsLoading = false;
+  private referenceCatalogsLoaded = false;
 
   uIdUser: UidUser = {
     sUid: 0
@@ -147,6 +149,7 @@ export class Profile implements OnInit {
       afterNextRender(() => {
         this.browserHydrated = true;
         this.loadInitialGalleryAfterHydration();
+        this.loadReferenceCatalogsAfterHydration();
       });
     }
   }
@@ -214,36 +217,6 @@ export class Profile implements OnInit {
       this.updateLocationDetailsAndSeo();
     });
 
-    this.api.getNaciones().subscribe(data => {
-      for (let items of data) {
-        this.oNacionalidades.push(items);
-      }
-    });
-
-    this.api.getGeneros().subscribe(data => {
-      for (let items of data) {
-        this.oGeneros.push(items);
-      }
-    });
-
-    this.api.getColorOjos().subscribe(data => {
-      for (let items of data) {
-        this.oColorOjos.push(items);
-      }
-    });
-
-    this.api.getColorCabello().subscribe(data => {
-      for (let items of data) {
-        this.oColorCabellos.push(items);
-      }
-    });
-
-    this.api.getBiotipo().subscribe(data => {
-      for (let items of data) {
-        this.oBiotipos.push(items);
-      }
-    });
-
     const requestProfile = getProfileResponseFromRequestContext(
       this.requestContext,
       this.uIdUser.sUid
@@ -287,20 +260,6 @@ export class Profile implements OnInit {
           if (this.oCliente.metro != null && this.oCliente.metro.toString() != '')
             this.metro = this.oMetros.filter(e => e.idComuna.toString() === this.oCliente.comuna.toString() && e.idMetro.toString() === this.oCliente.metro.toString()).map(e => e.NombreMetro);
 
-          if (this.oCliente.nacionalidad != null && this.oCliente.nacionalidad.toString() != '')
-            this.nacionalidad = this.oNacionalidades.filter(e => e.id.toString() === this.oCliente.nacionalidad.toString()).map(e => e.nacionalidad);
-
-          if (this.oCliente.genero != null && this.oCliente.genero.toString() != '')
-            this.genero = this.oGeneros.filter(e => e.id.toString() === this.oCliente.genero.toString()).map(e => e.nombre);
-
-          if (this.oCliente.colorojos != null && this.oCliente.colorojos.toString() != '')
-            this.colorojo = this.oColorOjos.filter(e => e.id.toString() === this.oCliente.colorojos.toString()).map(e => e.nombre);
-
-          if (this.oCliente.colorcabello != null && this.oCliente.colorcabello.toString() != '')
-            this.colorcabello = this.oColorCabellos.filter(e => e.id.toString() === this.oCliente.colorcabello.toString()).map(e => e.nombre);
-
-          if (this.oCliente.biotipo != null && this.oCliente.biotipo.toString() != '')
-            this.biotipo = this.oBiotipos.filter(e => e.id.toString() === this.oCliente.biotipo.toString()).map(e => e.nombre)
 
           if (this.oCliente.horariO_ATENCION != null && this.oCliente.horariO_ATENCION.toString() != '')
             this.hAtencion = (this.oCliente.horariO_ATENCION === 0 ? 'Full Time' : 'Part Time');
@@ -339,6 +298,7 @@ export class Profile implements OnInit {
 
           this.Reviews();
           this.loadInitialGalleryAfterHydration();
+          this.loadReferenceCatalogsAfterHydration();
 
         } else {
           this.markProfileNotFound();
@@ -431,6 +391,52 @@ export class Profile implements OnInit {
     });
   }
 
+  private loadReferenceCatalogsAfterHydration(): void {
+    if (!this.browserHydrated || !this.isProfileLoaded || this.referenceCatalogsLoading || this.referenceCatalogsLoaded) {
+      return;
+    }
+
+    this.referenceCatalogsLoading = true;
+    forkJoin({
+      nacionalidades: this.api.getNaciones().pipe(catchError(() => of([]))),
+      generos: this.api.getGeneros().pipe(catchError(() => of([]))),
+      colorOjos: this.api.getColorOjos().pipe(catchError(() => of([]))),
+      colorCabello: this.api.getColorCabello().pipe(catchError(() => of([]))),
+      biotipos: this.api.getBiotipo().pipe(catchError(() => of([])))
+    }).subscribe({
+      next: ({ nacionalidades, generos, colorOjos, colorCabello, biotipos }) => {
+        this.oNacionalidades = nacionalidades as Array<any>;
+        this.oGeneros = generos as Array<any>;
+        this.oColorOjos = colorOjos as Array<any>;
+        this.oColorCabellos = colorCabello as Array<any>;
+        this.oBiotipos = biotipos as Array<any>;
+        this.resolveReferenceDetails();
+        this.referenceCatalogsLoaded = true;
+        this.referenceCatalogsLoading = false;
+      },
+      error: () => {
+        this.referenceCatalogsLoading = false;
+      }
+    });
+  }
+
+  private resolveReferenceDetails(): void {
+    this.nacionalidad = this.getReferenceLabel(this.oNacionalidades, this.oCliente.nacionalidad, 'nacionalidad');
+    this.genero = this.getReferenceLabel(this.oGeneros, this.oCliente.genero, 'nombre');
+    this.colorojo = this.getReferenceLabel(this.oColorOjos, this.oCliente.colorojos, 'nombre');
+    this.colorcabello = this.getReferenceLabel(this.oColorCabellos, this.oCliente.colorcabello, 'nombre');
+    this.biotipo = this.getReferenceLabel(this.oBiotipos, this.oCliente.biotipo, 'nombre');
+  }
+
+  private getReferenceLabel(catalog: Array<any>, id: unknown, field: string): Array<any> {
+    if (id === null || id === undefined || id.toString() === '') {
+      return [];
+    }
+
+    return catalog
+      .filter(item => item.id?.toString() === id.toString())
+      .map(item => item[field]);
+  }
   private loadInitialGalleryAfterHydration(): void {
     if (!this.browserHydrated || !this.isProfileLoaded || this.initialGalleryProfileId === this.uIdUser.sUid) {
       return;

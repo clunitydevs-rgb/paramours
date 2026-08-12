@@ -9,6 +9,7 @@
     "test": "ng test",
     "test:ssr-404": "node --test tests/ssr-404.integration.mjs",
     "test:ssr-profile-context": "node --test tests/profile-request-context.integration.mjs",
+    "test:ssr-profile-catalogs": "node --test tests/profile-reference-catalogs.integration.mjs",
     "test:ssr-links": "node --test tests/home-internal-links.integration.mjs",
     "test:analytics": "node --test tests/analytics-loading.integration.mjs",
     "serve:ssr:cl.app.paramours": "node dist/cl.app.paramours/server/server.mjs"

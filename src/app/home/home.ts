@@ -8,7 +8,7 @@ import { ResponseClient, rStoriesHome } from '../models/response.interface';
 import { Storieshome } from "../storieshome/storieshome";
 import { MethodService } from '../method/method.service';
 import { Cliente } from '../models/models.interface';
-import { EMPTY, catchError, forkJoin, of, timeout } from 'rxjs';
+import { catchError, forkJoin, of, timeout } from 'rxjs';
 import { SeoService } from '../service/seo.service';
 import { getActiveProfileLocationIds } from '../../sitemap';
 import type { SitemapProfile } from '../../sitemap';
@@ -216,13 +216,13 @@ export class Home implements OnInit {
 
   getStories() {
     this.api.GetAllActiveStoriesUser().pipe(
-      timeout(6000),
-      catchError(() => EMPTY)
+      timeout(6000)
     ).subscribe({
       next: (value: rStoriesHome) => {
         this.methodservice.tStoriesHome.emit(value.oStories);
       },
       error: err => {
+        this.methodservice.tStoriesHome.emit([]);
         this.toastService.error('Error en cargar las historias!');
       }
     });

@@ -331,7 +331,9 @@ export class Profile implements OnInit {
 
   get profileHeading(): string {
     const profileName = this.oCliente.nombrE_USUARIO?.trim() || 'Perfil';
-    return `${profileName}, Escort en ${this.locationDirectoryName || 'Santiago'}`;
+    const serviceName = this.genero[0]
+      || (this.oCliente.genero?.toString() === '0' ? 'Masajista' : 'Escort');
+    return `${profileName}, ${serviceName} en ${this.locationDirectoryName || 'Santiago'}`;
   }
 
   get profileImageAlt(): string {

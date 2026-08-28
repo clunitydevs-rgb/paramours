@@ -41,11 +41,10 @@ export class Storieshome {
   ) { }
 
   ngOnInit() {
-    const grupos: any = {};
-
     this.subscription = this.methodservice.tStoriesHome.subscribe(data => {
+      const grupos: any = {};
 
-      data.forEach((story: any) => {
+      (data ?? []).forEach((story: any) => {
         if (!grupos[story.iD_USUARIO]) {
           grupos[story.iD_USUARIO] = {
             usuario: story.nomUsuario,
@@ -58,10 +57,7 @@ export class Storieshome {
       });
 
       this.storiesAgrupadas = Object.values(grupos);
-
-      if (this.storiesAgrupadas.length > 0) {
-        this.bShowFx = false;
-      }
+      this.bShowFx = false;
     });
 
     // SOLO EN BROWSER

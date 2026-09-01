@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { catchError, forkJoin, of, timeout } from 'rxjs';
 import { ApiServices } from '../api/api.service';
@@ -8,6 +8,9 @@ import { LocationSeoService } from '../service/location-seo.service';
 import { SeoService } from '../service/seo.service';
 import { SsrResponseService } from '../service/ssr-response.service';
 import { Pagenotfound } from '../pagenotfound/pagenotfound';
+import { Storieshome } from '../storieshome/storieshome';
+import { MethodService } from '../method/method.service';
+import { rStoriesHome } from '../models/response.interface';
 
 interface LocationItem {
   id: string | number;
@@ -68,7 +71,7 @@ const LOCAL_CONTENT: Record<string, LocalContent> = {
 
 @Component({
   selector: 'app-escort-directory',
-  imports: [CommonModule, RouterLink, Pagenotfound],
+  imports: [CommonModule, RouterLink, Pagenotfound, Storieshome],
   templateUrl: './escort-directory.html',
   styleUrls: ['../home/home.css', './escort-directory.css']
 })
@@ -92,7 +95,9 @@ export class EscortDirectory implements OnInit {
     private api: ApiServices,
     private seoService: LocationSeoService,
     private globalSeoService: SeoService,
-    private ssrResponse: SsrResponseService
+    private ssrResponse: SsrResponseService,
+    private methodService: MethodService,
+    @Inject(PLATFORM_ID) private platformId: object
   ) { }
 
   ngOnInit(): void {
@@ -107,6 +112,7 @@ export class EscortDirectory implements OnInit {
     this.loadError = false;
     this.notFound = false;
     this.profiles = [];
+    this.methodService.tStoriesHome.emit([]);
     this.locationName = '';
     this.content = null;
 
@@ -147,6 +153,7 @@ export class EscortDirectory implements OnInit {
         const responseClients = clients.oClient as unknown;
         const allProfiles = Array.isArray(responseClients) ? responseClients as Cliente[] : [];
         this.profiles = allProfiles.filter(profile => this.matchesLocation(profile));
+        this.loadLocationStories();
         this.relatedLocations = this.buildRelatedLocations(comunas as LocationItem[], allProfiles);
         this.loading = false;
         this.updateSeo();
@@ -195,6 +202,27 @@ export class EscortDirectory implements OnInit {
       ? profile.metro
       : this.locationType === 'commune' ? profile.comuna : profile.ciudad;
     return value?.toString() === this.locationId.toString();
+  }
+
+  private loadLocationStories(): void {
+    if (!isPlatformBrowser(this.platformId) || this.profiles.length === 0) {
+      this.methodService.tStoriesHome.emit([]);
+      return;
+    }
+
+    const profileIds = new Set(this.profiles.map(profile => profile.iD_USUARIO.toString()));
+
+    this.api.GetAllActiveStoriesUser().pipe(
+      timeout(6000),
+      catchError(() => of({ oStories: [], message: '', ncoderror: '' } as rStoriesHome))
+    ).subscribe(response => {
+      const stories = Array.isArray(response.oStories) ? response.oStories : [];
+      const locationStories = stories.filter(story =>
+        profileIds.has(story.iD_USUARIO?.toString())
+      );
+
+      this.methodService.tStoriesHome.emit(locationStories);
+    });
   }
 
   private updateSeo(): void {

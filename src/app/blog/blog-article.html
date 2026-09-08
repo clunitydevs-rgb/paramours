@@ -1,0 +1,25 @@
+@if (notFound) { <app-pagenotfound /> }
+@else {
+  <main class="blog-page">
+    <div class="blog-container blog-reading">
+      <nav class="blog-breadcrumb" aria-label="Ruta de navegación"><a routerLink="/">Inicio</a><span aria-hidden="true">/</span><a routerLink="/blog">Blog</a>@if (post) { <span aria-hidden="true">/</span><span aria-current="page">{{ post.title }}</span> }</nav>
+      @if (loading) { <p role="status">Cargando artículo…</p> }
+      @else if (loadError) { <h1>Artículo temporalmente no disponible</h1><p role="alert">Inténtalo de nuevo más tarde.</p><a routerLink="/blog">Volver al blog</a> }
+      @else if (post) {
+        <article>
+          <header class="blog-heading">
+            <h1>{{ post.title }}</h1>
+            <p class="blog-meta"><time [attr.datetime]="post.publishedDate">{{ post.publishedDate | date:'longDate' }}</time><span aria-hidden="true"> · </span>{{ post.author || 'Paramours' }}</p>
+            <p class="blog-summary">{{ post.summary }}</p>
+          </header>
+          @if (post.featuredImage) { <img class="blog-image" [src]="post.featuredImage" [alt]="post.featuredImageAlt || post.title" width="960" height="540" fetchpriority="high" decoding="async"> }
+          <div class="blog-content" [innerHTML]="post.content"></div>
+        </article>
+        <aside class="blog-explore" aria-labelledby="blog-explore-title">
+          <h2 id="blog-explore-title">Explora escorts independientes</h2>
+          <div><a routerLink="/">Escorts en Chile</a><a routerLink="/escort-santiago">Escorts en Santiago</a><a routerLink="/blog">Más guías y consejos</a></div>
+        </aside>
+      }
+    </div>
+  </main>
+}

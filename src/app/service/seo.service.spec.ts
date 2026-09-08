@@ -3,6 +3,7 @@ import { Meta, Title } from '@angular/platform-browser';
 import { Cliente } from '../models/models.interface';
 import { LocationSeoService } from './location-seo.service';
 import { SeoService } from './seo.service';
+import { BlogPost } from '../models/blog.interface';
 
 describe('Global SEO route policy', () => {
   let seo: SeoService;
@@ -39,6 +40,27 @@ describe('Global SEO route policy', () => {
 
   afterEach(() => seo.clearRouteSeo());
 
+  it('replaces blog schemas across SPA navigation and safely serializes API text', () => {
+    const post = {
+      slug: 'prueba', title: 'Título </script><script>example</script>',
+      metaTitle: '', metaDescription: 'Descripción', author: 'Paramours',
+      publishedDate: '2026-09-08T17:13:04.39', modifiedDate: '2026-09-08T17:13:04.39',
+      isIndexable: true, featuredImage: null
+    } as BlogPost;
+    seo.setBlogSeo(post);
+    seo.setBlogSeo(post);
+    expect(document.querySelectorAll('#blog-article-schema').length).toBe(1);
+    const schema = document.getElementById('blog-article-schema')!.textContent!;
+    expect(schema).not.toContain('</script>');
+    expect(JSON.parse(schema).headline).toBe(post.title);
+    seo.setBlogSeo();
+    expect(document.getElementById('blog-article-schema')).toBeNull();
+    expect(document.getElementById('blog-breadcrumb-schema')).toBeNull();
+    seo.setHomeSeo();
+    expect(document.getElementById('website-schema')).not.toBeNull();
+    expect(canonical()).toBe('https://paramours.cl/');
+  });
+
   function canonical(): string | null {
     return document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.href ?? null;
   }
@@ -67,10 +89,10 @@ describe('Global SEO route policy', () => {
     expect(schema.description).toBe(meta.getTag("name='description'")?.content);
     expect(schema.potentialAction).toBeUndefined();
     expect(meta.getTag("property='og:image'")?.content).toBe('https://paramours.cl/assets/images/logo-footer.png');
-    expect(meta.getTag("property='og:image:alt'")?.content).toBe('Paramours - Escorts en Santiago');
+    expect(meta.getTag("property='og:image:alt'")?.content).toBe('Paramours - Escorts independientes en Chile');
     expect(meta.getTag("name='twitter:card'")?.content).toBe('summary_large_image');
     expect(meta.getTag("name='twitter:image'")?.content).toBe('https://paramours.cl/assets/images/logo-footer.png');
-    expect(meta.getTag("name='twitter:image:alt'")?.content).toBe('Paramours - Escorts en Santiago');
+    expect(meta.getTag("name='twitter:image:alt'")?.content).toBe('Paramours - Escorts independientes en Chile');
   });
 
   it('sets /login as noindex without inherited canonical, social tags or schemas', () => {
@@ -208,7 +230,7 @@ describe('Global SEO route policy', () => {
 
   it('updates social image metadata across Home, Location, Profile and Home SPA navigation', () => {
     seo.setHomeSeo();
-    expect(meta.getTag("property='og:image:alt'")?.content).toBe('Paramours - Escorts en Santiago');
+    expect(meta.getTag("property='og:image:alt'")?.content).toBe('Paramours - Escorts independientes en Chile');
 
     locationSeo.setLocationSeo(location);
     expect(meta.getTag("property='og:image:alt'")?.content).toBe('Escorts en Providencia - Paramours');
@@ -219,8 +241,8 @@ describe('Global SEO route policy', () => {
 
     seo.setHomeSeo();
     expect(meta.getTag("property='og:image'")?.content).toBe('https://paramours.cl/assets/images/logo-footer.png');
-    expect(meta.getTag("property='og:image:alt'")?.content).toBe('Paramours - Escorts en Santiago');
-    expect(meta.getTag("name='twitter:image:alt'")?.content).toBe('Paramours - Escorts en Santiago');
+    expect(meta.getTag("property='og:image:alt'")?.content).toBe('Paramours - Escorts independientes en Chile');
+    expect(meta.getTag("name='twitter:image:alt'")?.content).toBe('Paramours - Escorts independientes en Chile');
   });
 
   it('uses a two-level profile breadcrumb when no valid commune exists', () => {

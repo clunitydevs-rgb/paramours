@@ -8,6 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:ssr-404": "node --test tests/ssr-404.integration.mjs",
+    "test:ssr-blog": "node --test tests/blog.integration.mjs",
     "test:ssr-profile-context": "node --test tests/profile-request-context.integration.mjs",
     "test:ssr-profile-catalogs": "node --test tests/profile-reference-catalogs.integration.mjs",
     "test:ssr-profile-reviews": "node --test tests/profile-review-summary.integration.mjs",

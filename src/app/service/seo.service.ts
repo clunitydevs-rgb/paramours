@@ -2,6 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { Cliente } from '../models/models.interface';
+import { BlogPost } from '../models/blog.interface';
 
 @Injectable({ providedIn: 'root' })
 export class SeoService {
@@ -205,6 +206,45 @@ export class SeoService {
     });
   }
 
+  setBlogSeo(post?: BlogPost): void {
+    this.clearRouteSeo();
+    const title = post ? post.metaTitle?.trim() || `${post.title} | Paramours`
+      : 'Blog Paramours | Guías y consejos sobre escorts en Chile';
+    const description = post ? post.metaDescription || ''
+      : 'Guías, consejos y respuestas a dudas frecuentes sobre escorts independientes en Chile, contacto, seguridad, hoteles y experiencias.';
+    const url = `${this.siteUrl}/blog${post ? `/${encodeURIComponent(post.slug)}` : ''}`;
+    const image = this.resolveSocialImage(post?.featuredImage || '');
+    const imageAlt = post?.featuredImageAlt || post?.title || 'Blog Paramours';
+    this.title.setTitle(title);
+    this.setDescription(description);
+    this.setCanonical(url);
+    this.meta.updateTag({ name: 'robots', content: !post || post.isIndexable === true ? 'index, follow' : 'noindex, follow' });
+    this.setOpenGraph({ title, description, url, image, imageAlt, type: post ? 'article' : 'website' });
+    this.setTwitter({ title, description, image, imageAlt });
+    if (post) {
+      this.setJsonLd('blog-article-schema', {
+        '@context': 'https://schema.org', '@type': 'Article',
+        headline: post.title, description, datePublished: post.publishedDate,
+        dateModified: post.modifiedDate, image,
+        author: { '@type': 'Organization', name: post.author || this.siteName },
+        publisher: { '@type': 'Organization', name: this.siteName },
+        mainEntityOfPage: { '@type': 'WebPage', '@id': url }
+      });
+      this.setJsonLd('blog-breadcrumb-schema', {
+        '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${this.siteUrl}/` },
+          { '@type': 'ListItem', position: 2, name: 'Blog', item: `${this.siteUrl}/blog` },
+          { '@type': 'ListItem', position: 3, name: post.title, item: url }
+        ]
+      });
+    }
+  }
+
+  setBlogUnavailableSeo(): void {
+    this.setFunctionalSeo('Blog temporalmente no disponible | Paramours');
+  }
+
   private setFunctionalSeo(title: string): void {
     this.clearRouteSeo();
     this.title.setTitle(title);
@@ -276,7 +316,7 @@ export class SeoService {
     const script = this.document.createElement('script');
     script.id = id;
     script.type = 'application/ld+json';
-    script.textContent = JSON.stringify(schema);
+    script.textContent = JSON.stringify(schema).replace(/</g, '\\u003c');
     this.document.head.appendChild(script);
   }
 

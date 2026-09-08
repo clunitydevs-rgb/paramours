@@ -1,3 +1,5 @@
+import { BlogPost, isPublishedBlog } from './app/models/blog.interface';
+
 const SITE_URL = 'https://paramours.cl';
 const SITEMAP_NAMESPACE = 'http://www.sitemaps.org/schemas/sitemap/0.9';
 
@@ -16,6 +18,7 @@ export interface SitemapLocation {
 }
 
 interface SitemapEntry {
+  lastmod?: string;
   loc: string;
   changefreq: 'daily';
   priority: '1.0' | '0.9';
@@ -24,7 +27,8 @@ interface SitemapEntry {
 export function buildSitemapXml(
   profiles: SitemapProfile[],
   communes: SitemapLocation[],
-  cities: SitemapLocation[]
+  cities: SitemapLocation[],
+  posts: BlogPost[] = []
 ): string {
   const activeProfiles = profiles.filter(isPublicActiveProfile);
   const activeCommuneIds = getActiveProfileLocationIds(activeProfiles, 'comuna');
@@ -32,6 +36,15 @@ export function buildSitemapXml(
   const entries = new Map<string, SitemapEntry>();
 
   addEntry(entries, `${SITE_URL}/`, '1.0');
+  addEntry(entries, `${SITE_URL}/blog`, '0.9');
+  for (const post of posts.filter(isPublishedBlog).filter(post => post.isIndexable === true)) {
+    const loc = `${SITE_URL}/blog/${encodeURIComponent(post.slug)}`;
+    addEntry(entries, loc, '0.9');
+    // SQL dates have no offset: use their calendar date without inventing a timezone.
+    if (/^\d{4}-\d{2}-\d{2}T/.test(post.modifiedDate) && Number.isFinite(Date.parse(post.modifiedDate))) {
+      entries.get(loc)!.lastmod = post.modifiedDate.slice(0, 10);
+    }
+  }
 
   for (const city of cities) {
     if (isValidLocation(city) && activeCityIds.has(normalizeId(city.id))) {
@@ -53,7 +66,7 @@ export function buildSitemapXml(
   }
 
   const xmlEntries = [...entries.values()].map(entry => `  <url>
-    <loc>${escapeXml(entry.loc)}</loc>
+    <loc>${escapeXml(entry.loc)}</loc>${entry.lastmod ? `\n    <lastmod>${escapeXml(entry.lastmod)}</lastmod>` : ''}
     <changefreq>${entry.changefreq}</changefreq>
     <priority>${entry.priority}</priority>
   </url>`).join('\n\n');

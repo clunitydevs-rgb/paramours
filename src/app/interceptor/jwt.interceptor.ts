@@ -14,7 +14,7 @@ export const jtwInterceptor: HttpInterceptorFn = (req, next) => {
     const router = inject(Router);
     const methodservice = inject(MethodService);
 
-    if (req.url.includes('/Authentication') || req.url.includes('/RefreshToken')) {
+    if (req.url.includes('/Authentication') || req.url.includes('/RefreshToken') || req.url.includes('/Blog/')) {
         return next(req);
     }
 

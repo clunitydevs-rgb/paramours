@@ -2,6 +2,8 @@ import { Routes } from '@angular/router';
 import { escortLocationMatcher } from './routing/escort-location.matcher';
 
 export const routes: Routes = [
+    {path:'blog', loadComponent: () => import('./blog/blog-list').then(m => m.BlogList)},
+    {path:'blog/:slug', loadComponent: () => import('./blog/blog-article').then(m => m.BlogArticle)},
     {path:'', loadComponent: () => import('./home/home').then(m => m.Home), pathMatch:'full'},
     {
         matcher: escortLocationMatcher,

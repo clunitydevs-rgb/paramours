@@ -1,6 +1,18 @@
 import { buildSitemapXml, SitemapLocation, SitemapProfile } from './sitemap';
+import { BlogPost } from './app/models/blog.interface';
 
 describe('Sitemap generator', () => {
+  it('includes only published indexable blogs and uses modifiedDate without inventing a timezone', () => {
+    const post = { slug: 'guia', status: 'V', isActive: true, isIndexable: true, modifiedDate: '2026-09-08T17:13:04.39' } as BlogPost;
+    const xml = buildSitemapXml([], [], [], [post, post,
+      { ...post, slug: 'privado', isIndexable: false },
+      { ...post, slug: 'inactivo', isActive: false },
+      { ...post, slug: 'borrador', status: 'B' }]);
+    expect(xml).toContain('<loc>https://paramours.cl/blog</loc>');
+    expect(xml).toContain('<lastmod>2026-09-08</lastmod>');
+    expect(xml.match(/<loc>https:\/\/paramours.cl\/blog\/guia<\/loc>/g)?.length).toBe(1);
+    for (const slug of ['privado', 'inactivo', 'borrador']) expect(xml).not.toContain(`/blog/${slug}`);
+  });
   const cities: SitemapLocation[] = [
     { id: 0, slug: 'santiago' },
     { id: 3, slug: 'calama' }

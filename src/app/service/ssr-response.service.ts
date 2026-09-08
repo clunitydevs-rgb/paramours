@@ -9,4 +9,8 @@ export class SsrResponseService {
       this.responseInit.status = 404;
     }
   }
+
+  setUnavailable(): void {
+    if (this.responseInit) this.responseInit.status = 503;
+  }
 }

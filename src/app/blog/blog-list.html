@@ -1,0 +1,23 @@
+<main class="blog-page">
+  <div class="blog-container">
+    <nav class="blog-breadcrumb" aria-label="Ruta de navegación"><a routerLink="/">Inicio</a><span aria-hidden="true">/</span><span aria-current="page">Blog</span></nav>
+    <header class="blog-heading"><p class="blog-eyebrow">Blog Paramours</p><h1>Guías y consejos</h1><p>Respuestas a tus dudas sobre contacto, privacidad y coordinación en Chile.</p></header>
+    @if (loading) { <p role="status">Cargando publicaciones…</p> }
+    @else if (loadError) { <p role="alert">No pudimos cargar las publicaciones. Inténtalo nuevamente.</p><button class="btn-outline" (click)="load()">Reintentar</button> }
+    @else {
+      <div class="blog-grid">
+        @for (post of posts; track post.id) {
+          <article class="blog-card">
+            @if (post.featuredImage) { <img class="blog-image" [src]="post.featuredImage" [alt]="post.featuredImageAlt || post.title" width="960" height="540" loading="lazy" decoding="async"> }
+            <div class="blog-card-body">
+              <time class="blog-meta" [attr.datetime]="post.publishedDate">{{ post.publishedDate | date:'longDate' }}</time>
+              <h2><a [routerLink]="['/blog', post.slug]">{{ post.title }}</a></h2>
+              <p>{{ post.summary }}</p>
+              <a class="blog-read" [routerLink]="['/blog', post.slug]" [attr.aria-label]="'Leer: ' + post.title">Leer artículo →</a>
+            </div>
+          </article>
+        } @empty { <p>Pronto encontrarás nuevas guías y consejos.</p> }
+      </div>
+    }
+  </div>
+</main>

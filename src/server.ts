@@ -13,6 +13,7 @@ import type { SitemapLocation, SitemapProfile } from './sitemap';
 import type { ProfileRequestContext } from './app/models/profile-request-context';
 import type { ResponseClient } from './app/models/response.interface';
 import { PUBLIC_CLIENTS_URL, publicClientsCache } from './public-clients-cache';
+import { BLOG_API_URL, GetBlogsResponse } from './app/models/blog.interface';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
@@ -157,26 +158,40 @@ app.get('/home', (_req, res) => {
 
 app.get('/sitemap.xml', async (_req, res) => {
   try {
-    const [clientsResponse, communesJson, citiesJson] = await Promise.all([
+    const [clientsResponse, communesJson, citiesJson, blogs] = await Promise.all([
       publicClientsCache.get(async () => {
         const clientsResponse = await fetch(PUBLIC_CLIENTS_URL, {
           signal: AbortSignal.timeout(6000),
         });
         if (!clientsResponse.ok) throw new Error(`Clients API returned ${clientsResponse.status}`);
         return clientsResponse.json() as Promise<ResponseClient>;
+      }).catch(error => {
+        console.error('Profile entries temporarily unavailable for sitemap.', error);
+        return null;
       }),
       readFile(join(browserDistFolder, 'assets/data/comunas.json'), 'utf8'),
       readFile(join(browserDistFolder, 'assets/data/ciudades.json'), 'utf8'),
+      fetch(`${process.env['PARAMOURS_BLOG_API_URL'] || BLOG_API_URL}/GetBlogs`, {
+        signal: AbortSignal.timeout(6000),
+      }).then(async response => {
+        if (!response.ok) throw new Error(`Blog API returned ${response.status}`);
+        const payload = await response.json() as GetBlogsResponse;
+        if (String(payload.ncoderror) !== '0' || !Array.isArray(payload.oBlog)) throw new Error('Invalid blog list');
+        return payload.oBlog;
+      }).catch(error => {
+        console.error('Blog entries temporarily unavailable for sitemap.', error);
+        return [];
+      }),
     ]);
 
-    const payload = clientsResponse as unknown as { oClient?: SitemapProfile[] };
-    const profiles = Array.isArray(payload.oClient) ? payload.oClient : [];
+    const payload = clientsResponse as unknown as { oClient?: SitemapProfile[] } | null;
+    const profiles = Array.isArray(payload?.oClient) ? payload.oClient : [];
     const communes = JSON.parse(communesJson) as SitemapLocation[];
     const cities = JSON.parse(citiesJson) as SitemapLocation[];
 
     res.type('application/xml');
     res.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate');
-    res.send(buildSitemapXml(profiles, communes, cities));
+    res.send(buildSitemapXml(profiles, communes, cities, blogs));
   } catch (error) {
     console.error('Failed to generate dynamic sitemap.', error);
     res.sendFile(join(browserDistFolder, 'sitemap.xml'));

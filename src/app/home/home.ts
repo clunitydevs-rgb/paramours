@@ -89,7 +89,6 @@ export class Home implements OnInit {
   }
 
   private updateLocationLinks(): void {
-    if (this.oComunas.length === 0) return;
     this.locationLinks = this.buildLocationLinks();
   }
 
@@ -99,9 +98,19 @@ export class Home implements OnInit {
       'comuna'
     );
 
-    return this.oComunas
-      .filter(comuna => comuna.slug && activeCommuneIds.has(comuna.id?.toString()))
-      .map(comuna => ({ label: comuna.nombre, url: `/escort-${comuna.slug}` }))
+    const activeCityIds = getActiveProfileLocationIds(
+      this.arrItems as unknown as SitemapProfile[],
+      'ciudad'
+    );
+    const cities = this.oCiudades
+      .filter(ciudad => ciudad.slug && activeCityIds.has(ciudad.id?.toString()));
+    const communes = this.oComunas
+      .filter(comuna => comuna.slug && activeCommuneIds.has(comuna.id?.toString()));
+    const links = [...cities, ...communes]
+      .filter(location => location.slug !== 'santiago')
+      .map(location => ({ label: location.nombre, url: `/escort-${location.slug}` }));
+
+    return [...new Map(links.map(link => [link.url, link])).values()]
       .sort((left, right) => left.label.localeCompare(right.label, 'es'));
   }
   getProfileUrl(item: Cliente): string {

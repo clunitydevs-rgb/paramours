@@ -45,7 +45,7 @@
     <section class="home-locations" aria-labelledby="home-locations-title">
         <div class="container">
             <h2 id="home-locations-title">Explora escorts por ubicación</h2>
-            <nav aria-label="Directorios de escorts por comuna">
+            <nav aria-label="Directorios de escorts por ubicación">
                 <a routerLink="/escort-santiago">Escorts en Santiago</a>
                 <a *ngFor="let location of locationLinks" [routerLink]="location.url">Escorts en {{ location.label }}</a>
             </nav>

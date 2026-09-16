@@ -70,6 +70,16 @@
         "slug":  "vina-del-mar"
     },
     {
+        "id":  30,
+        "nombre":  "Reñaca",
+        "slug":  "renaca"
+    },
+    {
+        "id":  31,
+        "nombre":  "Con Con",
+        "slug":  "con-con"
+    },
+    {
         "id":  14,
         "nombre":  "Melipilla",
         "slug":  "melipilla"

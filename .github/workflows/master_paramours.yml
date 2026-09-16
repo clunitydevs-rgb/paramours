@@ -1,21 +1,28 @@
-name: Deploy Angular app to Azure Web App - paramours
+name: Deploy Angular SSR to Hostinger VPS
 
 on:
-  push:
-    branches:
-      - master
   workflow_dispatch:
+    inputs:
+      deploy_production:
+        description: 'Actualizar produccion y reiniciar paramours-web (false solo valida)'
+        type: boolean
+        default: false
+        required: true
+
+concurrency:
+  group: paramours-production
+  cancel-in-progress: false
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   deploy:
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
-      id-token: write
       contents: read
-
     steps:
       - name: Checkout codigo
         uses: actions/checkout@v4
@@ -23,30 +30,63 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
-          cache: 'npm'
+          node-version: '22.x'
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build Angular app
+      - name: Build Angular SSR
         run: npm run build
 
-      - name: Prepare Windows App Service SSR package
+      - name: Configure SSH
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_PORT: ${{ secrets.VPS_PORT }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
         run: |
-          cp deploy/azure-server.js dist/cl.app.paramours/server.js
-          cp deploy/azure-web.config dist/cl.app.paramours/web.config
+          set -euo pipefail
+          for name in VPS_HOST VPS_USER VPS_PORT VPS_SSH_KEY VPS_KNOWN_HOSTS; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Falta el secreto $name"
+              exit 1
+            fi
+          done
+          [[ "$VPS_HOST" =~ ^[a-zA-Z0-9][a-zA-Z0-9.-]*$ ]]
+          [[ "$VPS_USER" =~ ^[a-z_][a-z0-9_-]*$ ]]
+          [[ "$VPS_PORT" =~ ^[0-9]+$ ]]
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/paramours
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/paramours ~/.ssh/known_hosts
+          ssh-keygen -y -P '' -f ~/.ssh/paramours > /dev/null
+          cat > ~/.ssh/config <<EOF
+          Host paramours-vps
+            HostName $VPS_HOST
+            User $VPS_USER
+            Port $VPS_PORT
+            IdentityFile ~/.ssh/paramours
+            IdentitiesOnly yes
+            BatchMode yes
+            StrictHostKeyChecking yes
+            ConnectTimeout 15
+          EOF
+          chmod 600 ~/.ssh/config
 
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_F607A196A5C04F0CAA27B58E99A30BB4 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_E89EF8F83B16407EBA698506BFB1CD7E }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_731B4E04158545B3ABD273255954425A }}
+      - name: Upload and deploy
+        env:
+          DEPLOY_PRODUCTION: ${{ inputs.deploy_production }}
+        run: |
+          set -euo pipefail
+          test -f dist/cl.app.paramours/server/server.mjs
+          tar -czf "$RUNNER_TEMP/paramours.tar.gz" -C dist/cl.app.paramours browser server
+          remote_dir=$(ssh paramours-vps 'mktemp -d "$HOME/paramours-deploy.XXXXXX"')
+          scp "$RUNNER_TEMP/paramours.tar.gz" "paramours-vps:$remote_dir/app.tar.gz"
+          scp deploy/hostinger-deploy.sh "paramours-vps:$remote_dir/deploy.sh"
+          ssh paramours-vps "bash '$remote_dir/deploy.sh' '$remote_dir' '$DEPLOY_PRODUCTION'"
 
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'paramours'
-          slot-name: 'Production'
-          package: dist/cl.app.paramours
+      - name: Remove runner SSH credentials
+        if: always()
+        run: rm -f ~/.ssh/paramours ~/.ssh/config ~/.ssh/known_hosts

@@ -1,4 +1,5 @@
 import { AnalyticsService } from './../service/analytics.service';
+import { WebVisitService } from '../service/web-visit.service';
 import { ActiveProfile, Cliente, ImageProfile, UidUser, Valoracion } from './../models/models.interface';
 import { afterNextRender, Component, Inject, OnInit, PLATFORM_ID, REQUEST_CONTEXT, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
@@ -142,6 +143,7 @@ export class Profile implements OnInit {
     private methodservice: MethodService,
     private toastService: ToastService,
     private analyticsService: AnalyticsService,
+    private webVisitService: WebVisitService,
     private seoService: SeoService,
     private ssrResponse: SsrResponseService,
     @Inject(PLATFORM_ID) private platformId: object,
@@ -639,12 +641,14 @@ export class Profile implements OnInit {
   }
 
   onClickWsp() {
+    this.webVisitService.registerEvent('CLICK_WHATSAPP', this.router.url);
     this.analyticsService.trackEvent('click_whatsapp', {
       click_whatsapp: this.oCliente.nombrE_USUARIO
     });
   }
 
   onClicPhone() {
+    this.webVisitService.registerEvent('CLICK_PHONE', this.router.url);
     this.analyticsService.trackEvent('onClicPhone', {
       onClicPhone: this.oCliente.nombrE_USUARIO
     });

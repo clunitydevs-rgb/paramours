@@ -1,4 +1,4 @@
-import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, inject, LOCALE_ID, provideAppInitializer, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -9,11 +9,13 @@ import { ApiInterceptor } from './interceptor/api.interceptor';
 import { publicClientsSsrCacheInterceptor } from './interceptor/public-clients-ssr-cache.interceptor';
 import localeEsCL from '@angular/common/locales/es-CL';
 import { registerLocaleData } from '@angular/common';
+import { WebVisitService } from './service/web-visit.service';
 
 registerLocaleData(localeEsCL);
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideAppInitializer(() => inject(WebVisitService).start()),
     provideHttpClient(withFetch(), withInterceptors([jtwInterceptor, publicClientsSsrCacheInterceptor]), withInterceptorsFromDi()),
     { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi:true },
     { provide: LOCALE_ID, useValue: 'es-CL' },

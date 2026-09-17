@@ -5,6 +5,7 @@ import { ApiServices } from "../api/api.service";
 import { ResponseI } from "../models/response.interface";
 import { Router } from '@angular/router';
 import { MethodService } from "../method/method.service";
+import { WEB_VISITS_REGISTER_URL } from '../api/web-visits.config';
 
 let isRefreshing = false;
 const refreshTokenSubject = new BehaviorSubject<string | null>(null);
@@ -14,7 +15,7 @@ export const jtwInterceptor: HttpInterceptorFn = (req, next) => {
     const router = inject(Router);
     const methodservice = inject(MethodService);
 
-    if (req.url.includes('/Authentication') || req.url.includes('/RefreshToken') || req.url.includes('/Blog/')) {
+    if (req.url === WEB_VISITS_REGISTER_URL || req.url.includes('/Authentication') || req.url.includes('/RefreshToken') || req.url.includes('/Blog/')) {
         return next(req);
     }
 

@@ -2,6 +2,7 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/c
 import { Injectable } from "@angular/core";
 import { NgxSpinnerService } from "ngx-spinner";
 import { finalize, Observable } from "rxjs";
+import { WEB_VISITS_REGISTER_URL } from '../api/web-visits.config';
 
 
 @Injectable()
@@ -10,7 +11,8 @@ export class ApiInterceptor implements HttpInterceptor{
     private _activeRequest = 0;
 
     intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-        const skipLoader = req.url.includes('/Client/GetClients')
+        const skipLoader = req.url === WEB_VISITS_REGISTER_URL
+            || req.url.includes('/Client/GetClients')
             || req.url.includes('/Blog/')
             || req.url.includes('/Stories/GetAllActiveStoriesUser')
             || req.url.includes('/assets/data/');

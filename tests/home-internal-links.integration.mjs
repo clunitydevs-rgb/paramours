@@ -81,13 +81,25 @@ test('Home SSR exposes the requested on-page SEO', async () => {
   assert.equal(websiteSchema.potentialAction, undefined);
   assert.match(html, /<meta property="og:title" content="Escort Chile \| Escorts independientes \| Paramours"/i);
   assert.match(html, new RegExp(`<meta property="og:description" content="${description}"`, 'i'));
-  assert.match(html, /<meta property="og:image" content="https:\/\/paramours\.cl\/assets\/images\/logo-footer\.png"/i);
+  assert.match(html, /<meta property="og:image" content="https:\/\/paramours\.cl\/assets\/images\/og-paramours\.png"/i);
   assert.match(html, /<meta property="og:image:alt" content="Paramours - Escorts independientes en Chile"/i);
-  assert.doesNotMatch(html, /<meta property="og:image:(?:width|height)"/i);
+  for (const [property, content] of Object.entries({
+    'og:image': 'https://paramours.cl/assets/images/og-paramours.png',
+    'og:image:width': '1200',
+    'og:image:height': '630',
+    'og:image:type': 'image/png',
+    'og:image:alt': 'Paramours - Escorts independientes en Chile',
+    'twitter:image': 'https://paramours.cl/assets/images/og-paramours.png',
+    'twitter:image:alt': 'Paramours - Escorts independientes en Chile'
+  })) {
+    const tags = [...html.matchAll(new RegExp('<meta (?:property|name)="' + property + '" content="([^"]*)"', 'g'))];
+    assert.equal(tags.length, 1, property + ' must occur exactly once in SSR HTML');
+    assert.equal(tags[0][1], content);
+  }
   assert.match(html, /<meta name="twitter:title" content="Escort Chile \| Escorts independientes \| Paramours"/i);
   assert.match(html, new RegExp(`<meta name="twitter:description" content="${description}"`, 'i'));
   assert.match(html, /<meta name="twitter:card" content="summary_large_image"/i);
-  assert.match(html, /<meta name="twitter:image" content="https:\/\/paramours\.cl\/assets\/images\/logo-footer\.png"/i);
+  assert.match(html, /<meta name="twitter:image" content="https:\/\/paramours\.cl\/assets\/images\/og-paramours\.png"/i);
   assert.match(html, /<meta name="twitter:image:alt" content="Paramours - Escorts independientes en Chile"/i);
 });
 
@@ -206,9 +218,9 @@ test('an active commune exposes complete on-page SEO and crawlable profile ancho
   }
   assert.equal((directoryHtml.match(/<script[^>]+type="application\/ld\+json"/gi) ?? []).length, 1);
   assert.match(directoryHtml, new RegExp(`<meta property="og:title" content="${title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`, 'i'));
-  assert.match(directoryHtml, /<meta property="og:image" content="https:\/\/paramours\.cl\/assets\/images\/logo-footer\.png"/i);
+  assert.match(directoryHtml, /<meta property="og:image" content="https:\/\/paramours\.cl\/assets\/images\/og-paramours\.png"/i);
   assert.match(directoryHtml, new RegExp(`<meta property="og:image:alt" content="Escorts en ${communeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} - Paramours"`, 'i'));
-  assert.match(directoryHtml, /<meta name="twitter:image" content="https:\/\/paramours\.cl\/assets\/images\/logo-footer\.png"/i);
+  assert.match(directoryHtml, /<meta name="twitter:image" content="https:\/\/paramours\.cl\/assets\/images\/og-paramours\.png"/i);
   assert.match(directoryHtml, new RegExp(`<meta name="twitter:image:alt" content="Escorts en ${communeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} - Paramours"`, 'i'));
   assert.doesNotMatch(directoryHtml, /<meta property="og:image:(?:width|height)"/i);
   assert.match(directoryHtml, new RegExp(`<meta name="twitter:description" content="${description.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`, 'i'));
@@ -275,7 +287,7 @@ test('an active public profile exposes complete on-page SEO and its commune link
   ]);
   assert.equal((html.match(/<script[^>]+type="application\/ld\+json"/gi) ?? []).length, 1);
   const hasPublicProfileImage = !schema.mainEntity.image.endsWith('/avatar_anunciante.png');
-  const expectedSocialImage = hasPublicProfileImage ? schema.mainEntity.image : 'https://paramours.cl/assets/images/logo-footer.png';
+  const expectedSocialImage = hasPublicProfileImage ? schema.mainEntity.image : 'https://paramours.cl/assets/images/og-paramours.png';
   const escapedSocialImage = expectedSocialImage.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const escapedSocialAlt = `${profileName} en ${communeName}`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   assert.match(html, new RegExp(`<meta property="og:image" content="${escapedSocialImage}"`, 'i'));

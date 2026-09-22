@@ -10,7 +10,7 @@ export class SeoService {
   private readonly siteUrl = 'https://paramours.cl';
   private readonly defaultTitle = 'Escort Chile | Escorts independientes | Paramours';
   private readonly defaultDescription = 'Explora en Paramours perfiles de escorts independientes en Chile, revisa su información y encuentra opciones según las ubicaciones disponibles.';
-  private readonly socialFallbackImage = 'https://paramours.cl/assets/images/logo-footer.png';
+  private readonly socialFallbackImage = 'https://paramours.cl/assets/images/og-paramours.png';
   private readonly profileSchemaFallbackImage = 'https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/avatar_anunciante.png';
 
   constructor(
@@ -87,6 +87,10 @@ export class SeoService {
       url: this.siteUrl,
       type: 'website'
     });
+
+    this.meta.updateTag({ property: 'og:image:width', content: '1200' });
+    this.meta.updateTag({ property: 'og:image:height', content: '630' });
+    this.meta.updateTag({ property: 'og:image:type', content: 'image/png' });
 
     this.setTwitter({
       title: this.defaultTitle,
@@ -225,7 +229,9 @@ export class SeoService {
       this.setJsonLd('blog-article-schema', {
         '@context': 'https://schema.org', '@type': 'Article',
         headline: post.title, description, datePublished: post.publishedDate,
-        dateModified: post.modifiedDate, image,
+        dateModified: post.modifiedDate,
+        // Keep the existing structured-data fallback independent of social metadata.
+        image: this.resolveSocialImage(post.featuredImage || '', 'https://paramours.cl/assets/images/logo-footer.png'),
         author: { '@type': 'Organization', name: post.author || this.siteName },
         publisher: { '@type': 'Organization', name: this.siteName },
         mainEntityOfPage: { '@type': 'WebPage', '@id': url }
@@ -273,12 +279,12 @@ export class SeoService {
     );
   }
 
-  private resolveSocialImage(imageUrl: string): string {
+  private resolveSocialImage(imageUrl: string, fallbackImage = this.socialFallbackImage): string {
     try {
       const url = new URL(imageUrl);
-      return url.protocol === 'https:' || url.protocol === 'http:' ? url.toString() : this.socialFallbackImage;
+      return url.protocol === 'https:' || url.protocol === 'http:' ? url.toString() : fallbackImage;
     } catch {
-      return this.socialFallbackImage;
+      return fallbackImage;
     }
   }
 

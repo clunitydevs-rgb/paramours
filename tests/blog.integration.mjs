@@ -79,7 +79,7 @@ test('article renders full SEO, sanitized HTML, schemas and transfer state in th
   assert.doesNotMatch(html, /<img[^>]*onerror=/);
   assert.doesNotMatch(html, /<script>alert/);
   assert.match(html, /property="og:type" content="article"/);
-  assert.match(html, /property="og:image" content="https:\/\/paramours.cl\/assets\/images\/logo-footer.png"/);
+  assert.match(html, /property="og:image" content="https:\/\/paramours.cl\/assets\/images\/og-paramours.png"/);
   assert.match(html, /name="twitter:card" content="summary_large_image"/);
   const structured = schemas(html);
   assert.equal(structured.filter(item => item['@type'] === 'Article').length, 1);

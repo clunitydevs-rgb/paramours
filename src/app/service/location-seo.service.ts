@@ -15,7 +15,7 @@ export interface LocationSeoData {
 @Injectable({ providedIn: 'root' })
 export class LocationSeoService {
   private readonly siteUrl = 'https://paramours.cl';
-  private readonly socialFallbackImage = 'https://paramours.cl/assets/images/logo-footer.png';
+  private readonly socialFallbackImage = 'https://paramours.cl/assets/images/og-paramours.png';
 
   constructor(
     private title: Title,

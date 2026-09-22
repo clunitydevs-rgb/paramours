@@ -53,6 +53,7 @@ describe('Global SEO route policy', () => {
     const schema = document.getElementById('blog-article-schema')!.textContent!;
     expect(schema).not.toContain('</script>');
     expect(JSON.parse(schema).headline).toBe(post.title);
+    expect(JSON.parse(schema).image).toBe('https://paramours.cl/assets/images/logo-footer.png');
     seo.setBlogSeo();
     expect(document.getElementById('blog-article-schema')).toBeNull();
     expect(document.getElementById('blog-breadcrumb-schema')).toBeNull();
@@ -88,10 +89,10 @@ describe('Global SEO route policy', () => {
     expect(schema.url).toBe('https://paramours.cl/');
     expect(schema.description).toBe(meta.getTag("name='description'")?.content);
     expect(schema.potentialAction).toBeUndefined();
-    expect(meta.getTag("property='og:image'")?.content).toBe('https://paramours.cl/assets/images/logo-footer.png');
+    expect(meta.getTag("property='og:image'")?.content).toBe('https://paramours.cl/assets/images/og-paramours.png');
     expect(meta.getTag("property='og:image:alt'")?.content).toBe('Paramours - Escorts independientes en Chile');
     expect(meta.getTag("name='twitter:card'")?.content).toBe('summary_large_image');
-    expect(meta.getTag("name='twitter:image'")?.content).toBe('https://paramours.cl/assets/images/logo-footer.png');
+    expect(meta.getTag("name='twitter:image'")?.content).toBe('https://paramours.cl/assets/images/og-paramours.png');
     expect(meta.getTag("name='twitter:image:alt'")?.content).toBe('Paramours - Escorts independientes en Chile');
   });
 
@@ -153,9 +154,9 @@ describe('Global SEO route policy', () => {
     expect(meta.getTag("property='og:url'")?.content).toBe('https://paramours.cl/escort-providencia');
     expect(meta.getTag("name='twitter:title'")?.content).toBe(title.getTitle());
     expect(meta.getTag("name='twitter:description'")?.content).toBe(description);
-    expect(meta.getTag("property='og:image'")?.content).toBe('https://paramours.cl/assets/images/logo-footer.png');
+    expect(meta.getTag("property='og:image'")?.content).toBe('https://paramours.cl/assets/images/og-paramours.png');
     expect(meta.getTag("property='og:image:alt'")?.content).toBe('Escorts en Providencia - Paramours');
-    expect(meta.getTag("name='twitter:image'")?.content).toBe('https://paramours.cl/assets/images/logo-footer.png');
+    expect(meta.getTag("name='twitter:image'")?.content).toBe('https://paramours.cl/assets/images/og-paramours.png');
     expect(meta.getTag("name='twitter:image:alt'")?.content).toBe('Escorts en Providencia - Paramours');
     expect(canonical()).toBe('https://paramours.cl/escort-providencia');
     expect(collectionPage.name).toBe(title.getTitle());
@@ -222,14 +223,23 @@ describe('Global SEO route policy', () => {
 
   it('uses the social logo fallback when an active profile has no public image', () => {
     seo.setProfileSeo(profile, 'https://paramours.cl/profile/42/Perfil-de-prueba', '', 'Providencia', '/escort-providencia');
-    expect(meta.getTag("property='og:image'")?.content).toBe('https://paramours.cl/assets/images/logo-footer.png');
+    expect(meta.getTag("property='og:image'")?.content).toBe('https://paramours.cl/assets/images/og-paramours.png');
     expect(meta.getTag("property='og:image:alt'")?.content).toBe('Perfil de prueba en Providencia');
-    expect(meta.getTag("name='twitter:image'")?.content).toBe('https://paramours.cl/assets/images/logo-footer.png');
+    expect(meta.getTag("name='twitter:image'")?.content).toBe('https://paramours.cl/assets/images/og-paramours.png');
     expect(meta.getTag("name='twitter:image:alt'")?.content).toBe('Perfil de prueba en Providencia');
   });
 
   it('updates social image metadata across Home, Location, Profile and Home SPA navigation', () => {
     seo.setHomeSeo();
+    seo.setHomeSeo();
+    for (const [property, content] of Object.entries({
+      'og:image:width': '1200', 'og:image:height': '630', 'og:image:type': 'image/png'
+    })) {
+      expect(meta.getTags(`property='${property}'`).length).toBe(1);
+      expect(meta.getTag(`property='${property}'`)?.content).toBe(content);
+    }
+    expect(meta.getTags("property='og:image'").length).toBe(1);
+    expect(meta.getTags("name='twitter:image'").length).toBe(1);
     expect(meta.getTag("property='og:image:alt'")?.content).toBe('Paramours - Escorts independientes en Chile');
 
     locationSeo.setLocationSeo(location);
@@ -239,8 +249,12 @@ describe('Global SEO route policy', () => {
     expect(meta.getTag("property='og:image'")?.content).toBe('https://images.paramours.test/profile.jpg');
     expect(meta.getTag("property='og:image:alt'")?.content).toBe('Perfil de prueba en Providencia');
 
+    expect(meta.getTag("property='og:image:width'")).toBeNull();
+    expect(meta.getTag("property='og:image:height'")).toBeNull();
+    expect(meta.getTag("property='og:image:type'")).toBeNull();
+
     seo.setHomeSeo();
-    expect(meta.getTag("property='og:image'")?.content).toBe('https://paramours.cl/assets/images/logo-footer.png');
+    expect(meta.getTag("property='og:image'")?.content).toBe('https://paramours.cl/assets/images/og-paramours.png');
     expect(meta.getTag("property='og:image:alt'")?.content).toBe('Paramours - Escorts independientes en Chile');
     expect(meta.getTag("name='twitter:image:alt'")?.content).toBe('Paramours - Escorts independientes en Chile');
   });

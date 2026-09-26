@@ -1,5 +1,5 @@
 import { registerSyncfusion } from '../../syncfusion-license';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ActiveProfile, Cliente, ImageProfile, UidUser } from '../models/models.interface';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -21,6 +21,7 @@ import {
   HtmlEditorService,
   LinkService,
   QuickToolbarService,
+  RichTextEditorComponent,
   RichTextEditorModule,
   ToolbarService,
   ToolbarSettingsModel
@@ -48,6 +49,7 @@ registerSyncfusion();
   providers: [ToolbarService, LinkService, HtmlEditorService, EmojiPickerService, QuickToolbarService]
 })
 export class Settingaccount {
+  @ViewChild(RichTextEditorComponent) descriptionEditor?: RichTextEditorComponent;
 
   //sUrlRps: string = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
   sUrlRps: string = "https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/";
@@ -486,7 +488,18 @@ export class Settingaccount {
     this.oCliente.colorojos = parseInt(this.frmAccount.get('colordeojos')?.value!);
     this.oCliente.colorcabello = parseInt(this.frmAccount.get('colorcabello')?.value!);
     this.oCliente.biotipo = parseInt(this.frmAccount.get('biotipo')?.value!);
-    this.oCliente.descripcion = this.frmAccount.get('descripcion')?.value!;
+    const description: string = this.descriptionEditor
+      ? this.descriptionEditor.getHtml() ?? ''
+      : this.frmAccount.controls.descripcion.value ?? '';
+    // Read the live editor before its blur/change event updates the form.
+    this.frmAccount.controls.descripcion.setValue(description);
+    // Preserve Unicode through storage that cannot represent emojis. Iterate by
+    // code point so surrogate pairs and joined emoji remain intact.
+    this.oCliente.descripcion = Array.from(description, character =>
+      character.codePointAt(0)! > 127
+        ? `&#${character.codePointAt(0)};`
+        : character
+    ).join('');
 
     this.api.updateClient(this.oCliente).subscribe({
       next: data => {

@@ -16,6 +16,7 @@ interface LocationItem {
   id: string | number;
   nombre: string;
   slug: string;
+  id_ciudad?: string | number;
   idComuna?: string | number;
   idMetro?: string | number;
   NombreMetro?: string;
@@ -84,6 +85,8 @@ export class EscortDirectory implements OnInit {
   locationName = '';
   locationType: LocationType = 'city';
   locationId: string | number | null = null;
+  private locationCityId: string | number | null = null;
+  private locationCommuneId: string | number | null = null;
   profiles: Cliente[] = [];
   loading = true;
   loadError = false;
@@ -140,6 +143,11 @@ export class EscortDirectory implements OnInit {
 
         this.locationType = metro ? 'metro' : commune ? 'commune' : 'city';
         this.locationId = metro ? metro.idMetro ?? null : location.id;
+        const parentCommune = metro
+          ? (comunas as LocationItem[]).find(item => item.id.toString() === metro.idComuna?.toString())
+          : commune;
+        this.locationCityId = parentCommune?.id_ciudad ?? null;
+        this.locationCommuneId = parentCommune?.id ?? null;
         this.locationName = metro ? 'Manquehue, Las Condes' : location.nombre;
         this.content = LOCAL_CONTENT[this.slug] ?? this.buildDefaultContent(this.locationName);
 
@@ -188,9 +196,11 @@ export class EscortDirectory implements OnInit {
   }
 
   private buildRelatedLocations(communes: LocationItem[], profiles: Cliente[]): Array<{ label: string; url: string }> {
-    const activeCommuneIds = new Set(profiles.map(profile => profile.comuna?.toString()).filter(Boolean));
     const communeLinks = communes
-      .filter(commune => commune.slug && activeCommuneIds.has(commune.id.toString()))
+      .filter(commune => commune.slug && commune.id_ciudad != null && profiles.some(profile =>
+        profile.ciudad?.toString() === commune.id_ciudad?.toString() &&
+        profile.comuna?.toString() === commune.id.toString()
+      ))
       .map(commune => ({ label: commune.nombre, url: `/escort-${commune.slug}` }))
       .sort((left, right) => left.label.localeCompare(right.label, 'es'));
 
@@ -198,6 +208,12 @@ export class EscortDirectory implements OnInit {
   }
   private matchesLocation(profile: Cliente): boolean {
     if (this.locationId === null) return false;
+    // A commune/metro value may remain set on profiles outside Santiago.
+    // Validate the complete location hierarchy before using those fields.
+    if (this.locationType !== 'city') {
+      if (this.locationCityId === null || profile.ciudad?.toString() !== this.locationCityId.toString()) return false;
+      if (this.locationCommuneId === null || profile.comuna?.toString() !== this.locationCommuneId.toString()) return false;
+    }
     const value = this.locationType === 'metro'
       ? profile.metro
       : this.locationType === 'commune' ? profile.comuna : profile.ciudad;

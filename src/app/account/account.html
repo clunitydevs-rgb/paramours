@@ -15,7 +15,7 @@
                         placeholder="tu@email.cl">
                 </div>
                 <span *ngIf="isFieldRequired('email')" class="field-error">Debes llenar el correo electrónico.</span>
-                <span *ngIf="frmAccount.controls.email.hasError('email') && (frmAccount.controls.email.touched || frmAccount.controls.email.dirty)" class="field-error">Ingresa un correo electrónico válido.</span>
+                <span *ngIf="frmAccount.controls.email.hasError('email') && (frmAccount.controls.email.touched || frmAccount.controls.email.dirty)" class="field-error">Ingresa un correo electr&oacute;nico v&aacute;lido.</span>
                 <span [hidden]="bMsgEmailValid" class="field-error">El email ya se encuentra registrado.</span>
             </div>
 

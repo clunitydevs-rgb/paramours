@@ -64,7 +64,7 @@ export class Account implements OnInit {
         this.frmAccount.controls.mes.setValidators(Validators.required);
         this.frmAccount.controls.ano.setValidators([Validators.required, Validators.pattern("^[0-9]*$")]);
         this.frmAccount.controls.username.setValidators(Validators.required);
-        this.frmAccount.controls.celular.setValidators(Validators.required);
+        this.frmAccount.controls.celular.setValidators([Validators.required, Validators.pattern(/^9[0-9]{8}$/)]);
         this.frmAccount.controls.servicio.setValidators(Validators.required);
       }
       else {
@@ -140,6 +140,10 @@ export class Account implements OnInit {
 
     if (this.frmAccount.invalid) {
       this.frmAccount.markAllAsTouched();
+      if (this.frmAccount.controls.celular.hasError('pattern')) {
+        this.toastService.error('Ingresa un celular de 9 dígitos que comience con 9, sin +56. Ejemplo: 984222306.');
+        return;
+      }
       this.bMsgRequiredFields = false;
       this.toastService.error('Debes llenar o seleccionar los campos obligatorios.');
       return;

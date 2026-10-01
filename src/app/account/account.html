@@ -78,10 +78,11 @@
                 <label for="account-celular">Celular</label>
                 <div class="field-control">
                     <i class="bi bi-phone"></i>
-                    <input id="account-celular" type="text" formControlName="celular" autocomplete="tel"
+                    <input id="account-celular" type="tel" formControlName="celular" autocomplete="tel-national" inputmode="numeric"
                         placeholder="9XXXXXXXX">
                 </div>
                 <span *ngIf="isFieldRequired('celular')" class="field-error">Debes llenar el celular.</span>
+                <span *ngIf="frmAccount.controls.celular.hasError('pattern') && (frmAccount.controls.celular.touched || frmAccount.controls.celular.dirty)" class="field-error">Ingresa un celular de 9 d&#237;gitos que comience con 9, sin +56. Ejemplo: 984222306.</span>
             </div>
 
             <div [hidden]="hddUserClient" class="field-group">

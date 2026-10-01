@@ -82,7 +82,7 @@
                         placeholder="9XXXXXXXX">
                 </div>
                 <span *ngIf="isFieldRequired('celular')" class="field-error">Debes llenar el celular.</span>
-                <span *ngIf="frmAccount.controls.celular.hasError('pattern') && (frmAccount.controls.celular.touched || frmAccount.controls.celular.dirty)" class="field-error">Ingresa un celular de 9 d&#237;gitos que comience con 9, sin +56. Ejemplo: 984222306.</span>
+                <span *ngIf="frmAccount.controls.celular.hasError('pattern') && (frmAccount.controls.celular.touched || frmAccount.controls.celular.dirty)" class="field-error">Ingresa un celular de 9 d&#237;gitos que comience sin +56. Ejemplo: 965043226.</span>
             </div>
 
             <div [hidden]="hddUserClient" class="field-group">

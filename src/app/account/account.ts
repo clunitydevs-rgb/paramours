@@ -141,7 +141,7 @@ export class Account implements OnInit {
     if (this.frmAccount.invalid) {
       this.frmAccount.markAllAsTouched();
       if (this.frmAccount.controls.celular.hasError('pattern')) {
-        this.toastService.error('Ingresa un celular de 9 dígitos que comience con 9, sin +56. Ejemplo: 984222306.');
+        this.toastService.error('Ingresa un celular de 9 dígitos que comience sin +56. Ejemplo: 965043226.');
         return;
       }
       this.bMsgRequiredFields = false;

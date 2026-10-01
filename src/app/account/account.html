@@ -14,7 +14,7 @@
                     <input id="account-email" type="email" formControlName="email" autocomplete="email"
                         placeholder="tu@email.cl">
                 </div>
-                <span *ngIf="isFieldRequired('email')" class="field-error">Debes llenar el correo electrónico.</span>
+                <span *ngIf="isFieldRequired('email')" class="field-error">Debes llenar el correo electr&oacute;nico.</span>
                 <span *ngIf="frmAccount.controls.email.hasError('email') && (frmAccount.controls.email.touched || frmAccount.controls.email.dirty)" class="field-error">Ingresa un correo electr&oacute;nico v&aacute;lido.</span>
                 <span [hidden]="bMsgEmailValid" class="field-error">El email ya se encuentra registrado.</span>
             </div>
@@ -26,7 +26,7 @@
                     <input id="account-password" type="password" formControlName="password"
                         autocomplete="new-password" placeholder="MÃ­nimo 4 caracteres">
                 </div>
-                <span *ngIf="isFieldRequired('password')" class="field-error">Debes llenar la contraseña.</span>
+                <span *ngIf="isFieldRequired('password')" class="field-error">Debes llenar la contrase&ntilde;a.</span>
                 <span [hidden]="bMsgPassValid" class="field-error">La contraseña debe tener mínimo 4 caracteres.</span>
             </div>
 
@@ -53,11 +53,11 @@
                     <input type="text" class="form-control" formControlName="ano" placeholder="AÃ±o" inputmode="numeric"
                         maxlength="4">
                 </div>
-                <span *ngIf="isFieldRequired('dia')" class="field-error">Debes llenar el día.</span>
+                <span *ngIf="isFieldRequired('dia')" class="field-error">Debes llenar el d&iacute;a.</span>
                 <span [hidden]="dia.valid || !(dia.touched || dia.dirty)" class="field-error"
                     *ngIf="dia.errors?.['pattern']">El día debe contener solo números.</span>
                 <span *ngIf="isFieldRequired('mes')" class="field-error">Debes seleccionar el mes.</span>
-                <span *ngIf="isFieldRequired('ano')" class="field-error">Debes llenar el año.</span>
+                <span *ngIf="isFieldRequired('ano')" class="field-error">Debes llenar el a&ntilde;o.</span>
                 <span [hidden]="ano.valid || !(ano.touched || ano.dirty)" class="field-error"
                     *ngIf="ano.errors?.['pattern']">El año debe contener solo números.</span>
                 <span [hidden]="bMsgEAgeEnable" class="field-error">Debes ser mayor de edad para registrarte.</span>

@@ -33,11 +33,13 @@
                     <img *ngIf="proFileImg" class="profile-main-image" [src]="proFileImg"
                         [attr.alt]="profileImageAlt" width="300" height="300"
                         loading="eager" fetchpriority="high">
-                    <div class="round" *ngIf="!isOwner">
-                        <!--<input type="file" formControlName="imgfotoprofile" (change)="capturarArchivo($event)" accept="image/*" >-->
-                        <input type="file" formControlName="fotoperfil" (change)="CargarImgFotoPerfil($event)"
+                    <div *ngIf="!isOwner">
+                        <input type="file" #profilePhotoInput hidden (change)="CargarImgFotoPerfil($event)"
                             accept="image/*">
-                        <i class="bi bi-camera"></i>
+                        <button type="button" class="round" aria-label="Cambiar foto de perfil"
+                            (click)="profilePhotoInput.click()">
+                            <i class="bi bi-camera" aria-hidden="true"></i>
+                        </button>
                     </div>
                 </div>
                 <div *ngIf="canEditProfile" class="justify-content-center m-3 btn-edit-profile-tblt"><button type="button"

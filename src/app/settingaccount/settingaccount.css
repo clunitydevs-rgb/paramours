@@ -1,14 +1,4 @@
-﻿@import '@syncfusion/ej2-base/styles/tailwind3.css';
-@import '@syncfusion/ej2-icons/styles/tailwind3.css';
-@import '@syncfusion/ej2-buttons/styles/tailwind3.css';
-@import '@syncfusion/ej2-splitbuttons/styles/tailwind3.css';
-@import '@syncfusion/ej2-inputs/styles/tailwind3.css';
-@import '@syncfusion/ej2-lists/styles/tailwind3.css';
-@import '@syncfusion/ej2-navigations/styles/tailwind3.css';
-@import '@syncfusion/ej2-popups/styles/tailwind3.css';
-@import '@syncfusion/ej2-dropdowns/styles/tailwind3.css';
-@import '@syncfusion/ej2-richtexteditor/styles/tailwind3.css';
-
+﻿
 :host {
     display: block;
 }
@@ -116,6 +106,7 @@
     content: "";
     position: absolute;
     inset: 0;
+    pointer-events: none;
     border: 5px solid transparent;
     border-radius: 50%;
     background: linear-gradient(140deg, #C6A75E, #E8DCBE) border-box;
@@ -125,8 +116,12 @@
 
 #container .round {
     position: absolute;
-    right: 90px;
+    left: 50%;
+    transform: translateX(-50%);
     bottom: 0px;
+    z-index: 2;
+    padding: 0;
+    cursor: pointer;
     display: grid;
     place-items: center;
     width: 46px;
@@ -138,7 +133,11 @@
     font-size: 1.35rem;
 }
 
-#container input[type='file'],
+#container .round:focus-visible {
+    outline: 2px solid #E8DCBE;
+    outline-offset: -3px;
+}
+
 .loadImgContent input[type='file'] {
     position: absolute;
     inset: 0;

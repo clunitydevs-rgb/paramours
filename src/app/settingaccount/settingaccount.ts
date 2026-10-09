@@ -1,5 +1,4 @@
-import { registerSyncfusion } from '../../syncfusion-license';
-import { Component, ViewChild } from '@angular/core';
+import { Component, DestroyRef, inject, ViewChild } from '@angular/core';
 import { ActiveProfile, Cliente, ImageProfile, UidUser } from '../models/models.interface';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,19 +12,11 @@ import { ToastService } from '../service/toast.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Identitycheck } from "../identitycheck/identitycheck";
 import { AnalyticsService } from '../service/analytics.service';
-import { forkJoin } from 'rxjs';
+import { defer, finalize, forkJoin } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { LoadingService } from '../service/loading.service';
 
-import {
-  EmojiPickerService,
-  EmojiSettingsModel,
-  HtmlEditorService,
-  LinkService,
-  QuickToolbarService,
-  RichTextEditorComponent,
-  RichTextEditorModule,
-  ToolbarService,
-  ToolbarSettingsModel
-} from '@syncfusion/ej2-angular-richtexteditor';
+import { ProfileDescriptionEditor } from '../profile-description-editor/profile-description-editor';
 
 interface Item {
   iId: number,
@@ -39,17 +30,17 @@ interface Files {
   mFile: File
 }
 
-registerSyncfusion();
 
 @Component({
   selector: 'app-settingaccount',
-  imports: [ReactiveFormsModule, CommonModule, GalleryLightbox, Identitycheck, RichTextEditorModule],
+  imports: [ReactiveFormsModule, CommonModule, GalleryLightbox, Identitycheck, ProfileDescriptionEditor],
   templateUrl: './settingaccount.html',
-  styleUrl: './settingaccount.css',
-  providers: [ToolbarService, LinkService, HtmlEditorService, EmojiPickerService, QuickToolbarService]
+  styleUrl: './settingaccount.css'
 })
 export class Settingaccount {
-  @ViewChild(RichTextEditorComponent) descriptionEditor?: RichTextEditorComponent;
+  @ViewChild('descriptionEditor') descriptionEditor?: ProfileDescriptionEditor;
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly loading = inject(LoadingService);
 
   //sUrlRps: string = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
   sUrlRps: string = "https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/";
@@ -74,49 +65,7 @@ export class Settingaccount {
   public bHiddenProfileValided: boolean = true;
   public isAdministrator: boolean = false;
   public isEditingManagedProfile: boolean = false;
-  public descriptionToolbar: ToolbarSettingsModel = {
-    items: [
-      'Undo', 'Redo', '|',
-      'Bold', 'Italic', 'Underline', '|',
-      'FontSize', 'FontColor', '|',
-      'Alignments', '|',
-      'OrderedList', 'UnorderedList', '|',
-      'CreateLink', 'EmojiPicker'
-    ]
-  };
-
-  public emojiPickerSettings: EmojiSettingsModel = {
-    iconsSet: [{
-      name: 'Caras y personas',
-      code: '1F600',
-      iconCss: 'e-emoji',
-      icons: [
-        { code: '1F600', desc: 'Sonrisa' },
-        { code: '1F602', desc: 'Risa' },
-        { code: '1F607', desc: 'Angel' },
-        { code: '1F609', desc: 'Guino' },
-        { code: '1F60D', desc: 'Enamorado' },
-        { code: '1F618', desc: 'Beso' },
-        { code: '1F60E', desc: 'Genial' },
-        { code: '1F970', desc: 'Con corazones' },
-        { code: '1F973', desc: 'Fiesta' }
-      ]
-    }, {
-      name: 'Simbolos',
-      code: '2764',
-      iconCss: 'e-symbols',
-      icons: [
-        { code: '2764', desc: 'Corazon' },
-        { code: '1F5A4', desc: 'Corazon negro' },
-        { code: '1F48B', desc: 'Beso' },
-        { code: '1F525', desc: 'Fuego' },
-        { code: '1F4A6', desc: 'Gotas' },
-        { code: '1F339', desc: 'Rosa' },
-        { code: '2714', desc: 'Correcto' }
-      ]
-    }]
-  };
-
+  public isProfileReady = false;
   ActiveProfileFrm: ActiveProfile = {
     Uid: '',
     estado: ''
@@ -235,6 +184,7 @@ export class Settingaccount {
   }
 
   LoadProfile() {
+    this.isProfileReady = false;
     const sessionUid = this.methodservice.getItemLocalStorage("cl.paramours.sUid");
     const requestedUid = Number(this.route.snapshot.queryParamMap.get('uid'));
     this.isEditingManagedProfile = this.isAdministrator && Number.isInteger(requestedUid) && requestedUid > 0;
@@ -244,33 +194,24 @@ export class Settingaccount {
       ? this.api.getClientById(this.uIdUser)
       : this.api.getClientByToken();
 
-    this.api.getNaciones().subscribe(data => {
-      this.oNacionalidades = data;
-    });
-
-    this.api.getGeneros().subscribe(data => {
-      this.oGeneros = data;
-    });
-
-    this.api.getColorOjos().subscribe(data => {
-      this.oColorOjos = data;
-    });
-
-    this.api.getColorCabello().subscribe(data => {
-      this.oColorCabello = data;
-    });
-
-    this.api.getBiotipo().subscribe(data => {
-      this.oBiotipo = data;
-    });
-
-    forkJoin({
+    const finishLoading = this.loading.begin();
+    defer(() => forkJoin({
+      nacionalidades: this.api.getNaciones(),
+      generos: this.api.getGeneros(),
+      colorOjos: this.api.getColorOjos(),
+      colorCabello: this.api.getColorCabello(),
+      biotipos: this.api.getBiotipo(),
       ciudades: this.api.getCiudades(),
       comunas: this.api.getComunas(),
       metros: this.api.getMetros(),
       cliente: clienteRequest
-    }).subscribe({
-      next: ({ ciudades, comunas, metros, cliente: data }) => {
+    })).pipe(finalize(finishLoading), takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: ({ nacionalidades, generos, colorOjos, colorCabello, biotipos, ciudades, comunas, metros, cliente: data }) => {
+        this.oNacionalidades = nacionalidades;
+        this.oGeneros = generos;
+        this.oColorOjos = colorOjos;
+        this.oColorCabello = colorCabello;
+        this.oBiotipo = biotipos;
         this.oCiudades = ciudades;
         this.oComunasCatalog = comunas;
         this.oMetrosCatalog = metros;
@@ -354,6 +295,7 @@ export class Settingaccount {
           }
 
           this.getMediaFiles();
+          this.isProfileReady = true;
 
           this.analyticsService.trackEvent('settingaccount', {
             view_profile: this.oCliente.iD_USUARIO
@@ -465,6 +407,8 @@ export class Settingaccount {
   }
 
   goBtnAceptar() {
+    if (!this.isProfileReady) return;
+
     let sEmail = this.frmAccount.get('email')?.value!;
 
     this.oCliente.correo = sEmail;
@@ -565,7 +509,7 @@ export class Settingaccount {
 
     const target = event.target as HTMLInputElement;
     const files: FileList | null = target.files;
-    if (files!.length > 0 && files != null) {
+    if (files && files.length > 0) {
       Array.prototype.forEach.call(files, (file: File) => {
 
         const imageProfile: ImageProfile = {
@@ -574,6 +518,7 @@ export class Settingaccount {
 
         const frmData = new FormData();
         frmData.append('foto', imageProfile.photoprofile);
+        target.value = '';
         this.api.updateLoadPhotoProfile(frmData).subscribe({
           next: data => {
             this.oCliente = data.oClient;

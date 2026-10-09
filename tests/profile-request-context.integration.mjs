@@ -55,7 +55,8 @@ const app = spawn(process.execPath, ['dist/cl.app.paramours/server/server.mjs'],
 
 async function request(path) {
   return fetch(`${origin}${path}`, {
-    headers: { host: 'paramours.cl', 'x-forwarded-host': 'paramours.cl' },
+    // Resolve SSR catalog requests against the local fixture server.
+    // A production Host header would make these tests depend on the live site.
     redirect: 'manual'
   });
 }

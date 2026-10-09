@@ -1,14 +1,13 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { NgxSpinnerService } from "ngx-spinner";
-import { finalize, Observable } from "rxjs";
+import { defer, finalize, Observable } from "rxjs";
+import { LoadingService } from '../service/loading.service';
 import { WEB_VISITS_REGISTER_URL } from '../api/web-visits.config';
 
 
 @Injectable()
 export class ApiInterceptor implements HttpInterceptor{
-    constructor(private spinner: NgxSpinnerService) {}
-    private _activeRequest = 0;
+    constructor(private loading: LoadingService) {}
 
     intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
         const skipLoader = req.url === WEB_VISITS_REGISTER_URL
@@ -21,23 +20,9 @@ export class ApiInterceptor implements HttpInterceptor{
             return next.handle(req);
         }
 
-        if (this._activeRequest === 0){
-            this.spinner.show();
-        }
-
-        this._activeRequest++;
-        /*this.spinner.show();
-        setTimeout(() => {
-            this.spinner.hide();
-        }, 5000);*/
-        
-        return next.handle(req).pipe(finalize(() => this.StopLoader()));
-    }
-
-    private StopLoader(){
-        this._activeRequest--;
-        if (this._activeRequest === 0){
-           this.spinner.hide();
-        }
+        return defer(() => {
+            const finish = this.loading.begin();
+            return defer(() => next.handle(req)).pipe(finalize(finish));
+        });
     }
 }

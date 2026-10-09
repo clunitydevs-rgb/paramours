@@ -45,21 +45,13 @@
         opacity: 0.9;
     }
 
-    input[type='file'] {
-        position: absolute;
-        transform: scale(2);
-        opacity: 0;
-    }
-
-    input[type=file]::file-selector-button {
-        cursor: pointer;
-    }
 }
 
 #container::before {
     content: "";
     position: absolute;
     inset: 0;
+    pointer-events: none;
     border-radius: 50%;
     z-index: 1;
     border: 5px outset transparent;
@@ -446,8 +438,10 @@
 }
 
 #container .round {
-    /*right: 22px;
-    bottom: 16px;*/
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0;
+    cursor: pointer;
     display: grid;
     z-index: 2;
     place-items: center;
@@ -456,6 +450,12 @@
     border: 1px solid rgba(232, 220, 190, 0.24);
     background: rgba(0, 0, 0, 0.64);
     font-size: 1.35rem;
+}
+
+#container .round:focus-visible {
+    outline: 2px solid #E8DCBE;
+    outline-offset: -3px;
+    opacity: 1;
 }
 
 .lbl-litle {

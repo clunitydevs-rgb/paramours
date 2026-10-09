@@ -5,16 +5,19 @@
                 <span class="settings-kicker">Cuenta</span>
                 <h1>Editar Perfil</h1>
             </div>
-            <button type="submit" class="btn-gold save-top"><i class="bi bi-save2"></i> Grabar</button>
+            <button type="submit" class="btn-gold save-top" [disabled]="!isProfileReady"><i class="bi bi-save2"></i> Grabar</button>
         </header>
 
         <section class="settings-hero">
             <aside class="profile-side">
                 <div id="container" [style.background-image]="'url(' + proFileImg + ')'">
-                    <div class="round" *ngIf="!isEditingManagedProfile">
-                        <input type="file" formControlName="fotoperfil" (change)="CargarImgFotoPerfil($event)"
+                    <div *ngIf="!isEditingManagedProfile">
+                        <input type="file" #profilePhotoInput hidden (change)="CargarImgFotoPerfil($event)"
                             accept="image/*">
-                        <i class="bi bi-camera"></i>
+                        <button type="button" class="round" aria-label="Cambiar foto de perfil"
+                            (click)="profilePhotoInput.click()">
+                            <i class="bi bi-camera" aria-hidden="true"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -159,17 +162,21 @@
         <section class="settings-card">
             <div class="section-title">Descripción</div>
             <div class="description-editor">
-                <ejs-richtexteditor formControlName="descripcion"
-                    [toolbarSettings]="descriptionToolbar"
-                    [emojiPickerSettings]="emojiPickerSettings"
-                    height="220px"
-                    placeholder="Cu&eacute;ntale a los visitantes sobre tus servicios">
-                </ejs-richtexteditor>
+                @defer (on idle) {
+                    <app-profile-description-editor #descriptionEditor
+                        [control]="frmAccount.controls.descripcion"></app-profile-description-editor>
+                } @placeholder {
+                    <p role="status">Cargando editor de descripci&oacute;n...</p>
+                } @loading {
+                    <p role="status">Cargando editor de descripci&oacute;n...</p>
+                } @error {
+                    <p role="alert">No pudimos cargar el editor. Recarga la p&aacute;gina para editar la descripci&oacute;n.</p>
+                }
             </div>
         </section>
 
         <div class="save-bottom">
-            <button type="submit" class="btn-gold"><i class="bi bi-save2"></i> Grabar</button>
+            <button type="submit" class="btn-gold" [disabled]="!isProfileReady"><i class="bi bi-save2"></i> Grabar</button>
         </div>
 
         <section class="settings-card media-card" *ngIf="!isEditingManagedProfile">

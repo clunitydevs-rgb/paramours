@@ -614,7 +614,7 @@ export class Profile implements OnInit {
 
     const target = event.target as HTMLInputElement;
     const files: FileList | null = target.files;
-    if (files!.length > 0 && files != null) {
+    if (files && files.length > 0) {
       Array.prototype.forEach.call(files, (file: File) => {
 
         const imageProfile: ImageProfile = {
@@ -623,6 +623,7 @@ export class Profile implements OnInit {
 
         const frmData = new FormData();
         frmData.append('foto', imageProfile.photoprofile);
+        target.value = '';
         this.api.updateLoadPhotoProfile(frmData).subscribe({
           next: data => {
             this.oCliente = data.oClient;

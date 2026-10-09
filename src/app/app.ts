@@ -1,5 +1,5 @@
 import { Component, signal, OnInit } from '@angular/core';
-import { Router, NavigationEnd, NavigationStart, RouterOutlet } from '@angular/router';
+import { Router, NavigationCancel, NavigationEnd, NavigationError, NavigationSkipped, NavigationStart, RouterOutlet } from '@angular/router';
 import { Headermenu } from './headermenu/headermenu';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { CommonModule } from '@angular/common';
@@ -11,6 +11,7 @@ import { AnalyticsService } from './service/analytics.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LegalModals } from './public/legal-modals/legal-modals';
 import { SeoService } from './service/seo.service';
+import { LoadingService } from './service/loading.service';
 
 @Component({
   selector: 'app-root',
@@ -26,8 +27,18 @@ export class App implements OnInit {
     private methodservice: MethodService,
     private router: Router,
     private analyticsService: AnalyticsService,
-    private seoService: SeoService
+    private seoService: SeoService,
+    private loading: LoadingService
   ) {
+    this.router.events.pipe(takeUntilDestroyed()).subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this.loading.startNavigation(event.id);
+      } else if (event instanceof NavigationEnd || event instanceof NavigationCancel
+        || event instanceof NavigationError || event instanceof NavigationSkipped) {
+        this.loading.endNavigation(event.id);
+      }
+    });
+
     this.router.events
       .pipe(
         filter((event): event is NavigationStart => event instanceof NavigationStart),

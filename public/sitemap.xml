@@ -262,5 +262,11 @@
     <loc>https://paramours.cl/profile/83/Escort-melody</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
-  </url>  
+  </url>
+  
+  <url>
+    <loc>https://paramours.cl/profile/84/Escort-mely</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
 </urlset>

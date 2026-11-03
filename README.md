@@ -67,7 +67,12 @@ It defines route content, canonical paths, indexability and optional geographic 
 catalog API, profile cards, responsive stylesheet, stories viewer and profile links.
 The unconfigured Home and the existing commune directory retain their own content and SEO.
 
-- Competitor pages describe Paramours as an independent alternative with no affiliation.
+- The four legacy entry pages use Paramours-only headings, descriptions and social metadata,
+  with no comparison section. `/gemidos-tv/` and `/gemidos-tv` render the same full catalog;
+  the original `/gemidos-tv/chile` remains available with canonical `/gemidos-tv/`.
+  Only the canonical URL is added to the sitemap. The four identical landing pages retain
+  their existing indexability policy; identical content under different self-canonical URLs
+  can be treated as duplicate content by search engines.
 - `/sexo-santiago`, `/sexo-providencia` and `/sexo-las-condes` filter the catalog and stories
   using the city/commune hierarchy. Geographic matching is shared with the sitemap.
 - `/escort` and `/escorts` remain HTTP 200, with `noindex, follow` and canonical

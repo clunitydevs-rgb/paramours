@@ -40,11 +40,23 @@ describe('SEO pages', () => {
   for (const page of SEO_PAGES) {
     it(`renders ${page.path} with metadata, filtered catalog, stories and profile links`, async () => {
       const harness = await RouterTestingHarness.create();
-      await harness.navigateByUrl(page.path === 'locanto-cl' ? '/locanto-cl/' : `/${page.path}`);
+      await harness.navigateByUrl(page.canonicalPath.endsWith('/') ? page.canonicalPath : `/${page.path}`);
       harness.detectChanges();
       const root = harness.routeNativeElement!;
       const expected = profiles.filter(p => p.estado === 'V' && matchesSeoPageLocation(page, p, cities, communes));
       expect(root.querySelector('h1')?.textContent).toBe(page.h1);
+      if (!page.heading) {
+        expect(page.h1).toBe('Escorts en Chile | Paramours');
+        expect(page.description).toBe('Explora los perfiles publicados en Paramours y revisa la informaci\u00f3n de cada anunciante.');
+        expect(root.querySelector('.profiles-intro p')?.textContent).toBe(page.description);
+        expect(root.querySelector('.seo-content')).toBeNull();
+        expect(root.textContent).not.toMatch(/skokka|locanto|gemidos|sectorvip|afiliad|relaci[o\u00f3]n comercial|alternativa independiente/i);
+        for (const selector of ['name="description"', 'property="og:title"', 'property="og:description"', 'name="twitter:title"', 'name="twitter:description"']) {
+          const value = TestBed.inject(Meta).getTag(selector)?.content;
+          expect(value).toBe(selector.endsWith('title"') ? page.title : page.description);
+        }
+      }
+
       expect(root.querySelectorAll('a.profile-card').length).toBe(expected.length);
       for (const profile of expected) expect(root.querySelector(`a[href="/profile/${profile.iD_USUARIO}/${profile.slug}"]`)).not.toBeNull();
       expect(TestBed.inject(Title).getTitle()).toBe(page.title);
@@ -68,6 +80,15 @@ describe('SEO pages', () => {
       stories.next({ oStories: profiles.map(p => ({ iD_USUARIO: p.iD_USUARIO })) });
       expect(emissions.at(-1).map((s: any) => s.iD_USUARIO)).toEqual(expected.map(p => p.iD_USUARIO));
       subscription.unsubscribe();
+    });
+  }
+
+  for (const path of ['/gemidos-tv', '/gemidos-tv/', '/gemidos-tv/chile', '/locanto-cl', '/locanto-cl/']) {
+    it(`supports client navigation to ${path} without redirecting home`, async () => {
+      const harness = await RouterTestingHarness.create(path);
+      expect(harness.routeNativeElement!.querySelector('h1')?.textContent).toBe('Escorts en Chile | Paramours');
+      expect(harness.routeNativeElement!.querySelectorAll('a.profile-card').length).toBe(3);
+      expect(TestBed.inject(Router).url).toBe(path);
     });
   }
 

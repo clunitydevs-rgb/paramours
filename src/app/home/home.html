@@ -68,7 +68,7 @@
             </p>
         </div>
     </section>
-    <section *ngIf="seoPage" class="seo-content" aria-labelledby="seo-info-title">
+    <section *ngIf="seoPage && seoPage.heading" class="seo-content" aria-labelledby="seo-info-title">
         <div class="container">
             <h2 id="seo-info-title">{{ seoPage.heading }}</h2>
             <p *ngFor="let paragraph of seoPage.paragraphs">{{ paragraph }}</p>

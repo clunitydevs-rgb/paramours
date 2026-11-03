@@ -34,7 +34,7 @@ describe('WebVisitService', () => {
   });
 
   it('registers allowed paths independently, normalizes queries/fragments and deduplicates pending and successful visits', () => {
-    for (const path of ['/', '/escort-santiago', '/profile/x', '/profile/j', '/blog/article', ...SEO_PAGES.map(page => page.canonicalPath === '/locanto-cl/' ? '/locanto-cl/' : `/${page.path}`)]) {
+    for (const path of ['/', '/escort-santiago', '/profile/x', '/profile/j', '/blog/article', ...SEO_PAGES.flatMap(page => [`/${page.path}`, ...(page.canonicalPath.endsWith('/') ? [page.canonicalPath] : []), ...(page.aliases ?? []).map(path => `/${path}`)])]) {
       service.register(`${path}?source=test#section`);
       service.register(path);
       const request = http.expectOne(WEB_VISITS_REGISTER_URL);

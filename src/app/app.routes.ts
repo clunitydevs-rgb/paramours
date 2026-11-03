@@ -5,7 +5,7 @@ import { escortLocationMatcher } from './routing/escort-location.matcher';
 export const routes: Routes = [
     ...SEO_PAGES.flatMap(page =>
         // Angular preserves an empty final segment during client navigation.
-        (page.canonicalPath.endsWith('/') ? [page.path, `${page.path}/`] : [page.path]).map(path => ({
+        [page.path, ...(page.canonicalPath.endsWith('/') ? [`${page.path}/`] : []), ...(page.aliases ?? [])].map(path => ({
             path, pathMatch: 'full' as const, data: { seoPage: page },
             loadComponent: () => import('./seo-pages/seo-page').then(m => m.SeoPage)
         }))

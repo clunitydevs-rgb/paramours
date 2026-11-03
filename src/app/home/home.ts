@@ -1,5 +1,7 @@
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { SeoPageConfig, matchesSeoPageLocation } from '../seo-pages/seo-pages.config';
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, DestroyRef, inject, Input, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ApiServices } from '../api/api.service';
@@ -10,7 +12,7 @@ import { MethodService } from '../method/method.service';
 import { Cliente } from '../models/models.interface';
 import { catchError, forkJoin, of, timeout } from 'rxjs';
 import { SeoService } from '../service/seo.service';
-import { getActiveProfileLocationIds } from '../../sitemap';
+import { getActiveProfileLocationIds, isPublicActiveProfile } from '../../sitemap';
 import type { SitemapProfile } from '../../sitemap';
 
 @Component({
@@ -20,6 +22,13 @@ import type { SitemapProfile } from '../../sitemap';
   styleUrl: './home.css'
 })
 export class Home implements OnInit {
+  @Input() seoPage?: SeoPageConfig;
+  private readonly destroyRef = inject(DestroyRef);
+  private clientsLoaded = false;
+  private locationsLoaded = false;
+  private pageStoriesLoaded = false;
+  catalogError = false;
+
   //sUrlRps: string = "https://demofilesblobazure.blob.core.windows.net/rpsfilescontainer/";
   sUrlRps: string = "https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/";
   proFileImg: string = this.sUrlRps + "avatar_anunciante.png";
@@ -40,17 +49,22 @@ export class Home implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.seoService.setHomeSeo();
+    if (this.seoPage) this.seoService.setPageSeo(this.seoPage, false);
+    else this.seoService.setHomeSeo();
 
     const isBrowser = isPlatformBrowser(this.platformId);
 
     this.api.getClients().pipe(
       timeout(6000),
+      takeUntilDestroyed(this.destroyRef),
       catchError(() => of(null))
     ).subscribe(clients => {
+      this.clientsLoaded = true;
       if (!clients) {
         this.arrItems = [];
         this.nTotalClienteCount = 0;
+        this.catalogError = true;
+        this.updatePageCatalog();
         return;
       }
 
@@ -60,6 +74,7 @@ export class Home implements OnInit {
       this.arrItems = [...clientes];
       this.nTotalClienteCount = this.arrItems.length;
       this.updateLocationLinks();
+      this.updatePageCatalog();
 
       if (isBrowser && this.arrItems.length > 0) {
         this.methodservice.delItenLocalStorage("cl.paramours.arrItems");
@@ -71,20 +86,39 @@ export class Home implements OnInit {
       ciudades: this.api.getCiudades(),
       comunas: this.api.getComunas(),
       metros: this.api.getMetros()
-    }).subscribe({
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: ({ ciudades, comunas, metros }) => {
+        this.locationsLoaded = true;
         this.oCiudades = ciudades;
         this.oComunas = comunas;
         this.oMetros = metros;
+        this.updatePageCatalog();
         this.updateLocationLinks();
       },
       error: () => {
+        this.catalogError = true;
+        this.locationsLoaded = true;
+        this.updatePageCatalog();
         this.toastService.error('No fue posible cargar las ubicaciones.');
       }
     });
 
-    if (isBrowser) {
+    if (isBrowser && !this.seoPage) {
       this.scheduleStoriesLoad();
+    }
+  }
+
+  private updatePageCatalog(): void {
+    if (!this.seoPage || !this.clientsLoaded || !this.locationsLoaded) return;
+    this.arrItems = this.catalogError ? [] : this.oData.filter(profile =>
+      isPublicActiveProfile(profile as unknown as SitemapProfile)
+      && matchesSeoPageLocation(this.seoPage!, profile, this.oCiudades, this.oComunas));
+    this.nTotalClienteCount = this.arrItems.length;
+    this.seoService.setPageSeo(this.seoPage, !this.catalogError && this.arrItems.length > 0);
+    if (isPlatformBrowser(this.platformId) && !this.pageStoriesLoaded) {
+      this.pageStoriesLoaded = true;
+      this.methodservice.tStoriesHome.emit([]);
+      if (this.arrItems.length > 0) this.getStories();
     }
   }
 
@@ -225,10 +259,14 @@ export class Home implements OnInit {
 
   getStories() {
     this.api.GetAllActiveStoriesUser().pipe(
-      timeout(6000)
+      timeout(6000),
+      takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: (value: rStoriesHome) => {
-        this.methodservice.tStoriesHome.emit(value.oStories);
+        const stories = Array.isArray(value.oStories) ? value.oStories : [];
+        const ids = new Set(this.arrItems.map(profile => String(profile.iD_USUARIO)));
+        this.methodservice.tStoriesHome.emit(this.seoPage
+          ? stories.filter(story => ids.has(String(story.iD_USUARIO))) : value.oStories);
       },
       error: err => {
         this.methodservice.tStoriesHome.emit([]);

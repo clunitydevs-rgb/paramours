@@ -1,3 +1,4 @@
+import { SEO_PAGES } from '../seo-pages/seo-pages.config';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { PLATFORM_ID } from '@angular/core';
@@ -33,7 +34,7 @@ describe('WebVisitService', () => {
   });
 
   it('registers allowed paths independently, normalizes queries/fragments and deduplicates pending and successful visits', () => {
-    for (const path of ['/', '/escort-santiago', '/profile/x', '/profile/j', '/blog/article']) {
+    for (const path of ['/', '/escort-santiago', '/profile/x', '/profile/j', '/blog/article', ...SEO_PAGES.map(page => page.canonicalPath === '/locanto-cl/' ? '/locanto-cl/' : `/${page.path}`)]) {
       service.register(`${path}?source=test#section`);
       service.register(path);
       const request = http.expectOne(WEB_VISITS_REGISTER_URL);

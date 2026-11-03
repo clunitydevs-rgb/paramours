@@ -1,7 +1,15 @@
+import { SEO_PAGES } from './seo-pages/seo-pages.config';
 import { Routes } from '@angular/router';
 import { escortLocationMatcher } from './routing/escort-location.matcher';
 
 export const routes: Routes = [
+    ...SEO_PAGES.flatMap(page =>
+        // Angular preserves an empty final segment during client navigation.
+        (page.canonicalPath.endsWith('/') ? [page.path, `${page.path}/`] : [page.path]).map(path => ({
+            path, pathMatch: 'full' as const, data: { seoPage: page },
+            loadComponent: () => import('./seo-pages/seo-page').then(m => m.SeoPage)
+        }))
+    ),
     {path:'blog', loadComponent: () => import('./blog/blog-list').then(m => m.BlogList)},
     {path:'blog/:slug', loadComponent: () => import('./blog/blog-article').then(m => m.BlogArticle)},
     {path:'', loadComponent: () => import('./home/home').then(m => m.Home), pathMatch:'full'},

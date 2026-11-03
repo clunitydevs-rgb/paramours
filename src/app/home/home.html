@@ -6,12 +6,17 @@
             <div class="profiles-intro">
                 <div>
                     <span class="section-kicker">Paramours Chile</span>
-                    <h1 id="profiles-title">Escorts independientes en Chile</h1>
+                    <h1 id="profiles-title">{{ seoPage?.h1 || 'Escorts independientes en Chile' }}</h1>
                 </div>
                 <span *ngIf="nTotalClienteCount > 0" class="profiles-count">{{ nTotalClienteCount }} perfiles</span>
-                <p>Paramours es un directorio de escorts independientes en Chile donde puedes explorar perfiles publicados, revisar la informaci&oacute;n de cada anunciante y acceder a sus medios de contacto. Navega por las ubicaciones disponibles actualmente para encontrar opciones seg&uacute;n los perfiles activos.</p>
+                <p *ngIf="seoPage; else homeIntro">{{ seoPage.intro }}</p>
+                <ng-template #homeIntro>
+                    <p>Paramours es un directorio de escorts independientes en Chile donde puedes explorar perfiles publicados, revisar la informaci&oacute;n de cada anunciante y acceder a sus medios de contacto. Navega por las ubicaciones disponibles actualmente para encontrar opciones seg&uacute;n los perfiles activos.</p>
+                </ng-template>
             </div>
 
+            <p *ngIf="seoPage && catalogError" role="status">El catálogo no está disponible temporalmente. Intenta nuevamente más tarde.</p>
+            <p *ngIf="seoPage && !catalogError && arrItems.length === 0" role="status">No hay perfiles disponibles en esta selección.</p>
             <h2 id="available-profiles-title">Escorts disponibles</h2>
 
             <div *ngIf="arrItems.length > 0" class="profiles-grid" aria-labelledby="available-profiles-title">
@@ -63,7 +68,13 @@
             </p>
         </div>
     </section>
-    <section class="seo-content">
+    <section *ngIf="seoPage" class="seo-content" aria-labelledby="seo-info-title">
+        <div class="container">
+            <h2 id="seo-info-title">{{ seoPage.heading }}</h2>
+            <p *ngFor="let paragraph of seoPage.paragraphs">{{ paragraph }}</p>
+        </div>
+    </section>
+    <section *ngIf="!seoPage" class="seo-content">
         <div class="container">
             <p>Bienvenido a Paramours, un directorio de escorts VIP y damas de compa&ntilde;&iacute;a en Chile. Aqu&iacute; encontrar&aacute;s perfiles independientes con fotos reales y verificadas. Nuestro portal conecta de forma directa y confidencial a quienes buscan acompa&ntilde;antes o amantes en Chile, incluyendo alternativas de masajes sensitivos y atenci&oacute;n en las principales comunas de Santiago.</p>
             <p>Explora perfiles detallados, historias exclusivas y conecta de manera segura con las mejores alternativas de entretenimiento para adultos en Santiago.</p>

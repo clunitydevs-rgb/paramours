@@ -1,3 +1,4 @@
+import { findSeoPage } from '../seo-pages/seo-pages.config';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { DestroyRef, inject, Injectable, PLATFORM_ID } from '@angular/core';
@@ -44,7 +45,7 @@ export class WebVisitService {
     if (!path) return;
     const isPageView = eventType === 'PAGE_VIEW';
     if (isPageView) {
-      if (!/^(?:\/|\/escort-[^/]+\/?|\/(?:profile|blog)\/.+)$/.test(path)) return;
+      if (!findSeoPage(path) && !/^(?:\/|\/escort-[^/]+\/?|\/(?:profile|blog)\/.+)$/.test(path)) return;
       if (this.inFlight.has(path) || this.registered.has(path) || this.readPaths().includes(path)) return;
       this.inFlight.add(path);
     }

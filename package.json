@@ -7,6 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "test:seo": "ng test --watch=false --browsers=ChromeHeadless --include=src/app/seo-pages/seo-page.spec.ts --include=src/app/service/web-visit.service.spec.ts --include=src/app/service/seo.service.spec.ts --include=src/sitemap.spec.ts --include=src/app/storieshome/storieshome.spec.ts --include=src/app/escort-directory/escort-directory.spec.ts",
+    "test:ssr-seo": "node --test tests/seo-pages.integration.mjs",
     "test:ssr-404": "node --test tests/ssr-404.integration.mjs",
     "test:ssr-blog": "node --test tests/blog.integration.mjs",
     "test:ssr-profile-context": "node --test tests/profile-request-context.integration.mjs",

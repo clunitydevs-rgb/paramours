@@ -1,3 +1,4 @@
+import { SEO_PAGES, matchesSeoPageLocation } from './app/seo-pages/seo-pages.config';
 import { BlogPost, isPublishedBlog } from './app/models/blog.interface';
 
 const SITE_URL = 'https://paramours.cl';
@@ -15,6 +16,7 @@ export interface SitemapProfile extends Record<string, unknown> {
 export interface SitemapLocation {
   id: string | number;
   slug: string;
+  id_ciudad?: string | number;
 }
 
 interface SitemapEntry {
@@ -37,6 +39,11 @@ export function buildSitemapXml(
 
   addEntry(entries, `${SITE_URL}/`, '1.0');
   addEntry(entries, `${SITE_URL}/blog`, '0.9');
+  for (const page of SEO_PAGES) {
+    if (page.indexable && activeProfiles.some(profile => matchesSeoPageLocation(page, profile, cities, communes))) {
+      addEntry(entries, `${SITE_URL}${page.canonicalPath}`, '0.9');
+    }
+  }
   for (const post of posts.filter(isPublishedBlog).filter(post => post.isIndexable === true)) {
     const loc = `${SITE_URL}/blog/${encodeURIComponent(post.slug)}`;
     addEntry(entries, loc, '0.9');

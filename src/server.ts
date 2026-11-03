@@ -1,3 +1,4 @@
+import { findSeoPage } from './app/seo-pages/seo-pages.config';
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 import {
   AngularNodeAppEngine,
@@ -148,7 +149,8 @@ app.get([...legacyLocationRoutes.keys()], (req, res) => {
   res.redirect(301, legacyLocationRoutes.get(req.path)!);
 });
 
-app.get('/escorts-:slug', (req, res) => {
+app.get('/escorts-:slug', (req, res, next) => {
+  if (findSeoPage(req.path)) { next(); return; }
   res.redirect(301, `/escort-${req.params.slug}`);
 });
 

@@ -1,3 +1,4 @@
+import { SeoPageConfig } from '../seo-pages/seo-pages.config';
 import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
@@ -70,6 +71,19 @@ export class SeoService {
     if (functionalTitle) {
       this.setFunctionalSeo(functionalTitle);
     }
+  }
+
+  setPageSeo(page: SeoPageConfig, available = true): void {
+    this.clearRouteSeo();
+    const url = `${this.siteUrl}${page.canonicalPath}`;
+    this.title.setTitle(page.title);
+    this.setDescription(page.description);
+    this.setCanonical(url);
+    this.meta.updateTag({ name: 'robots', content: page.indexable && available ? 'index, follow, max-image-preview:large' : 'noindex, follow' });
+    const social = { title: page.title, description: page.description, url,
+      image: this.socialFallbackImage, imageAlt: page.h1, type: 'website' };
+    this.setOpenGraph(social);
+    this.setTwitter(social);
   }
 
   setHomeSeo(): void {

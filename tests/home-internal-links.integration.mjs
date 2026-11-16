@@ -66,7 +66,9 @@ test('Home SSR exposes the requested on-page SEO', async () => {
 
   assert.equal(title, 'Escort Chile | Escorts independientes | Paramours');
   assert.equal(description, 'Explora en Paramours perfiles de escorts independientes en Chile, revisa su información y encuentra opciones según las ubicaciones disponibles.');
-  assert.equal(canonical, 'https://paramours.cl');
+  assert.equal(canonical, 'https://paramours.cl/');
+  assert.equal((html.match(/<link\b[^>]*rel="canonical"/gi) ?? []).length, 1);
+  assert.deepEqual([...html.matchAll(/<meta property="og:url" content="([^"]*)"/gi)].map(match => match[1]), ['https://paramours.cl/']);
   assert.equal(robots, 'index, follow, max-image-preview:large');
   assert.deepEqual(h1s, ['Escorts independientes en Chile']);
   assert.ok(h2s.includes('Escorts disponibles'));

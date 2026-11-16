@@ -63,7 +63,7 @@ describe('Global SEO route policy', () => {
   });
 
   function canonical(): string | null {
-    return document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.href ?? null;
+    return document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.getAttribute('href') ?? null;
   }
 
   function schemas(): HTMLScriptElement[] {
@@ -81,6 +81,8 @@ describe('Global SEO route policy', () => {
 
     expect(meta.getTag("name='robots'")?.content).toBe('index, follow, max-image-preview:large');
     expect(canonical()).toBe('https://paramours.cl/');
+    expect(document.head.querySelectorAll('link[rel="canonical"]').length).toBe(1);
+    expect(meta.getTag("property='og:url'")?.content).toBe('https://paramours.cl/');
     const schema = JSON.parse(document.getElementById('website-schema')?.textContent ?? '{}');
     expect(schemas().length).toBe(1);
     expect(schema['@context']).toBe('https://schema.org');
@@ -232,6 +234,10 @@ describe('Global SEO route policy', () => {
   it('updates social image metadata across Home, Location, Profile and Home SPA navigation', () => {
     seo.setHomeSeo();
     seo.setHomeSeo();
+    expect(canonical()).toBe('https://paramours.cl/');
+    expect(document.head.querySelectorAll('link[rel="canonical"]').length).toBe(1);
+    expect(meta.getTags("property='og:url'").length).toBe(1);
+    expect(meta.getTag("property='og:url'")?.content).toBe('https://paramours.cl/');
     for (const [property, content] of Object.entries({
       'og:image:width': '1200', 'og:image:height': '630', 'og:image:type': 'image/png'
     })) {

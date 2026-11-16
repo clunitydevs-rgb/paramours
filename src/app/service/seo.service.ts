@@ -88,17 +88,18 @@ export class SeoService {
 
   setHomeSeo(): void {
     this.clearRouteSeo();
+    const homeUrl = `${this.siteUrl}/`;
     this.title.setTitle(this.defaultTitle);
     this.meta.updateTag({ name: 'robots', content: 'index, follow, max-image-preview:large' });
     this.setDescription(this.defaultDescription);
-    this.setCanonical(this.siteUrl);
+    this.setCanonical(homeUrl);
 
     this.setOpenGraph({
       title: this.defaultTitle,
       description: this.defaultDescription,
       image: this.socialFallbackImage,
       imageAlt: 'Paramours - Escorts independientes en Chile',
-      url: this.siteUrl,
+      url: homeUrl,
       type: 'website'
     });
 

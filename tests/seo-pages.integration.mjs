@@ -1,5 +1,9 @@
 import assert from 'node:assert/strict';
-import { spawn } from 'node:child_process';
+import { execFile, spawn } from 'node:child_process';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { promisify } from 'node:util';
 import test from 'node:test';
 const origin = 'http://127.0.0.1:4357';
 const paths = ['/skokka-com/chile', '/locanto-cl/', '/gemidos-tv/', '/escort', '/escorts', '/escorts-chile', '/sexo-chile', '/sexo-santiago', '/sexo-providencia', '/sexo-las-condes', '/sectorvip', '/masajes-sensitivos'];
@@ -14,6 +18,33 @@ test.before(async () => {
   throw new Error('SSR server did not start');
 });
 test.after(() => server.kill());
+
+test('home hydration preserves SSR SEO metadata without duplicate canonical or og:url', {
+  skip: !process.env.CHROME_BIN,
+  timeout: 60000
+}, async () => {
+  const html = await (await request('/')).text();
+  assert.match(html, /\sngh="/); // Verify this is hydratable SSR HTML.
+  const userDataDir = await mkdtemp(join(tmpdir(), 'paramours-seo-'));
+  try {
+    const { stdout: hydrated } = await promisify(execFile)(process.env.CHROME_BIN, [
+      '--headless', '--disable-gpu', '--no-first-run', '--no-default-browser-check',
+      `--user-data-dir=${userDataDir}`, '--dump-dom', '--virtual-time-budget=10000', `${origin}/`
+    ], { timeout: 45000, maxBuffer: 5 * 1024 * 1024, windowsHide: true });
+    assert.match(hydrated, /<app-root[^>]*ng-version="20\./);
+    assert.doesNotMatch(hydrated, /\sngh="/); // Angular consumed the hydration annotations.
+    const metadata = document => {
+      const head = document.match(/<head\b[^>]*>([\s\S]*?)<\/head>/i)?.[1] ?? '';
+      return [...head.matchAll(/<title>[^<]*<\/title>|<meta\b[^>]*>|<link\b[^>]*rel="canonical"[^>]*>|<script\b[^>]*type="application\/ld\+json"[^>]*>[\s\S]*?<\/script>/gi)]
+        .map(match => match[0]).sort();
+    };
+    assert.deepEqual(metadata(hydrated), metadata(html));
+    assert.deepEqual([...hydrated.matchAll(/<link\b[^>]*rel="canonical"[^>]*href="([^"]*)"/g)].map(match => match[1]), ['https://paramours.cl/']);
+    assert.deepEqual([...hydrated.matchAll(/<meta property="og:url" content="([^"]*)"/g)].map(match => match[1]), ['https://paramours.cl/']);
+  } finally {
+    await rm(userDataDir, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
+  }
+});
 for (const path of paths) test(`SSR ${path} returns contextual HTML and metadata without redirect`, async () => {
   const response = await request(`${path}?utm_source=test`);
   assert.equal(response.status, 200);
@@ -76,10 +107,16 @@ test('sitemap contains canonical indexable pages and excludes aliases', async ()
   }
 });
 test('home, commune pages and existing legacy redirects retain their behavior', async () => {
-  assert.equal((await request('/')).status, 200);
+  const home = await request('/');
+  assert.equal(home.status, 200);
+  const html = await home.text();
+  assert.deepEqual([...html.matchAll(/<link\b[^>]*rel="canonical"[^>]*href="([^"]*)"/g)].map(match => match[1]), ['https://paramours.cl/']);
+  assert.deepEqual([...html.matchAll(/<meta property="og:url" content="([^"]*)"/g)].map(match => match[1]), ['https://paramours.cl/']);
   const commune = await request('/escort-providencia');
   assert.equal(commune.status, 200);
-  assert.match(await commune.text(), /href="https:\/\/paramours.cl\/escort-providencia"/);
+  const communeHtml = await commune.text();
+  assert.deepEqual([...communeHtml.matchAll(/<link\b[^>]*rel="canonical"[^>]*href="([^"]*)"/g)].map(match => match[1]), ['https://paramours.cl/escort-providencia']);
+  assert.match(communeHtml, /property="og:url" content="https:\/\/paramours.cl\/escort-providencia"/);
   assert.equal((await request('/escorts-santiago')).status, 301);
   assert.equal((await request('/home')).status, 301);
 });

@@ -168,6 +168,35 @@ describe('Settingaccount deferred editor and initial loading', () => {
     expect(finishLoading).toHaveBeenCalledTimes(1);
   });
 
+  for (const edad of [null, 25, 0]) {
+    it(`loads the complete profile when age is ${edad}`, () => {
+      const component = fixture.componentInstance;
+      api.getClientByToken.and.returnValue(of({
+        ncoderror: '0',
+        oClient: {
+          ...component.oCliente,
+          iD_USUARIO: 1,
+          edad,
+          correo: 'user@example.test',
+          nacionalidad: 3,
+          descripcion: 'Perfil de prueba',
+          estado: 'V'
+        }
+      } as any));
+
+      fixture.detectChanges();
+
+      expect(component.frmAccount.controls.edad.value).toBe(edad?.toString() ?? '');
+      expect(component.frmAccount.controls.email.value).toBe('user@example.test');
+      expect(component.frmAccount.controls.nacionalidad.value).toBe('3');
+      expect(component.frmAccount.controls.descripcion.value).toBe('Perfil de prueba');
+      expect(component.isProfileActive).toBeTrue();
+      expect(component.isProfileReady).toBeTrue();
+      expect(api.getMediaFiles).toHaveBeenCalledWith({ sUid: 1 });
+      expect(finishLoading).toHaveBeenCalledTimes(1);
+    });
+  }
+
   it('releases loading and prevents saving when initial loading fails', () => {
     const cliente = new Subject<any>();
     api.getClientByToken.and.returnValue(cliente);

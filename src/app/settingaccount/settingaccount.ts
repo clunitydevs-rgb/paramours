@@ -228,7 +228,7 @@ export class Settingaccount {
           if (this.oCliente.genero != null)
             this.frmAccount.controls.genero.setValue(this.oCliente.genero.toString());
 
-          this.frmAccount.controls.edad.setValue(this.oCliente.edad.toString());
+          this.frmAccount.controls.edad.setValue(this.oCliente.edad?.toString() ?? '');
 
           if (this.oCliente.nacionalidad != null)
             this.frmAccount.controls.nacionalidad.setValue(this.oCliente.nacionalidad.toString());

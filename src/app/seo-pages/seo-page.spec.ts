@@ -114,11 +114,11 @@ describe('SEO pages', () => {
     expect(api.GetAllActiveStoriesUser).not.toHaveBeenCalled();
   });
 
-  it('renders an unavailable catalog without indexing an empty result', async () => {
+  it('renders an unavailable catalog without emitting noindex for a temporary failure', async () => {
     api.getClients.and.returnValue(throwError(() => new Error('Unavailable')));
     const harness = await RouterTestingHarness.create('/escorts-chile');
     expect(harness.routeNativeElement!.textContent).toContain('temporalmente');
-    expect(TestBed.inject(Meta).getTag('name="robots"')?.content).toBe('noindex, follow');
+    expect(TestBed.inject(Meta).getTag('name="robots"')).toBeNull();
     expect(api.GetAllActiveStoriesUser).not.toHaveBeenCalled();
   });
 

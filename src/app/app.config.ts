@@ -2,7 +2,8 @@ import { ApplicationConfig, inject, LOCALE_ID, provideAppInitializer, provideBro
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 
 import { routes } from './app.routes';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { provideClientHydration, withEventReplay, withNoHttpTransferCache } from '@angular/platform-browser';
+import { publicAssetsTransferInterceptor } from './interceptor/public-assets-transfer.interceptor';
 import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { jtwInterceptor } from './interceptor/jwt.interceptor';
 import { ApiInterceptor } from './interceptor/api.interceptor';
@@ -16,7 +17,7 @@ registerLocaleData(localeEsCL);
 export const appConfig: ApplicationConfig = {
   providers: [
     provideAppInitializer(() => inject(WebVisitService).start()),
-    provideHttpClient(withFetch(), withInterceptors([jtwInterceptor, publicClientsSsrCacheInterceptor]), withInterceptorsFromDi()),
+    provideHttpClient(withFetch(), withInterceptors([publicAssetsTransferInterceptor, jtwInterceptor, publicClientsSsrCacheInterceptor]), withInterceptorsFromDi()),
     { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi:true },
     { provide: LOCALE_ID, useValue: 'es-CL' },
     provideBrowserGlobalErrorListeners(),
@@ -25,6 +26,6 @@ export const appConfig: ApplicationConfig = {
       scrollPositionRestoration: 'top',
       anchorScrolling: 'enabled'
     })),
-    provideClientHydration(withEventReplay())
+    provideClientHydration(withEventReplay(), withNoHttpTransferCache())
   ]
 };

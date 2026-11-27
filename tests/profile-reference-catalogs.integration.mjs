@@ -3,7 +3,8 @@ import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
 const profile = await readFile('src/app/profile/profile.ts', 'utf8');
-const loadProfile = profile.match(/  LoadProfile\(\) \{([\s\S]*?)\n  \}\n\n  private markProfileNotFound/)?.[1] ?? '';
+const loadProfile = profile.match(/  ngOnInit\(\): void \{([\s\S]*?)\n  private resetProfile/)?.[1] ?? '';
+assert.ok(loadProfile, 'The critical profile load must be found');
 
 test('profile SSR does not load non-critical reference catalogs', () => {
   for (const method of ['getNaciones', 'getGeneros', 'getColorOjos', 'getColorCabello', 'getBiotipo']) {

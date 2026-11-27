@@ -15,6 +15,7 @@ import type { ProfileRequestContext } from './app/models/profile-request-context
 import type { ResponseClient } from './app/models/response.interface';
 import { PUBLIC_CLIENTS_URL, publicClientsCache } from './public-clients-cache';
 import { BLOG_API_URL, GetBlogsResponse } from './app/models/blog.interface';
+import { classifyProfile, publicCatalog } from './app/models/public-page-data';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
@@ -56,6 +57,9 @@ app.use(async (req, res, next) => {
   }
 
   const requestedId = profileMatch[1];
+  res.locals['profileRequestContext'] = {
+    profileLookup: { requestedId: Number(requestedId), unavailable: true }
+  } satisfies ProfileRequestContext;
   let requestedSlug: string;
   try {
     requestedSlug = decodeURIComponent(profileMatch[2] ?? '');
@@ -73,18 +77,25 @@ app.use(async (req, res, next) => {
     });
 
     if (!profileResponse.ok) {
+      if (profileResponse.status === 404) {
+        res.locals['profileRequestContext'] = {
+          profileLookup: { requestedId: Number(requestedId), response: { ncoderror: '1', oClient: null } as unknown as ResponseClient }
+        } satisfies ProfileRequestContext;
+      }
       next();
       return;
     }
 
     const payload = await profileResponse.json() as ProfileCanonicalPayload;
+    const result = classifyProfile(payload, Number(requestedId));
+    if (result.kind === 'unavailable') { next(); return; }
     res.locals['profileRequestContext'] = {
       profileLookup: {
         requestedId: Number(requestedId),
         response: payload as ResponseClient,
       },
     } satisfies ProfileRequestContext;
-    const profile = String(payload.ncoderror) === '0' ? payload.oClient : undefined;
+    const profile = result.kind === 'found' ? result.profile : undefined;
     const officialPath = profile ? buildOfficialProfilePath(profile) : null;
     if (!officialPath) {
       next();
@@ -166,7 +177,9 @@ app.get('/sitemap.xml', async (_req, res) => {
           signal: AbortSignal.timeout(6000),
         });
         if (!clientsResponse.ok) throw new Error(`Clients API returned ${clientsResponse.status}`);
-        return clientsResponse.json() as Promise<ResponseClient>;
+        const payload = await clientsResponse.json();
+        publicCatalog(payload);
+        return payload as ResponseClient;
       }).catch(error => {
         console.error('Profile entries temporarily unavailable for sitemap.', error);
         return null;

@@ -4,6 +4,7 @@ import { ToastService } from '../service/toast.service';
 import { UidUser } from '../models/models.interface';
 import { rStories } from '../models/response.interface';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-stories',
@@ -33,6 +34,7 @@ export class Stories implements OnChanges, OnDestroy {
   private ignoreNextClick = false;
   private lastPlayedVideoIndex: number | null = null;
   private browserHydrated = false;
+  private storyRequest?: Subscription;
 
   uIdUser: UidUser = {
     sUid: 0
@@ -58,6 +60,7 @@ export class Stories implements OnChanges, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.storyRequest?.unsubscribe();
     this.stopCurrentVideo();
     this.clearTimer();
   }
@@ -99,10 +102,15 @@ export class Stories implements OnChanges, OnDestroy {
   }
 
   loadStories() {
-    this.uIdUser.sUid = this.iUser ? this.iUser : 0;
+    this.storyRequest?.unsubscribe();
+    const profileId = this.iUser;
+    this.ArrStories = [];
+    this.closeViewer();
+    this.uIdUser = { sUid: profileId || 0 };
 
-    this.api.getStoriesById(this.uIdUser).subscribe({
+    this.storyRequest = this.api.getStoriesById({ sUid: profileId || 0 }).subscribe({
       next: (data: rStories) => {
+        if (this.iUser !== profileId) return;
 
         const ahora = Date.now();
         const seisHorasMs = 6 * 60 * 60 * 1000;

@@ -1,5 +1,6 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, ElementRef, HostListener, Inject, Input, OnChanges, PLATFORM_ID, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, Input, OnChanges, OnDestroy, PLATFORM_ID, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ApiServices } from '../api/api.service';
 import { objId, PublicationForm, UidUser } from '../models/models.interface';
@@ -13,7 +14,10 @@ import { ProfilePostEditor } from '../profile-post-editor/profile-post-editor';
   templateUrl: './profile-timeline.html',
   styleUrl: './profile-timeline.css'
 })
-export class ProfileTimeline implements OnChanges {
+export class ProfileTimeline implements OnChanges, OnDestroy {
+  private publicationsRequest?: Subscription;
+
+  ngOnDestroy(): void { this.publicationsRequest?.unsubscribe(); }
   @Input() iUser: number | null = null;
   @Input() sNomUser: string | null = null;
   @Input() sUrlProfile: string | null = null;
@@ -69,6 +73,8 @@ export class ProfileTimeline implements OnChanges {
 
   LoadPublications(resetTimeline: boolean = false) {
     if (this.iUser != null) {
+      this.publicationsRequest?.unsubscribe();
+      const profileId = this.iUser;
       if (resetTimeline) {
         this.resetTimeline();
       }
@@ -77,8 +83,9 @@ export class ProfileTimeline implements OnChanges {
       this.publication.pageIndex = this.pageIndex + 1;
       this.publication.pageSize = 5;
 
-      this.api.getPaginationPublicationsById(this.publication).subscribe({
+      this.publicationsRequest = this.api.getPaginationPublicationsById({ ...this.publication }).subscribe({
         next: (data: rPublications) => {
+          if (this.iUser !== profileId) return;
           this.pageIndex++;
           const oData = Object.values(data.post);
 

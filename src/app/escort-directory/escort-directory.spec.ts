@@ -32,7 +32,8 @@ describe('EscortDirectory location filtering', () => {
       jasmine.createSpyObj('globalSeo', ['applyStaticRouteSeo']),
       jasmine.createSpyObj('ssr', ['setNotFound']),
       { tStoriesHome: { emit: jasmine.createSpy('emit') } } as any,
-      'server' as unknown as object
+      'server' as unknown as object,
+      { catalog: () => of(clients) } as any
     );
     component.ngOnInit();
     params.next(convertToParamMap({ slug }));

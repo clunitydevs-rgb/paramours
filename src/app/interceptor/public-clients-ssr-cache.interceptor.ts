@@ -3,6 +3,7 @@ import { HttpInterceptorFn, HttpResponse } from '@angular/common/http';
 import { inject, PLATFORM_ID } from '@angular/core';
 import { from, map } from 'rxjs';
 import { PUBLIC_CLIENTS_URL, publicClientsCache } from '../../public-clients-cache';
+import { publicCatalog } from '../models/public-page-data';
 
 export const publicClientsSsrCacheInterceptor: HttpInterceptorFn = (request, next) => {
   const platformId = inject(PLATFORM_ID);
@@ -20,7 +21,9 @@ export const publicClientsSsrCacheInterceptor: HttpInterceptorFn = (request, nex
       throw new Error(`Clients API returned ${response.status}`);
     }
 
-    return response.json();
+    const payload = await response.json();
+    publicCatalog(payload);
+    return payload;
   })).pipe(
     map(body => new HttpResponse({ body, status: 200, url: request.url }))
   );

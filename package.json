@@ -16,6 +16,8 @@
     "test:ssr-profile-reviews": "node --test tests/profile-review-summary.integration.mjs",
     "test:ssr-links": "node --test tests/home-internal-links.integration.mjs",
     "test:analytics": "node --test tests/analytics-loading.integration.mjs",
+    "test:phase1": "ng test --watch=false --browsers=ChromeHeadless --include=src/app/profile/profile.phase1.spec.ts --include=src/app/profile/related-identity.phase1.spec.ts --include=src/app/service/public-page-data.service.spec.ts --include=src/app/app.routes.spec.ts --include=src/app/service/ssr-response.service.spec.ts --include=src/app/service/blog.service.spec.ts --include=src/public-clients-cache.spec.ts",
+    "test:ssr-phase1": "node --test tests/phase1.integration.mjs",
     "serve:ssr:cl.app.paramours": "node dist/cl.app.paramours/server/server.mjs"
   },
   "prettier": {

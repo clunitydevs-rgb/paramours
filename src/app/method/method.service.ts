@@ -4,7 +4,7 @@ import { BehaviorSubject } from "rxjs";
 
 @Injectable({ providedIn: 'root' })
 export class MethodService {
-    @Output() tMediaFiles = new EventEmitter<MediaFiles>();
+    @Output() tMediaFiles = new EventEmitter<MediaFiles | MediaFiles[]>();
     @Output() tStoriesHome = new EventEmitter<StoriesHome[]>();
     @Output() tInProcess: EventEmitter<string> = new EventEmitter();
 

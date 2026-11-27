@@ -6,14 +6,16 @@ import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ApiServices } from '../api/api.service';
 import { ToastService } from '../service/toast.service';
-import { ResponseClient, rStoriesHome } from '../models/response.interface';
+import { rStoriesHome } from '../models/response.interface';
 import { Storieshome } from "../storieshome/storieshome";
 import { MethodService } from '../method/method.service';
 import { Cliente } from '../models/models.interface';
-import { catchError, forkJoin, of, timeout } from 'rxjs';
+import { catchError, forkJoin, map, of, timeout } from 'rxjs';
 import { SeoService } from '../service/seo.service';
 import { getActiveProfileLocationIds, isPublicActiveProfile } from '../../sitemap';
 import type { SitemapProfile } from '../../sitemap';
+import { PublicPageDataService } from '../service/public-page-data.service';
+import { SsrResponseService } from '../service/ssr-response.service';
 
 @Component({
   selector: 'app-home',
@@ -24,6 +26,8 @@ import type { SitemapProfile } from '../../sitemap';
 export class Home implements OnInit {
   @Input() seoPage?: SeoPageConfig;
   private readonly destroyRef = inject(DestroyRef);
+  private readonly publicData = inject(PublicPageDataService);
+  private readonly ssrResponse = inject(SsrResponseService);
   private clientsLoaded = false;
   private locationsLoaded = false;
   private pageStoriesLoaded = false;
@@ -49,63 +53,39 @@ export class Home implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    if (this.seoPage) this.seoService.setPageSeo(this.seoPage, false);
-    else this.seoService.setHomeSeo();
-
     const isBrowser = isPlatformBrowser(this.platformId);
-
-    this.api.getClients().pipe(
-      timeout(6000),
-      takeUntilDestroyed(this.destroyRef),
-      catchError(() => of(null))
-    ).subscribe(clients => {
-      this.clientsLoaded = true;
-      if (!clients) {
-        this.arrItems = [];
-        this.nTotalClienteCount = 0;
-        this.catalogError = true;
-        this.updatePageCatalog();
-        return;
-      }
-
-      const responseClients = clients.oClient as unknown;
-      const clientes = Array.isArray(responseClients) ? responseClients as Cliente[] : [];
-      this.oData = clientes;
-      this.arrItems = [...clientes];
-      this.nTotalClienteCount = this.arrItems.length;
-      this.updateLocationLinks();
-      this.updatePageCatalog();
-
-      if (isBrowser && this.arrItems.length > 0) {
-        this.methodservice.delItenLocalStorage("cl.paramours.arrItems");
-        this.methodservice.setItemLocalStorage("cl.paramours.arrItems", JSON.stringify(this.arrItems));
-      }
-    });
-
     forkJoin({
-      ciudades: this.api.getCiudades(),
-      comunas: this.api.getComunas(),
-      metros: this.api.getMetros()
-    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: ({ ciudades, comunas, metros }) => {
-        this.locationsLoaded = true;
-        this.oCiudades = ciudades;
-        this.oComunas = comunas;
-        this.oMetros = metros;
-        this.updatePageCatalog();
+      clients: this.publicData.catalog(),
+      ciudades: this.api.getCiudades().pipe(timeout(6000)),
+      comunas: this.api.getComunas().pipe(timeout(6000)),
+      metros: this.api.getMetros().pipe(timeout(6000))
+    }).pipe(map(data => {
+      if (![data.ciudades, data.comunas, data.metros].every(Array.isArray)) throw new Error('Invalid location catalog');
+      return data;
+    }), takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: ({ clients, ciudades, comunas, metros }) => {
+        if (clients === null) { this.markUnavailable(); return; }
+        this.clientsLoaded = this.locationsLoaded = true;
+        this.oCiudades = ciudades; this.oComunas = comunas; this.oMetros = metros;
+        this.oData = clients;
+        this.arrItems = [...clients];
+        this.nTotalClienteCount = clients.length;
+        if (this.seoPage) this.updatePageCatalog();
+        else this.seoService.setHomeSeo();
         this.updateLocationLinks();
+        if (isBrowser && this.arrItems.length > 0) {
+          this.methodservice.setItemLocalStorage('cl.paramours.arrItems', JSON.stringify(this.arrItems));
+        }
       },
-      error: () => {
-        this.catalogError = true;
-        this.locationsLoaded = true;
-        this.updatePageCatalog();
-        this.toastService.error('No fue posible cargar las ubicaciones.');
-      }
+      error: () => this.markUnavailable()
     });
+    if (isBrowser && !this.seoPage) this.scheduleStoriesLoad();
+  }
 
-    if (isBrowser && !this.seoPage) {
-      this.scheduleStoriesLoad();
-    }
+  private markUnavailable(): void {
+    this.catalogError = true;
+    this.ssrResponse.setUnavailable();
+    this.seoService.setUnavailableSeo();
   }
 
   private updatePageCatalog(): void {
@@ -248,7 +228,16 @@ export class Home implements OnInit {
   }
 
   private scheduleStoriesLoad(): void {
-    const scheduleRequest = () => window.setTimeout(() => this.getStories(), 250);
+    let timer: number | undefined;
+    const scheduleRequest = () => {
+      timer = window.setTimeout(() => {
+        if (!this.destroyRef.destroyed) this.getStories();
+      }, 250);
+    };
+    this.destroyRef.onDestroy(() => {
+      if (timer !== undefined) window.clearTimeout(timer);
+      window.removeEventListener('load', scheduleRequest);
+    });
 
     if (document.readyState === 'complete') {
       scheduleRequest();

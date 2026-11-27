@@ -3,7 +3,8 @@ import type { ResponseClient } from './response.interface';
 export interface ProfileRequestContext {
   profileLookup?: {
     requestedId: number;
-    response: ResponseClient;
+    response?: ResponseClient;
+    unavailable?: boolean;
   };
 }
 
@@ -14,5 +15,5 @@ export function getProfileResponseFromRequestContext(
   if (!context || typeof context !== 'object' || requestedId === null) return null;
 
   const lookup = (context as ProfileRequestContext).profileLookup;
-  return lookup?.requestedId === requestedId ? lookup.response : null;
+  return lookup?.requestedId === requestedId ? lookup.response ?? null : null;
 }

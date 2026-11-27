@@ -1,7 +1,7 @@
 import { AnalyticsService } from './../service/analytics.service';
 import { WebVisitService } from '../service/web-visit.service';
 import { ActiveProfile, Cliente, ImageProfile, UidUser, Valoracion } from './../models/models.interface';
-import { afterNextRender, Component, Inject, OnInit, PLATFORM_ID, REQUEST_CONTEXT, ViewChild } from '@angular/core';
+import { afterNextRender, Component, DestroyRef, inject, Inject, OnInit, PLATFORM_ID, REQUEST_CONTEXT, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiServices } from '../api/api.service';
 import { ResponseClient, ResponseMediaFiles } from '../models/response.interface';
@@ -18,8 +18,10 @@ import { StoryManager } from '../story-manager/story-manager';
 import { SeoService } from '../service/seo.service';
 import { SsrResponseService } from '../service/ssr-response.service';
 import { Pagenotfound } from '../pagenotfound/pagenotfound';
-import { getProfileResponseFromRequestContext } from '../models/profile-request-context';
-import { catchError, forkJoin, of } from 'rxjs';
+import { catchError, distinctUntilChanged, forkJoin, map, Observable, of, Subject, switchMap, takeUntil, timeout } from 'rxjs';
+import { ProfileLookup } from '../models/public-page-data';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { PublicPageDataService } from '../service/public-page-data.service';
 
 interface Files {
   mFile: File
@@ -34,6 +36,10 @@ type ProfileViewState = 'loading' | 'ready' | 'inactive' | 'error' | 'not-found'
   styleUrl: './profile.css'
 })
 export class Profile implements OnInit {
+
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly publicData = inject(PublicPageDataService);
+  private readonly identityChanges = new Subject<void>();
 
   @ViewChild(Stories) private storiesComponent?: Stories;
 
@@ -136,6 +142,8 @@ export class Profile implements OnInit {
     estado: ''
   }
 
+  private readonly emptyProfile = { ...this.oCliente };
+
   constructor(
     private router: Router,
     private activateroute: ActivatedRoute,
@@ -160,168 +168,110 @@ export class Profile implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.isAdministrator = this.methodservice.getItemLocalStorage('cl.paramours.typeuser') === '0';
-
-    this.activateroute.paramMap.subscribe({
-      next: (params) => {
-        let sUid = params.get('sUid');
-        if (sUid != null && sUid != '') {
-          this.uIdUser.sUid = parseInt(sUid);
-          this.analyticsService.trackEvent('view_profile', {
-            profile_slug: params.get('sLug')
-          });
-
-        } else {
-          if ((this.uIdUser.sUid == 0) && (this.methodservice.getItemLocalStorage('cl.paramours.sUid') != null && this.methodservice.getItemLocalStorage('cl.paramours.sUid') != ''))
-            this.uIdUser.sUid = parseInt(this.methodservice.getItemLocalStorage('cl.paramours.sUid'));
-        }
-
-        if (this.uIdUser.sUid && this.uIdUser.sUid !== 0) {
-          this.LoadProfile();
-
-          this.methodservice.tInProcess.subscribe((data: string) => {
-            if (data === 'P') {
-              this.bHiddenProfileValided = true;
-              this.isProfileActive = false;
-              this.oCliente.estado = 'P';
-            }
-          });
-
-
-        } else {
-          this.toastService.error('1.Usuario no encontrado!');
-          this.router.navigate(['/404']);
-        }
-      },
-      error: (err) => {
-        console.error('2. Error al obtener parámetros de la ruta: ', err);
-        this.toastService.error('Error al cargar el perfil!');
-        this.router.navigate(['/404']);
+    this.methodservice.tInProcess.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((data: string) => {
+      if (data === 'P') {
+        this.bHiddenProfileValided = true;
+        this.isProfileActive = false;
+        this.oCliente.estado = 'P';
       }
+    });
 
+    this.activateroute.paramMap.pipe(
+      map(params => {
+        const rawId = params.get('sUid') || this.methodservice.getItemLocalStorage('cl.paramours.sUid');
+        const id = /^\d+$/.test(rawId || '') ? Number(rawId) : 0;
+        this.analyticsService.trackEvent('view_profile', { profile_slug: params.get('sLug') });
+        return Number.isSafeInteger(id) && id > 0 ? id : 0;
+      }),
+      distinctUntilChanged(),
+      switchMap(id => {
+        this.resetProfile(id);
+        const profile$: Observable<ProfileLookup> = id ? this.publicData.profile(id, this.requestContext,
+          this.isAdministrator || String(id) === this.methodservice.getItemLocalStorage('cl.paramours.sUid')) : of({ kind: 'missing' } as const);
+        return profile$.pipe(
+          switchMap(profile => profile.kind !== 'found'
+            ? of({ id, profile, ciudades: [], comunas: [], metros: [] })
+            : forkJoin({
+              profile: of(profile),
+              ciudades: this.api.getCiudades().pipe(timeout(6000)),
+              comunas: this.api.getComunas().pipe(timeout(6000)),
+              metros: this.api.getMetros().pipe(timeout(6000))
+            }).pipe(map(data => {
+              if (![data.ciudades, data.comunas, data.metros].every(Array.isArray)) throw new Error('Invalid location catalog');
+              return { ...data, id };
+            }))),
+          catchError(() => of({ id, profile: { kind: 'unavailable' } as const, ciudades: [], comunas: [], metros: [] }))
+        );
+      }),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(({ id, profile, ciudades, comunas, metros }) => {
+      if (id !== this.uIdUser.sUid) return;
+      if (profile.kind === 'missing') { this.markProfileNotFound(); return; }
+      if (profile.kind === 'unavailable') {
+        this.isProfileLoaded = true;
+        this.profileViewState = 'error';
+        this.ssrResponse.setUnavailable();
+        this.seoService.setUnavailableSeo();
+        return;
+      }
+      if (Number(profile.profile.iD_USUARIO) !== id) return;
+      this.oCliente = profile.profile;
+      this.oCiudades = ciudades;
+      this.oComunas = comunas;
+      this.oMetros = metros;
+      const ownId = this.methodservice.getItemLocalStorage('cl.paramours.sUid');
+      const ownType = this.methodservice.getItemLocalStorage('cl.paramours.typeuser');
+      this.isOwner = !(ownId === String(id) && ownType === '2');
+      this.isProfileUser = ownId === String(id) && ownType === '3';
+      this.proFileImg = this.oCliente.fotO_PERFIL
+        ? this.sUrlRps + this.oCliente.fotO_PERFIL
+        : this.sUrlRps + (this.oCliente.tipo === '2' ? 'avatar_anunciante.png' : 'avatar_visitante.png');
+      this.isProfileActive = this.oCliente.estado === 'V';
+      this.bHiddenProfileValided = !['V', 'N'].includes(this.oCliente.estado);
+      if (this.oCliente.horariO_ATENCION != null && this.oCliente.horariO_ATENCION.toString() !== '') {
+        this.hAtencion = this.oCliente.horariO_ATENCION === 0 ? 'Full Time' : 'Part Time';
+      }
+      this.isProfileLoaded = true;
+      this.resolveReferenceDetails();
+      if (this.isOwner && !this.isAdministrator && !this.isProfileActive) {
+        this.profileViewState = 'inactive';
+        this.seoService.setInactiveProfileSeo(this.buildProfileUrl());
+        return;
+      }
+      this.profileViewState = 'ready';
+      this.updateLocationDetailsAndSeo();
+      this.loadInitialReviewSummaryAfterHydration();
+      this.loadInitialGalleryAfterHydration();
+      this.loadReferenceCatalogsAfterHydration();
     });
   }
 
-  LoadProfile() {
+  private resetProfile(id: number): void {
+    this.identityChanges.next();
+    this.uIdUser = { sUid: id };
+    this.oCliente = { ...this.emptyProfile };
+    this.isOwner = true;
+    this.isProfileUser = false;
+    this.isProfileActive = false;
+    this.isProfileBlocked = false;
+    this.bHiddenProfileValided = true;
     this.isProfileLoaded = false;
     this.profileViewState = 'loading';
-
-    this.api.getCiudades().subscribe(data => {
-      this.oCiudades = data;
-      this.updateLocationDetailsAndSeo();
-    });
-
-    this.api.getComunas().subscribe(data => {
-      this.oComunas = data;
-      this.updateLocationDetailsAndSeo();
-    });
-
-    this.api.getMetros().subscribe(data => {
-      this.oMetros = data;
-      this.updateLocationDetailsAndSeo();
-    });
-
-    const requestProfile = getProfileResponseFromRequestContext(
-      this.requestContext,
-      this.uIdUser.sUid
-    );
-    const profileResponse = requestProfile
-      ? of(requestProfile)
-      : this.api.getClientById(this.uIdUser);
-
-    profileResponse.subscribe({
-      next: (data: ResponseClient) => {
-        if (data.ncoderror == '0') {
-          this.oCliente = data.oClient;
-
-          if (((this.methodservice.getItemLocalStorage("cl.paramours.sUid") != null) && (this.methodservice.getItemLocalStorage("cl.paramours.sUid") != '')) && (this.methodservice.getItemLocalStorage('cl.paramours.sUid') == this.oCliente.iD_USUARIO.toString())) {
-            if (this.methodservice.getItemLocalStorage("cl.paramours.typeuser") === "2")
-              this.isOwner = false;
-
-            if (this.methodservice.getItemLocalStorage("cl.paramours.typeuser") === "3") {
-              this.isProfileUser = true;
-            }
-            //this.methodservice.tShowMenu.emit(true);
-          }
-
-          if ((this.oCliente.fotO_PERFIL != null) && (this.oCliente.fotO_PERFIL != ''))
-            this.proFileImg = this.sUrlRps + this.oCliente.fotO_PERFIL;
-          else {
-            if (this.oCliente.tipo === '2')
-              this.proFileImg = this.sUrlRps + 'avatar_anunciante.png';
-            else
-              this.proFileImg = this.sUrlRps + 'avatar_visitante.png';
-          }
-
-          if (this.oCliente.ciudad != null && this.oCliente.ciudad.toString() != '')
-            this.ciudad = this.oCiudades.filter(e => e.id.toString() === this.oCliente.ciudad.toString()).map(e => e.nombre);
-
-          if (this.oCliente.ciudad?.toString() === '0' && this.oCliente.comuna != null && this.oCliente.comuna.toString() != '')
-            this.comuna = this.oComunas.filter(e => e.id.toString() === this.oCliente.comuna.toString()).map(e => e.nombre);
-          else
-            this.comuna = [];
-
-          if (this.oCliente.metro != null && this.oCliente.metro.toString() != '')
-            this.metro = this.oMetros.filter(e => e.idComuna.toString() === this.oCliente.comuna.toString() && e.idMetro.toString() === this.oCliente.metro.toString()).map(e => e.NombreMetro);
-
-
-          if (this.oCliente.horariO_ATENCION != null && this.oCliente.horariO_ATENCION.toString() != '')
-            this.hAtencion = (this.oCliente.horariO_ATENCION === 0 ? 'Full Time' : 'Part Time');
-
-          switch (this.oCliente.estado) {
-            case 'V':
-              this.bHiddenProfileValided = false;
-              this.isProfileActive = true;
-              break;
-            case 'N':
-              this.bHiddenProfileValided = false;
-              this.isProfileActive = false;
-              break;
-            case 'P':
-              this.bHiddenProfileValided = true;
-              this.isProfileActive = false;
-              break;
-          }
-          this.isProfileLoaded = true;
-
-          if (this.isOwner && !this.isAdministrator && this.oCliente.estado !== 'V') {
-            this.profileViewState = 'inactive';
-            this.seoService.setInactiveProfileSeo(this.buildProfileUrl());
-            return;
-          }
-
-          this.profileViewState = 'ready';
-          this.updateLocationDetailsAndSeo();
-          this.seoService.setProfileSeo(
-            this.oCliente,
-            this.buildProfileUrl(),
-            this.getPublicProfileImageUrl(),
-            this.locationDirectoryName,
-        this.locationDirectoryUrl
-          );
-
-          this.loadInitialReviewSummaryAfterHydration();
-          this.loadInitialGalleryAfterHydration();
-          this.loadReferenceCatalogsAfterHydration();
-
-        } else {
-          this.markProfileNotFound();
-          this.toastService.error('Perfil no encontrado!');
-        }
-      },
-      error: (err: HttpErrorResponse) => {
-        this.isProfileLoaded = true;
-        if (err.status === 404) {
-          this.markProfileNotFound();
-          return;
-        }
-        this.profileViewState = 'error';
-        this.toastService.error('Error en cargar el perfil!');
-      }
-
-    });
-
+    this.proFileImg = null;
+    this.locationDirectoryName = '';
+    this.locationDirectoryUrl = '';
+    this.ciudad = []; this.comuna = []; this.metro = [];
+    this.nacionalidad = []; this.genero = []; this.colorojo = [];
+    this.colorcabello = []; this.biotipo = [];
+    this.hAtencion = '';
+    this.iReviewCount = 0; this.dValReview = undefined;
+    this.oValoracion = { ...this.oValoracion, iD_USUARIO: 0, valoracion: '' };
+    this.initialGalleryProfileId = null;
+    this.initialReviewSummaryProfileId = null;
+    this.reviewSummaryLoadingProfileId = null;
+    this.mostrarModal = false;
+    this.methodservice.tMediaFiles.emit([]);
   }
 
   private markProfileNotFound(): void {
@@ -333,8 +283,7 @@ export class Profile implements OnInit {
 
   get profileHeading(): string {
     const profileName = this.oCliente.nombrE_USUARIO?.trim() || 'Perfil';
-    const serviceName = this.genero[0]
-      || (this.oCliente.genero?.toString() === '0' ? 'Masajista' : 'Escort');
+    const serviceName = this.oCliente.genero?.toString() === '0' ? 'Masajista' : 'Escort';
     return `${profileName}, ${serviceName} en ${this.locationDirectoryName || 'Santiago'}`;
   }
 
@@ -353,7 +302,7 @@ export class Profile implements OnInit {
 
   private loadInitialReviewSummaryAfterHydration(): void {
     const profileId = this.uIdUser.sUid;
-    if (!this.browserHydrated || !this.isProfileLoaded || !profileId || this.initialReviewSummaryProfileId === profileId) {
+    if (!this.browserHydrated || !this.isProfileLoaded || !profileId || this.initialReviewSummaryProfileId === profileId || this.profileViewState !== 'ready') {
       return;
     }
 
@@ -376,7 +325,7 @@ export class Profile implements OnInit {
     forkJoin({
       count: this.api.GetCountReviewByUser(profileRequest).pipe(catchError(() => of(null))),
       rating: this.api.GetValReviewById(profileRequest).pipe(catchError(() => of(null)))
-    }).subscribe({
+    }).pipe(takeUntil(this.identityChanges), takeUntilDestroyed(this.destroyRef)).subscribe({
       next: ({ count, rating }) => {
         if (this.uIdUser.sUid !== profileId) {
           this.clearReviewSummaryLoading(profileId);
@@ -414,7 +363,9 @@ export class Profile implements OnInit {
       this.ActiveProfileFrm.estado = 'N';
     }
 
-    this.api.ActiveProfile(this.ActiveProfileFrm).subscribe({
+    this.api.ActiveProfile(this.ActiveProfileFrm).pipe(
+      takeUntil(this.identityChanges), takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
       next: (data: ResponseClient) => {
         if (!this.isProfileActive) {
           this.isProfileActive = true;
@@ -444,7 +395,7 @@ export class Profile implements OnInit {
       colorOjos: this.api.getColorOjos().pipe(catchError(() => of([]))),
       colorCabello: this.api.getColorCabello().pipe(catchError(() => of([]))),
       biotipos: this.api.getBiotipo().pipe(catchError(() => of([])))
-    }).subscribe({
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: ({ nacionalidades, generos, colorOjos, colorCabello, biotipos }) => {
         this.oNacionalidades = nacionalidades as Array<any>;
         this.oGeneros = generos as Array<any>;
@@ -479,7 +430,7 @@ export class Profile implements OnInit {
       .map(item => item[field]);
   }
   private loadInitialGalleryAfterHydration(): void {
-    if (!this.browserHydrated || !this.isProfileLoaded || this.initialGalleryProfileId === this.uIdUser.sUid) {
+    if (!this.browserHydrated || !this.isProfileLoaded || this.initialGalleryProfileId === this.uIdUser.sUid || this.profileViewState !== 'ready') {
       return;
     }
 
@@ -492,8 +443,12 @@ export class Profile implements OnInit {
       return;
     }
 
-    this.api.getMediaFiles(this.uIdUser).subscribe({
+    const profileId = this.uIdUser.sUid;
+    this.api.getMediaFiles({ sUid: profileId }).pipe(
+      takeUntil(this.identityChanges), takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
       next: (data: ResponseMediaFiles) => {
+        if (this.uIdUser.sUid !== profileId || this.profileViewState !== 'ready') return;
         this.methodservice.tMediaFiles.emit(data.oMediaFiles);
       },
       error: err => {
@@ -522,7 +477,9 @@ export class Profile implements OnInit {
         frmData.append('Achivos', file, file.name);
         //frmData.append('Achivos', mediaFiles.mFile);
 
-        this.api.updateLoadMediaFiles(frmData).subscribe({
+        this.api.updateLoadMediaFiles(frmData).pipe(
+          takeUntil(this.identityChanges), takeUntilDestroyed(this.destroyRef)
+        ).subscribe({
           next: data => {
             this.getMediaFiles();
           },
@@ -624,8 +581,12 @@ export class Profile implements OnInit {
         const frmData = new FormData();
         frmData.append('foto', imageProfile.photoprofile);
         target.value = '';
-        this.api.updateLoadPhotoProfile(frmData).subscribe({
+        const profileId = this.uIdUser.sUid;
+        this.api.updateLoadPhotoProfile(frmData).pipe(
+          takeUntil(this.identityChanges), takeUntilDestroyed(this.destroyRef)
+        ).subscribe({
           next: data => {
+            if (this.uIdUser.sUid !== profileId || Number(data.oClient?.iD_USUARIO) !== profileId) return;
             this.oCliente = data.oClient;
             this.proFileImg = this.sUrlRps + this.oCliente.fotO_PERFIL;
           },

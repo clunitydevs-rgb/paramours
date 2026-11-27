@@ -44,7 +44,11 @@ export class App implements OnInit {
         filter((event): event is NavigationStart => event instanceof NavigationStart),
         takeUntilDestroyed()
       )
-      .subscribe(() => this.seoService.clearRouteSeo());
+      .subscribe(event => {
+        // The first navigation hydrates valid SSR metadata. Later navigations
+        // must not keep metadata belonging to the previous URL while loading.
+        if (this.router.navigated) this.seoService.prepareRouteNavigation(this.router.url, event.url);
+      });
 
     this.router.events
       .pipe(

@@ -33,6 +33,18 @@ function anchors(html) {
   }));
 }
 
+function locationAnchors(html, cities, communes) {
+  const cityByPath = new Map(cities.map(city => [`/escort-${city.slug}`, city]));
+  const communeByPath = new Map(communes.map(commune => [`/escort-${commune.slug}`, commune]));
+  return anchors(html).flatMap(anchor => {
+    // Match the directory's precedence: a known commune is resolved before a city.
+    const commune = communeByPath.get(anchor.href);
+    if (commune) return [{ ...anchor, kind: 'commune', location: commune }];
+    const city = cityByPath.get(anchor.href);
+    return city ? [{ ...anchor, kind: 'city', location: city }] : [];
+  }).sort((left, right) => left.href.localeCompare(right.href, 'en'));
+}
+
 function profileImages(html) {
   return Array.from(html.matchAll(/<img\b[^>]*>/gi), match => match[0])
     .filter(image => /class="[^"]*\bimage-show\b[^"]*"/i.test(image));
@@ -178,10 +190,20 @@ test('Providencia directory SSR prioritizes only its first profile image', async
 });
 
 test('an active commune exposes complete on-page SEO and crawlable profile anchors in SSR', async () => {
-  const homeHtml = await request('/').then(response => response.text());
-  const communeAnchor = anchors(homeHtml).find(anchor => anchor.href.startsWith('/escort-') && anchor.href !== '/escort-santiago');
+  const [homeHtml, citiesJson, communesJson] = await Promise.all([
+    request('/').then(response => response.text()),
+    readFile('public/assets/data/ciudades.json', 'utf8'),
+    readFile('public/assets/data/comunas.json', 'utf8')
+  ]);
+  const cities = JSON.parse(citiesJson);
+  const communes = JSON.parse(communesJson);
+  const santiago = cities.find(city => city.slug === 'santiago');
+  assert.ok(santiago, 'Santiago must exist in the city catalog');
+  const communeAnchor = locationAnchors(homeHtml, cities, communes).find(anchor =>
+    anchor.kind === 'commune' && String(anchor.location.id_ciudad) === String(santiago.id));
   assert.ok(communeAnchor);
-  const communeName = communeAnchor.text.replace(/^Escorts en /, '');
+  const communeName = communeAnchor.location.nombre;
+  assert.equal(communeAnchor.text, `Escorts en ${communeName}`);
 
   const response = await request(communeAnchor.href);
   const directoryHtml = await response.text();
@@ -230,6 +252,30 @@ test('an active commune exposes complete on-page SEO and crawlable profile ancho
   const profileAnchors = anchors(directoryHtml).filter(anchor => anchor.href.startsWith('/profile/'));
   assert.ok(profileAnchors.length > 0);
   assert.ok(profileAnchors.every(anchor => /^\/profile\/\d+\/[^/]+$/.test(anchor.href)));
+});
+
+test('city and commune selection is explicit and independent of API or anchor order', () => {
+  const cities = [{ id: 0, nombre: 'Santiago', slug: 'santiago' }, { id: 5, nombre: 'Caldera', slug: 'caldera' }];
+  const communes = [{ id: 1, id_ciudad: 0, nombre: 'Providencia', slug: 'providencia' },
+    { id: 0, id_ciudad: 0, nombre: 'Las Condes', slug: 'las-condes' }];
+  const links = ['<a href="/escort-caldera">Escorts en Caldera</a>',
+    '<a href="/escort-providencia">Escorts en Providencia</a>',
+    '<a href="/escort-las-condes">Escorts en Las Condes</a>'];
+  const selected = locationAnchors(links.join(''), cities, communes);
+  assert.deepEqual(selected, locationAnchors([...links].reverse().join(''), [...cities].reverse(), [...communes].reverse()));
+  assert.equal(selected.find(anchor => anchor.href === '/escort-caldera').kind, 'city');
+  assert.deepEqual(selected.filter(anchor => anchor.kind === 'commune').map(anchor => anchor.href),
+    ['/escort-las-condes', '/escort-providencia']);
+});
+
+test('Caldera retains city metadata rather than a Santiago commune title', async () => {
+  const response = await request('/escort-caldera');
+  const html = await response.text();
+  assert.equal(response.status, 200);
+  assert.match(html, /<title>Escorts en Caldera \| Perfiles verificados \| Paramours<\/title>/);
+  assert.doesNotMatch(html, /<title>[^<]*Caldera, Santiago/);
+  assert.match(html, /rel="canonical" href="https:\/\/paramours.cl\/escort-caldera"/);
+  assert.match(html, /<h1[^>]*>Escorts en Caldera<\/h1>/);
 });
 
 test('a valid empty commune stays 200/noindex and outside the sitemap', async () => {

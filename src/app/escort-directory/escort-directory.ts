@@ -1,7 +1,8 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { catchError, forkJoin, of, timeout } from 'rxjs';
+import { catchError, forkJoin, map, of, Subject, takeUntil, timeout } from 'rxjs';
+import { PublicPageDataService } from '../service/public-page-data.service';
 import { ApiServices } from '../api/api.service';
 import { Cliente } from '../models/models.interface';
 import { LocationSeoService } from '../service/location-seo.service';
@@ -76,7 +77,9 @@ const LOCAL_CONTENT: Record<string, LocalContent> = {
   templateUrl: './escort-directory.html',
   styleUrls: ['../home/home.css', './escort-directory.css']
 })
-export class EscortDirectory implements OnInit {
+export class EscortDirectory implements OnInit, OnDestroy {
+  private readonly destroyed = new Subject<void>();
+  private readonly locationChanges = new Subject<void>();
   readonly sUrlRps = 'https://paramoursfilesblobazure.blob.core.windows.net/rpsfilescontainer/';
   readonly proFileImg = `${this.sUrlRps}avatar_anunciante.png`;
   relatedLocations: Array<{ label: string; url: string }> = [];
@@ -100,17 +103,25 @@ export class EscortDirectory implements OnInit {
     private globalSeoService: SeoService,
     private ssrResponse: SsrResponseService,
     private methodService: MethodService,
-    @Inject(PLATFORM_ID) private platformId: object
+    @Inject(PLATFORM_ID) private platformId: object,
+    private publicData: PublicPageDataService
   ) { }
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.pipe(takeUntil(this.destroyed)).subscribe(params => {
       this.slug = params.get('slug') ?? '';
       this.loadLocation();
     });
   }
 
+  ngOnDestroy(): void {
+    this.destroyed.next();
+    this.destroyed.complete();
+    this.locationChanges.complete();
+  }
+
   private loadLocation(): void {
+    this.locationChanges.next();
     this.loading = true;
     this.loadError = false;
     this.notFound = false;
@@ -120,11 +131,14 @@ export class EscortDirectory implements OnInit {
     this.content = null;
 
     forkJoin({
-      clients: this.api.getClients().pipe(timeout(6000), catchError(() => of(null))),
-      ciudades: this.api.getCiudades(),
-      comunas: this.api.getComunas(),
-      metros: this.api.getMetros()
-    }).subscribe({
+      clients: this.publicData.catalog(),
+      ciudades: this.api.getCiudades().pipe(timeout(6000)),
+      comunas: this.api.getComunas().pipe(timeout(6000)),
+      metros: this.api.getMetros().pipe(timeout(6000))
+    }).pipe(map(data => {
+      if (![data.ciudades, data.comunas, data.metros].every(Array.isArray)) throw new Error('Invalid location catalog');
+      return data;
+    }), takeUntil(this.locationChanges), takeUntil(this.destroyed)).subscribe({
       next: ({ clients, ciudades, comunas, metros }) => {
         const city = (ciudades as LocationItem[]).find(item => item.slug === this.slug);
         const commune = (comunas as LocationItem[]).find(item => item.slug === this.slug);
@@ -154,12 +168,12 @@ export class EscortDirectory implements OnInit {
         if (!clients) {
           this.loadError = true;
           this.loading = false;
-          this.updateSeo();
+          this.ssrResponse.setUnavailable();
+          this.globalSeoService.setUnavailableSeo();
           return;
         }
 
-        const responseClients = clients.oClient as unknown;
-        const allProfiles = Array.isArray(responseClients) ? responseClients as Cliente[] : [];
+        const allProfiles = clients;
         this.profiles = allProfiles.filter(profile => this.matchesLocation(profile));
         this.loadLocationStories();
         this.relatedLocations = this.buildRelatedLocations(comunas as LocationItem[], allProfiles);
@@ -169,7 +183,8 @@ export class EscortDirectory implements OnInit {
       error: () => {
         this.loadError = true;
         this.loading = false;
-        this.updateSeo();
+        this.ssrResponse.setUnavailable();
+        this.globalSeoService.setUnavailableSeo();
       }
     });
   }
@@ -229,6 +244,7 @@ export class EscortDirectory implements OnInit {
     const profileIds = new Set(this.profiles.map(profile => profile.iD_USUARIO.toString()));
 
     this.api.GetAllActiveStoriesUser().pipe(
+      takeUntil(this.locationChanges), takeUntil(this.destroyed),
       timeout(6000),
       catchError(() => of({ oStories: [], message: '', ncoderror: '' } as rStoriesHome))
     ).subscribe(response => {

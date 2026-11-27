@@ -15,7 +15,7 @@
                 </ng-template>
             </div>
 
-            <p *ngIf="seoPage && catalogError" role="status">El catálogo no está disponible temporalmente. Intenta nuevamente más tarde.</p>
+            <p *ngIf="catalogError" role="status">El catálogo no está disponible temporalmente. Intenta nuevamente más tarde.</p>
             <p *ngIf="seoPage && !catalogError && arrItems.length === 0" role="status">No hay perfiles disponibles en esta selección.</p>
             <h2 id="available-profiles-title">Escorts disponibles</h2>
 

@@ -2,6 +2,7 @@
 
 # Compiled output
 /dist
+/.audit-tmp/
 /tmp
 /out-tsc
 /bazel-out

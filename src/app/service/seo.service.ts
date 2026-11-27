@@ -1,4 +1,4 @@
-import { SeoPageConfig } from '../seo-pages/seo-pages.config';
+import { findSeoPage, SeoPageConfig } from '../seo-pages/seo-pages.config';
 import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
@@ -27,6 +27,28 @@ export class SeoService {
     this.document.querySelectorAll('meta[name^="twitter:"]').forEach(tag => tag.remove());
     this.document.querySelectorAll('link[rel="canonical"]').forEach(link => link.remove());
     this.document.querySelectorAll('script[type="application/ld+json"]').forEach(script => script.remove());
+  }
+
+  clearPendingRouteSeo(): void {
+    this.clearRouteSeo();
+    this.title.setTitle('');
+  }
+
+  prepareRouteNavigation(from: string, to: string): void {
+    const identity = (url: string) => {
+      const path = this.normalizePath(url);
+      const profile = /^\/profile\/(\d+)(?:\/[^/]*)?$/.exec(path);
+      if (profile) return `profile:${Number(profile[1])}`;
+      const page = findSeoPage(path);
+      if (page) return `seo:${page.path}`;
+      return /^\/escort-[a-z0-9-]+$/i.test(path) ? path.toLowerCase() : path;
+    };
+    if (identity(from) !== identity(to)) this.clearPendingRouteSeo();
+  }
+
+  setUnavailableSeo(): void {
+    // No invented resource identity, canonical or noindex on a transient failure.
+    this.clearPendingRouteSeo();
   }
 
   applyStaticRouteSeo(url: string): void {

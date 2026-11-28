@@ -25,7 +25,7 @@ describe('Phase 1 profile route identity and cancellation', () => {
   const response = (id: number) => ({ ncoderror: '0', oClient: {
     iD_USUARIO: id, nombrE_USUARIO: names[id], slug: `Escort-${names[id]}`,
     genero: [25, 88].includes(id) ? 0 : 1, estado: 'V', tipo: '2', ciudad: 0,
-    comuna: 1, metro: 0, descripcion: `Description ${names[id]}`, fotO_PERFIL: `${id}.jpg`
+    comuna: 1, metro: 0, descripcion: `Descripción publicada exclusivamente por ${names[id]} con contexto individual.`, fotO_PERFIL: `${id}.jpg`
   } });
   beforeEach(async () => {
     requests = []; media = [];
@@ -40,7 +40,7 @@ describe('Phase 1 profile route identity and cancellation', () => {
       }),
       getClients: () => of({ ncoderror: '0', oClient: [] }),
       getCiudades: () => of([{ id: 0, nombre: 'Santiago', slug: 'santiago' }]),
-      getComunas: () => of([{ id: 1, nombre: 'Providencia', slug: 'providencia' }]),
+      getComunas: () => of([{ id: 1, nombre: 'Providencia', slug: 'providencia', id_ciudad: 0 }]),
       getMetros: () => of([]), getNaciones: () => of([]),
       getGeneros: () => of([{ id: 0, nombre: 'Masajista' }, { id: 1, nombre: 'Escort' }]),
       getColorOjos: () => of([]), getColorCabello: () => of([]), getBiotipo: () => of([]),
@@ -77,6 +77,10 @@ describe('Phase 1 profile route identity and cancellation', () => {
     expect(fixture.nativeElement.querySelector('h1')?.textContent).toContain(names[id]);
     expect(TestBed.inject(Title).getTitle()).toContain(names[id]);
     expect(TestBed.inject(Meta).getTag('name="description"')?.content).toContain(names[id]);
+    expect(TestBed.inject(Meta).getTag('name="description"')?.content).toContain(`exclusivamente por ${names[id]}`);
+    expect(TestBed.inject(Title).getTitle()).toContain([25, 88].includes(id) ? 'Masajista' : 'Escort');
+    expect(TestBed.inject(Meta).getTag('property="og:description"')?.content)
+      .toBe(TestBed.inject(Meta).getTag('name="description"')?.content);
     expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(`https://paramours.cl${path(id)}`);
     expect(TestBed.inject(Meta).getTag('property="og:url"')?.content).toBe(`https://paramours.cl${path(id)}`);
     expect(document.getElementById('profile-schema')?.textContent).toContain(names[id]);
@@ -148,7 +152,7 @@ describe('Phase 1 profile route identity and cancellation', () => {
     expect(requests.length).toBe(1);
     const data = response(58); data.oClient.estado = 'N';
     requests[0].subscriber.next(data); requests[0].subscriber.complete(); fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('p')?.textContent).toBe('Description Agatha');
+    expect(fixture.nativeElement.querySelector('p')?.textContent).toBe(response(58).oClient.descripcion);
     assertProfile(58);
   });
 

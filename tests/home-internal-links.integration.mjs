@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
+import { decodeHTML } from 'entities';
 
 const port = 4324;
 const origin = `http://127.0.0.1:${port}`;
@@ -293,11 +294,16 @@ test('a valid empty commune stays 200/noindex and outside the sitemap', async ()
   assert.match(html, /<meta name="robots" content="noindex, follow"/i);
   assert.doesNotMatch(sitemapXml, new RegExp(`<loc>https://paramours\\.cl/escort-${emptyCommune.slug}</loc>`));
 });
-test('an active public profile exposes complete on-page SEO and its commune link in SSR', async () => {
+test('an active public profile exposes individual SEO and its verified commune link in SSR', async () => {
   const homeHtml = await request('/').then(response => response.text());
-  const communeAnchor = anchors(homeHtml).find(anchor => anchor.href.startsWith('/escort-') && anchor.href !== '/escort-santiago');
+  const cities = JSON.parse(await readFile('public/assets/data/ciudades.json', 'utf8'));
+  const communes = JSON.parse(await readFile('public/assets/data/comunas.json', 'utf8'));
+  const communeAnchor = locationAnchors(homeHtml, cities, communes).find(anchor => anchor.kind === 'commune');
   assert.ok(communeAnchor);
   const communeName = communeAnchor.text.replace(/^Escorts en /, '');
+  const parentCity = cities.find(city => String(city.id) === String(communeAnchor.location.id_ciudad));
+  assert.ok(parentCity);
+  const location = `${communeName}, ${parentCity.nombre}`;
   const directoryHtml = await request(communeAnchor.href).then(response => response.text());
   const profileHref = anchors(directoryHtml).find(anchor => anchor.href.startsWith('/profile/'))?.href;
   assert.ok(profileHref);
@@ -305,22 +311,26 @@ test('an active public profile exposes complete on-page SEO and its commune link
   const response = await request(profileHref);
   const html = await response.text();
   const title = html.match(/<title>([^<]+)<\/title>/i)?.[1];
-  const description = html.match(/<meta name="description" content="([^"]+)"/i)?.[1];
+  const description = decodeHTML(html.match(/<meta name="description" content="([^"]+)"/i)?.[1] || '');
   const canonical = html.match(/<link rel="canonical" href="([^"]+)"/i)?.[1];
   const robots = html.match(/<meta name="robots" content="([^"]+)"/i)?.[1];
   const h1s = Array.from(html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi), match => match[1].replace(/<[^>]+>/g, '').trim());
   const schema = JSON.parse(html.match(/<script id="profile-schema" type="application\/ld\+json">([\s\S]*?)<\/script>/i)?.[1] ?? '{}');
   const profileName = schema.mainEntity?.name;
-  const expectedTitle = `${profileName} - Escort en ${communeName}, Santiago | Paramours`;
-  const expectedDescription = `Conoce el perfil de ${profileName}, escort en ${communeName}, Santiago. Revisa la información publicada, disponibilidad y medios de contacto en Paramours.`;
+  const state = JSON.parse(html.match(/<script[^>]*id="ng-state"[^>]*>(.*?)<\/script>/s)?.[1] || '{}');
+  const profile = Object.entries(state).find(([key]) => key.startsWith('public-page:profile:'))?.[1]?.profile;
+  assert.ok(profile);
+  const category = String(profile.genero) === '0' ? 'Masajista' : 'Escort';
+  const plural = category === 'Masajista' ? 'Masajistas' : 'Escorts';
+  const expectedTitle = `${profileName} - ${category} en ${location} | Paramours`;
 
   assert.equal(response.status, 200);
   assert.equal(robots, 'index, follow, max-image-preview:large');
   assert.equal(title, expectedTitle);
-  assert.equal(description, expectedDescription.length <= 160 ? expectedDescription : `${expectedDescription.slice(0, 159).trim()}...`);
+  assert.ok(description.startsWith(`${profileName}, ${category.toLowerCase()} en ${location}.`));
   assert.equal(canonical, `https://paramours.cl${profileHref}`);
-  assert.deepEqual(h1s, [`${profileName}, Escort en ${communeName}`]);
-  assert.ok(anchors(html).some(anchor => anchor.href === communeAnchor.href && anchor.text === `Escorts en ${communeName}`));
+  assert.deepEqual(h1s, [`${profileName}, ${category} en ${location}`]);
+  assert.ok(anchors(html).some(anchor => anchor.href === communeAnchor.href && anchor.text === `${plural} en ${communeName}`));
   assert.equal(schema['@type'], 'ProfilePage');
   assert.equal(schema.name, title);
   assert.equal(schema.url, canonical);
@@ -330,14 +340,14 @@ test('an active public profile exposes complete on-page SEO and its commune link
   assert.equal(schema.breadcrumb['@type'], 'BreadcrumbList');
   assert.deepEqual(schema.breadcrumb.itemListElement, [
     { '@type': 'ListItem', position: 1, name: 'Paramours', item: 'https://paramours.cl/' },
-    { '@type': 'ListItem', position: 2, name: `Escorts en ${communeName}`, item: `https://paramours.cl${communeAnchor.href}` },
+    { '@type': 'ListItem', position: 2, name: `${plural} en ${location}`, item: `https://paramours.cl${communeAnchor.href}` },
     { '@type': 'ListItem', position: 3, name: profileName, item: canonical }
   ]);
   assert.equal((html.match(/<script[^>]+type="application\/ld\+json"/gi) ?? []).length, 1);
   const hasPublicProfileImage = !schema.mainEntity.image.endsWith('/avatar_anunciante.png');
   const expectedSocialImage = hasPublicProfileImage ? schema.mainEntity.image : 'https://paramours.cl/assets/images/og-paramours.png';
   const escapedSocialImage = expectedSocialImage.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const escapedSocialAlt = `${profileName} en ${communeName}`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const escapedSocialAlt = `${profileName}, ${category} en ${location}`.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   assert.match(html, new RegExp(`<meta property="og:image" content="${escapedSocialImage}"`, 'i'));
   assert.match(html, new RegExp(`<meta property="og:image:alt" content="${escapedSocialAlt}"`, 'i'));
   assert.match(html, new RegExp(`<meta name="twitter:image" content="${escapedSocialImage}"`, 'i'));

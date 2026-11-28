@@ -4,6 +4,7 @@ import { Cliente } from '../models/models.interface';
 import { LocationSeoService } from './location-seo.service';
 import { SeoService } from './seo.service';
 import { BlogPost } from '../models/blog.interface';
+import { resolveProfileLocation } from '../models/profile-seo';
 
 describe('Global SEO route policy', () => {
   let seo: SeoService;
@@ -13,12 +14,15 @@ describe('Global SEO route policy', () => {
 
   const profile = {
     iD_USUARIO: 42,
+    genero: '1', ciudad: 0, comuna: 1,
     nombrE_USUARIO: 'Perfil de prueba',
     descripcion: 'Descripción del perfil de prueba',
     edad: 25,
     altura: '165 cm',
     valor: 100000
   } as Cliente;
+  const profileLocation = resolveProfileLocation(profile,
+    [{ id: 0, nombre: 'Santiago' }], [{ id: 1, id_ciudad: 0, nombre: 'Providencia', slug: 'providencia' }]);
 
   const location = {
     locationName: 'Providencia',
@@ -188,8 +192,8 @@ describe('Global SEO route policy', () => {
 
   it('sets coherent SEO and schemas for an active public profile', () => {
     const profileUrl = 'https://paramours.cl/profile/42/Perfil-de-prueba';
-    const description = 'Conoce el perfil de Perfil de prueba, escort en Providencia, Santiago. Revisa la información publicada, disponibilidad y medios de contacto en Paramours.';
-    seo.setProfileSeo(profile, profileUrl, 'https://images.paramours.test/profile.jpg', 'Providencia', '/escort-providencia');
+    const description = 'Perfil de prueba, escort en Providencia, Santiago. Descripción del perfil de prueba';
+    seo.setProfileSeo(profile, profileUrl, 'https://images.paramours.test/profile.jpg', profileLocation);
 
     const schema = JSON.parse(document.getElementById('profile-schema')?.textContent ?? '{}');
     expect(title.getTitle()).toBe('Perfil de prueba - Escort en Providencia, Santiago | Paramours');
@@ -201,9 +205,9 @@ describe('Global SEO route policy', () => {
     expect(meta.getTag("name='twitter:title'")?.content).toBe(title.getTitle());
     expect(meta.getTag("name='twitter:description'")?.content).toBe(description);
     expect(meta.getTag("property='og:image'")?.content).toBe('https://images.paramours.test/profile.jpg');
-    expect(meta.getTag("property='og:image:alt'")?.content).toBe('Perfil de prueba en Providencia');
+    expect(meta.getTag("property='og:image:alt'")?.content).toBe('Perfil de prueba, Escort en Providencia, Santiago');
     expect(meta.getTag("name='twitter:image'")?.content).toBe('https://images.paramours.test/profile.jpg');
-    expect(meta.getTag("name='twitter:image:alt'")?.content).toBe('Perfil de prueba en Providencia');
+    expect(meta.getTag("name='twitter:image:alt'")?.content).toBe('Perfil de prueba, Escort en Providencia, Santiago');
     expect(canonical()).toBe(profileUrl);
     expect(schema['@type']).toBe('ProfilePage');
     expect(schema.name).toBe(title.getTitle());
@@ -218,17 +222,17 @@ describe('Global SEO route policy', () => {
     expect(schema.breadcrumb['@type']).toBe('BreadcrumbList');
     expect(schema.breadcrumb.itemListElement).toEqual([
       { '@type': 'ListItem', position: 1, name: 'Paramours', item: 'https://paramours.cl/' },
-      { '@type': 'ListItem', position: 2, name: 'Escorts en Providencia', item: 'https://paramours.cl/escort-providencia' },
+      { '@type': 'ListItem', position: 2, name: 'Escorts en Providencia, Santiago', item: 'https://paramours.cl/escort-providencia' },
       { '@type': 'ListItem', position: 3, name: 'Perfil de prueba', item: profileUrl }
     ]);
   });
 
   it('uses the social logo fallback when an active profile has no public image', () => {
-    seo.setProfileSeo(profile, 'https://paramours.cl/profile/42/Perfil-de-prueba', '', 'Providencia', '/escort-providencia');
+    seo.setProfileSeo(profile, 'https://paramours.cl/profile/42/Perfil-de-prueba', '', profileLocation);
     expect(meta.getTag("property='og:image'")?.content).toBe('https://paramours.cl/assets/images/og-paramours.png');
-    expect(meta.getTag("property='og:image:alt'")?.content).toBe('Perfil de prueba en Providencia');
+    expect(meta.getTag("property='og:image:alt'")?.content).toBe('Perfil de prueba, Escort en Providencia, Santiago');
     expect(meta.getTag("name='twitter:image'")?.content).toBe('https://paramours.cl/assets/images/og-paramours.png');
-    expect(meta.getTag("name='twitter:image:alt'")?.content).toBe('Perfil de prueba en Providencia');
+    expect(meta.getTag("name='twitter:image:alt'")?.content).toBe('Perfil de prueba, Escort en Providencia, Santiago');
   });
 
   it('updates social image metadata across Home, Location, Profile and Home SPA navigation', () => {
@@ -251,9 +255,9 @@ describe('Global SEO route policy', () => {
     locationSeo.setLocationSeo(location);
     expect(meta.getTag("property='og:image:alt'")?.content).toBe('Escorts en Providencia - Paramours');
 
-    seo.setProfileSeo(profile, 'https://paramours.cl/profile/42/Perfil-de-prueba', 'https://images.paramours.test/profile.jpg', 'Providencia', '/escort-providencia');
+    seo.setProfileSeo(profile, 'https://paramours.cl/profile/42/Perfil-de-prueba', 'https://images.paramours.test/profile.jpg', profileLocation);
     expect(meta.getTag("property='og:image'")?.content).toBe('https://images.paramours.test/profile.jpg');
-    expect(meta.getTag("property='og:image:alt'")?.content).toBe('Perfil de prueba en Providencia');
+    expect(meta.getTag("property='og:image:alt'")?.content).toBe('Perfil de prueba, Escort en Providencia, Santiago');
 
     expect(meta.getTag("property='og:image:width'")).toBeNull();
     expect(meta.getTag("property='og:image:height'")).toBeNull();
@@ -283,7 +287,7 @@ describe('Global SEO route policy', () => {
 
   it('cleans Home and Profile metadata when navigating to Login', () => {
     seo.setHomeSeo();
-    seo.setProfileSeo(profile, 'https://paramours.cl/profile/42/perfil-prueba', 'profile.jpg', 'Providencia');
+    seo.setProfileSeo(profile, 'https://paramours.cl/profile/42/perfil-prueba', 'profile.jpg', profileLocation);
     seo.clearRouteSeo();
     seo.applyStaticRouteSeo('/login');
 
@@ -302,7 +306,7 @@ describe('Global SEO route policy', () => {
   });
 
   it('replaces Profile metadata with Location metadata', () => {
-    seo.setProfileSeo(profile, 'https://paramours.cl/profile/42/perfil-prueba', 'profile.jpg', 'Providencia');
+    seo.setProfileSeo(profile, 'https://paramours.cl/profile/42/perfil-prueba', 'profile.jpg', profileLocation);
     locationSeo.setLocationSeo(location);
 
     expect(document.getElementById('profile-schema')).toBeNull();

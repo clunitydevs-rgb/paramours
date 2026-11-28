@@ -180,3 +180,62 @@ Quedan fuera de este cierre:
 
 No se modificaron las descripciones de anunciantes, los textos geográficos, las
 dependencias, la base de datos, las APIs, la infraestructura ni GitHub Actions.
+
+## Fase 2: SEO individual de perfiles (implementación local)
+
+La generación de perfiles se centraliza en `src/app/models/profile-seo.ts`:
+
+- La categoría procede del dato `genero` vigente y se comparte entre title, H1,
+  descripción, etiquetas sociales, JSON-LD y el enlace de ubicación del perfil.
+- La ubicación se resuelve con los catálogos existentes de ciudades y comunas,
+  comprobando `id_ciudad`. No se atribuye Santiago a una ciudad o ubicación desconocida.
+- La meta description combina contexto verificable y un extracto del campo público
+  `descripcion`. Elimina marcado y contenido ejecutable, decodifica entidades,
+  normaliza espacios y prioriza frases/cláusulas completas. Los recortes restantes
+  mantienen palabras completas y señalan la omisión con puntos suspensivos.
+- Cuando el texto no es útil, el fallback contiene solo nombre, categoría y ubicación
+  conocida. No añade servicios, horarios, disponibilidad, edad ni certificaciones.
+- Una frase que declara una edad distinta de la ficha se omite del resumen, sin elegir
+  una edad ni corregir el texto original. El conflicto se conserva para revisión editorial.
+
+El presupuesto de longitud es orientativo; no garantiza el fragmento que Google mostrará.
+El texto original del anunciante y su representación visible no se reescriben. No se
+añaden consultas API, campos privados a TransferState, dependencias, URLs ni canonical.
+El contenido editorial geográfico permanece reservado para Fase 3.
+
+Validación reproducible, después de compilar producción:
+
+```sh
+npm run build -- --configuration production
+npm run test:seo
+npm run test:phase1
+npx ng test --watch=false --browsers=ChromeHeadless --include=src/app/models/profile-seo.spec.ts
+npm run test:ssr-phase1
+node --test tests/phase2.integration.mjs
+```
+
+Usar `CHROME_BIN` cuando sea necesario. Las suites de SSR de Fase 1 y Fase 2
+simulan errores y respuestas mediante fixtures locales. La matriz del inventario
+público usa el build local y llamadas reales a las APIs; el navegador recibe los
+recursos del sitio desde localhost, sin interceptar respuestas API ni deshabilitar CORS.
+La matriz anterior/nueva, el informe y la procedencia de las pruebas se guardan como
+artefactos locales no versionados en `.audit-tmp/phase2/`.
+
+Esta implementación no está publicada: no se realizan commits, push ni despliegues
+durante su certificación. El controlador de despliegue continúa separado en
+`feature/deploy-controller`, sin modificaciones.
+
+Estado recuperado el 28 de noviembre de 2026: **233 pruebas aprobadas, cero fallidas
+y cero omitidas**, con build de producción correcto. La consulta actual del catálogo
+confirma **32 perfiles**: se conservaron las 31 validaciones SSR/hidratación aprobadas
+y se añadió la comprobación de Natacha (94), única alta sin cambios en los otros datos.
+El nuevo build conserva idénticos los 108 archivos JS/MJS/CSS del runtime certificado;
+no fue necesario repetir las suites. La matriz y el informe completos están en
+`.audit-tmp/phase2/informe.html` y `.audit-tmp/phase2/matriz.csv`.
+
+No quedan tareas de implementación o pruebas obligatorias pendientes. Permanecen
+observaciones editoriales: las descripciones vacías de Pamela, Agatha y Sofi, y la
+edad contradictoria de javiera (68), cuya frase conflictiva no se traslada al resumen.
+Calama se valida mediante fixtures porque no tiene un perfil público actual.
+Un cambio posterior de `public/sitemap.xml` que añade Natacha se conserva intacto,
+pero se documenta separado de los archivos de implementación de Fase 2.

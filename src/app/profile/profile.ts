@@ -22,6 +22,7 @@ import { catchError, distinctUntilChanged, forkJoin, map, Observable, of, Subjec
 import { ProfileLookup } from '../models/public-page-data';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PublicPageDataService } from '../service/public-page-data.service';
+import { emptyProfileLocation, profileIdentity, resolveProfileLocation } from '../models/profile-seo';
 
 interface Files {
   mFile: File
@@ -55,6 +56,7 @@ export class Profile implements OnInit {
   public profileViewState: ProfileViewState = 'loading';
   public locationDirectoryUrl = '';
   public locationDirectoryName = '';
+  private profileLocation = emptyProfileLocation();
   // dssfs
   nCount = 0;
 
@@ -260,6 +262,7 @@ export class Profile implements OnInit {
     this.profileViewState = 'loading';
     this.proFileImg = null;
     this.locationDirectoryName = '';
+    this.profileLocation = emptyProfileLocation();
     this.locationDirectoryUrl = '';
     this.ciudad = []; this.comuna = []; this.metro = [];
     this.nacionalidad = []; this.genero = []; this.colorojo = [];
@@ -282,14 +285,15 @@ export class Profile implements OnInit {
   }
 
   get profileHeading(): string {
-    const profileName = this.oCliente.nombrE_USUARIO?.trim() || 'Perfil';
-    const serviceName = this.oCliente.genero?.toString() === '0' ? 'Masajista' : 'Escort';
-    return `${profileName}, ${serviceName} en ${this.locationDirectoryName || 'Santiago'}`;
+    return profileIdentity(this.oCliente, this.profileLocation).heading;
   }
 
   get profileImageAlt(): string {
-    const profileName = this.oCliente.nombrE_USUARIO?.trim() || 'Perfil';
-    return this.locationDirectoryName ? `${profileName} en ${this.locationDirectoryName}` : `${profileName} en Santiago`;
+    return this.profileHeading;
+  }
+
+  get profileDirectoryLabel(): string {
+    return `${profileIdentity(this.oCliente, this.profileLocation).category.plural} en ${this.locationDirectoryName}`;
   }
 
   get showInactiveProfileMessage(): boolean {
@@ -519,27 +523,25 @@ export class Profile implements OnInit {
     if (!this.oCliente?.iD_USUARIO) return;
 
     const city = this.oCiudades.find(item => item.id?.toString() === this.oCliente.ciudad?.toString());
-    const commune = this.oComunas.find(item => item.id?.toString() === this.oCliente.comuna?.toString());
     const metro = this.oMetros.find(item =>
       item.idComuna?.toString() === this.oCliente.comuna?.toString()
       && item.idMetro?.toString() === this.oCliente.metro?.toString()
     );
 
     this.ciudad = city ? [city.nombre] : [];
-    this.comuna = this.oCliente.ciudad?.toString() === '0' && commune ? [commune.nombre] : [];
+    this.profileLocation = resolveProfileLocation(this.oCliente, this.oCiudades, this.oComunas);
+    this.comuna = this.profileLocation.commune ? [this.profileLocation.commune] : [];
     this.metro = metro ? [metro.NombreMetro] : [];
 
-    const location = this.oCliente.ciudad?.toString() === '0' && commune ? commune : city;
-    this.locationDirectoryName = location?.nombre ?? '';
-    this.locationDirectoryUrl = location?.slug ? `/escort-${location.slug}` : '';
+    this.locationDirectoryName = this.profileLocation.primary;
+    this.locationDirectoryUrl = this.profileLocation.directoryUrl;
 
     if (this.profileViewState === 'ready') {
       this.seoService.setProfileSeo(
         this.oCliente,
         this.buildProfileUrl(),
         this.getPublicProfileImageUrl(),
-        this.locationDirectoryName,
-        this.locationDirectoryUrl
+        this.profileLocation
       );
     }
   }

@@ -14,6 +14,7 @@ function profile(id, name, slug, photo = '', city = 999, commune = 999) {
     nombrE_USUARIO: name,
     slug,
     estado: 'V',
+    genero: '1',
     tipo: '2',
     descripcion: '',
     fotO_PERFIL: photo,
@@ -101,7 +102,7 @@ test('profile main photo is an eager high-priority SSR image', async () => {
 
   assert.equal(response.status, 200);
   assert.match(image, /src="https:\/\/paramoursfilesblobazure\.blob\.core\.windows\.net\/rpsfilescontainer\/elida-profile\.jpg"/i);
-  assert.match(image, /alt="Elida Morat en Providencia"/i);
+  assert.match(image, /alt="Elida Morat, Escort en Providencia, Santiago"/i);
   assert.match(image, /width="300"/i);
   assert.match(image, /height="300"/i);
   assert.match(image, /loading="eager"/i);
@@ -115,7 +116,7 @@ test('profile without a photo renders the existing advertiser fallback', async (
 
   assert.equal(response.status, 200);
   assert.match(image, /src="https:\/\/paramoursfilesblobazure\.blob\.core\.windows\.net\/rpsfilescontainer\/avatar_anunciante\.png"/i);
-  assert.match(image, /alt="Perfil Dos en Santiago"/i);
+  assert.match(image, /alt="Perfil Dos, Escort"/i);
   assert.doesNotMatch(image, /(?:src=""|src="null"|src="undefined")/i);
 });
 

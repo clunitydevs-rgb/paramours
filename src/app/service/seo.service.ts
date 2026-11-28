@@ -4,6 +4,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { Cliente } from '../models/models.interface';
 import { BlogPost } from '../models/blog.interface';
+import { buildProfileSeo, emptyProfileLocation, ProfileLocation } from '../models/profile-seo';
 
 @Injectable({ providedIn: 'root' })
 export class SeoService {
@@ -149,14 +150,11 @@ export class SeoService {
     });
   }
 
-  setProfileSeo(profile: Cliente, profileUrl: string, imageUrl: string, locationName = '', locationDirectoryUrl = ''): void {
+  setProfileSeo(profile: Cliente, profileUrl: string, imageUrl: string, place: ProfileLocation = emptyProfileLocation()): void {
     this.clearRouteSeo();
-    const profileName = this.cleanText(profile.nombrE_USUARIO) || 'Perfil Paramours';
-    const description = this.buildProfileDescription(profile, profileName, locationName);
-    const location = this.cleanText(locationName);
-    const title = location
-      ? `${profileName} - Escort en ${location}, Santiago | Paramours`
-      : `${profileName} - Escort en Santiago | Paramours`;
+    const { name: profileName, description, title, heading, category } = buildProfileSeo(profile, place, this.document);
+    const location = place.label;
+    const locationDirectoryUrl = place.directoryUrl;
 
     this.title.setTitle(title);
     this.meta.updateTag({ name: 'robots', content: 'index, follow, max-image-preview:large' });
@@ -164,7 +162,7 @@ export class SeoService {
     this.setCanonical(profileUrl);
 
     const socialImage = this.resolveSocialImage(imageUrl);
-    const socialImageAlt = `${profileName} en ${location || 'Santiago'}`;
+    const socialImageAlt = heading;
 
     this.setOpenGraph({
       title,
@@ -188,7 +186,7 @@ export class SeoService {
         ? [{
           '@type': 'ListItem',
           position: 2,
-          name: `Escorts en ${location}`,
+          name: `${category.plural} en ${location}`,
           item: new URL(locationDirectoryUrl, `${this.siteUrl}/`).toString()
         }]
         : []),
@@ -307,15 +305,6 @@ export class SeoService {
     return path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path;
   }
 
-  private buildProfileDescription(_profile: Cliente, profileName: string, locationName = ''): string {
-    const location = this.cleanText(locationName);
-    const geographicText = location ? `${location}, Santiago` : 'Santiago';
-    return this.truncate(
-      `Conoce el perfil de ${profileName}, escort en ${geographicText}. Revisa la información publicada, disponibilidad y medios de contacto en Paramours.`,
-      160
-    );
-  }
-
   private resolveSocialImage(imageUrl: string, fallbackImage = this.socialFallbackImage): string {
     try {
       const url = new URL(imageUrl);
@@ -363,17 +352,4 @@ export class SeoService {
     this.document.head.appendChild(script);
   }
 
-  private cleanText(value: string | null | undefined): string {
-    return (value || '').replace(/\s+/g, ' ').trim();
-  }
-
-  private truncate(value: string, maxLength: number): string {
-    const text = this.cleanText(value);
-
-    if (text.length <= maxLength) {
-      return text;
-    }
-
-    return `${text.slice(0, maxLength - 1).trim()}...`;
-  }
 }
